@@ -39,7 +39,6 @@
         ::-webkit-scrollbar-thumb { background:rgba(0,229,255,0.3); border-radius:20px; }
         ::-webkit-scrollbar-thumb:hover { background:var(--accent-cyan); }
 
-        /* NETFLIX INTRO ANIMATION */
         #introAnim { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999999; display: flex; align-items: center; justify-content: center; flex-direction: column; animation: fadeOutIntro 0.5s ease 3.5s forwards; }
         .intro-n { color: var(--netflix-red); font-size: 150px; font-weight: 900; font-family: Impact, sans-serif; opacity: 0; transform: scale(0.5); animation: popN 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
         .intro-glitch { display: none; text-align: center; color: #fff; animation: showGlitch 2s ease forwards; }
@@ -50,7 +49,6 @@
         @keyframes showGlitch { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
         @keyframes fadeOutIntro { to { opacity: 0; visibility: hidden; } }
 
-        /* VICCES TÖLTŐKÉPERNYŐ */
         .global-loader { position: fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-primary); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; transition: opacity 0.4s ease; }
         .loader-spinner { width: 60px; height: 60px; border: 6px solid rgba(0,229,255,0.1); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite; box-shadow: 0 0 20px rgba(0,229,255,0.2); }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -199,9 +197,8 @@
             
             #viewChannels.active { display: flex; flex-direction: column; padding: 10px; gap: 12px; overflow: visible; }
             
-            /* A JÁTÉKOS MOBILON LEGYEN FELÜL! */
             .right-panel { order: 1; flex: none; overflow: visible; }
-            .left-panel { order: 2; flex: none; min-height: 450px; overflow: visible; }
+            .left-panel { order: 2; flex: none; min-height: 450px; overflow: visible; scroll-margin-top: 20px; }
             
             .dashboard-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
             .dash-card { padding: 16px 10px; }
@@ -218,7 +215,7 @@
         <div class="intro-n" id="introN">N</div>
         <div class="intro-glitch" id="introGlitch">
             <h1>RobiTV Premium</h1>
-            <p>Felejtsd el a többít.</p>
+            <p>Felejtsd el a többit.</p>
         </div>
     </div>
 
@@ -227,7 +224,7 @@
             <i class="fa-solid fa-bolt" style="color:var(--accent-magenta);"></i> RobiTV
         </div>
         <div class="loader-spinner"></div>
-        <div class="funny-quote" id="loadingJoke">Csatornák szinkronizálása... Kérlek várj!</div>
+        <div class="funny-quote" id="loadingJoke">Bitek és bájtok sorba rendezése...</div>
     </div>
 
     <header>
@@ -237,7 +234,7 @@
         
         <div class="header-search-wrap">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" id="headerSearchInput" placeholder="Keresés adók, filmek, sorozatok között (min. 3 karakter)..." oninput="executeHeaderSearch()" />
+            <input type="text" id="headerSearchInput" placeholder="Keresés adók, filmek, sorozatok között..." oninput="executeHeaderSearch()" />
             <div class="search-results-box" id="headerSearchResults"></div>
         </div>
 
@@ -245,7 +242,7 @@
             <div class="status-badge" id="expireStatus" onclick="checkAdminPin()" style="background:rgba(251, 191, 36, 0.04); border-color:rgba(251, 191, 36, 0.15); cursor: pointer;"><i class="fa-regular fa-calendar" style="color:var(--accent-cyan);"></i><span id="expireText" style="color:#fff;">Lejárat: Lekérés...</span></div>
             <div class="status-badge" id="m3uStatus"><div class="dot"></div><span id="m3uText">M3U..</span></div>
             <div class="status-badge" id="epgStatus"><div class="dot"></div><span id="epgText">EPG..</span></div>
-            <div class="status-badge" style="background:rgba(0, 225, 255, 0.05); border-color:rgba(0, 225, 255, 0.2);"><div class="dot ok"></div><span id="activeUsersCount" style="color:var(--accent-cyan);">1 online</span></div>
+            <div class="status-badge" style="background:rgba(0, 225, 255, 0.05); border-color:rgba(0, 225, 255, 0.2);"><div class="dot ok"></div><span id="activeUsersCount" style="color:var(--accent-cyan);">Lekérés...</span></div>
         </div>
     </header>
 
@@ -253,7 +250,7 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <h2><i class="fa-regular fa-folder"></i> Kategóriák</h2>
-                <i class="fa-solid fa-arrows-up-down" style="color:var(--text-muted); font-size:12px; cursor:help;" title="A főoldalon (Irányítópult) tudod húzással módosítani a sorrendet!"></i>
+                <i class="fa-solid fa-arrows-up-down" style="color:var(--text-muted); font-size:12px; cursor:help;" title="A főoldalon tudod húzással módosítani a sorrendet!"></i>
             </div>
             <div class="category-list" id="categoryList"></div>
         </aside>
@@ -338,20 +335,21 @@
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwQ6BMut0hHl4yWr6ikFaeFeI_qJARjQz6Uxfn7odFLKeKOzK7il_c7QKeBAdwkKlRCPw/exec"; 
 
         const jokes = [
-            "Hálózat optimalizálása... mehetsz is addig egy 15 kilométeres sétára.",
-            "Marcipán macska épp a szerverkábelt rágja, kis türelmet...",
-            "Készülnek a 90-es évekbeli Euro-pop jinglek a háttérben...",
-            "Love is Blind dráma letöltése folyamatban...",
-            "Lattafa Asad illatfelhő fújása a kódra...",
-            "Golyó.html scriptek összehangolása...",
-            "RobiTV Premium betöltése... Izomépítés 99%."
+            "Bitek és bájtok sorba rendezése...",
+            "Virtuális kábelek kibogozása folyamatban...",
+            "Pixelek fényesítése a maximális élményért...",
+            "A streaming manók ébresztése...",
+            "Keresem a távirányítót a szerverszobában...",
+            "Az EPG mátrix dekódolása...",
+            "Kérlek várj, a szerver épp a kávéját issza...",
+            "Pufferek feltöltése illegálisan jó tartalommal..."
         ];
 
         let allChannels = [];
         let channelsByGroup = {};
         let groupNames = [];
         let savedCategoryOrder = [];
-        let continueCloudList = []; // FELHŐBŐL ÉRKEZŐ LISTA
+        let continueCloudList = []; 
         
         let activeGroup = null;
         let activeChannel = null;
@@ -362,7 +360,7 @@
         let epgDB = {};              
         let epgFullyLoaded = false; 
         let epgLoading = false;
-        let mySessionId = null;
+        let mySessionId = generateUUID();
 
         let currentM3uUrl = "";
         let currentEpgUrl = "";
@@ -373,16 +371,21 @@
         let popupTriggered = false;
         
         let lastSavedTime = 0; 
-        let lastCloudSyncTime = 0; // Throttle a Google Script kíméléséhez
+        let lastCloudSyncTime = 0; 
         let playAttemptTime = 0;
-
         let draggedGroupName = null;
 
         const video = document.getElementById('player');
         const loadFill = document.getElementById('loadFill');
         const loadPercent = document.getElementById('loadPercent');
 
-        // INTRO ANIMÁCIÓ KEZELÉSE
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
         setTimeout(() => {
             const n = document.getElementById('introN');
             const glitch = document.getElementById('introGlitch');
@@ -398,8 +401,7 @@
             if(document.getElementById('globalLoader').style.display === 'flex') {
                 document.getElementById('loadingJoke').innerText = jokes[Math.floor(Math.random() * jokes.length)];
             }
-        }, 4000);
-
+        }, 2500);
 
         function resetToHome() {
             if (hls) { hls.destroy(); hls = null; }
@@ -438,18 +440,6 @@
             return g.includes('film') || g.includes('mozi') || g.includes('sorozat') || g.includes('vod') || g.includes('cinema');
         }
 
-        function parseEpgDate(str) {
-            if (!str) return new Date();
-            const year = str.slice(0, 4); const month = str.slice(4, 6); const day = str.slice(6, 8);
-            const hour = str.slice(8, 10); const min = str.slice(10, 12); const sec = str.slice(12, 14) || "00";
-            let tz = "+01:00"; 
-            const parts = str.split(' ');
-            if (parts.length > 1 && parts[1].length === 5) {
-                tz = parts[1].slice(0, 3) + ":" + parts[1].slice(3, 5);
-            }
-            return new Date(`${year}-${month}-${day}T${hour}:${min}:${sec}${tz}`);
-        }
-
         function checkAdminPin() {
             const pin = prompt("Kérlek, add meg a 4 jegyű szerkesztői kódot a továbblépéshez:");
             if (pin === "0000") openAdminModal();
@@ -474,7 +464,10 @@
                 const sendUrl = `${GOOGLE_SCRIPT_URL}?action=setUrls&m3u=${encodeURIComponent(m3uVal)}&epg=${encodeURIComponent(epgVal)}&api=${encodeURIComponent(apiVal)}`;
                 const res = await fetch(sendUrl);
                 const data = await res.json();
-                if (data.status === "success") { alert("Sikeres mentés! A system azonnal frissíti és beolvassa a listákat."); location.reload(); }
+                if (data.status === "success") { 
+                    alert("Sikeres mentés! A rendszer azonnal beolvassa a listákat az új forrásból."); 
+                    setTimeout(() => location.reload(), 500);
+                }
             } catch(e) { alert("Hiba történt a mentés során."); }
         }
 
@@ -518,6 +511,13 @@
             }
         }
 
+        function scrollToChannelListOnMobile() {
+            if (window.innerWidth <= 900) {
+                const listPanel = document.querySelector('.left-panel');
+                if (listPanel) listPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
         function openChannelFromSearch(ch) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById('viewChannels').classList.add('active');
@@ -555,7 +555,7 @@
             
             scrollToPlayerOnMobile();
 
-            if (!epgFullyLoaded && !isVodGroup(ch.group) && !ch.group.startsWith("⭐") && !ch.group.startsWith("⏪")) {
+            if (!epgFullyLoaded && ch.group === "⭐ Élő Magyar Csatornák") {
                 loadEPG(); 
             }
         }
@@ -616,32 +616,6 @@
             return result;
         }
 
-        function parseEPG(xmlText, filterIds) {
-            const db = {};
-            const parser = new DOMParser();
-            const xml = parser.parseFromString(xmlText, 'text/xml');
-            const programmes = xml.getElementsByTagName('programme');
-            const limitDate = new Date(); limitDate.setDate(limitDate.getDate() - 1);
-
-            for (let i=0; i<programmes.length; i++) {
-                const p = programmes[i];
-                let chId = sanitizeId(p.getAttribute('channel'));
-                if (!chId || !filterIds.has(chId)) continue;
-                const startStr = p.getAttribute('start'); const stopStr = p.getAttribute('stop');
-                if(!startStr || !stopStr) continue;
-                
-                const start = parseEpgDate(startStr); const stop = parseEpgDate(stopStr);
-                if (stop < limitDate) continue;
-                const title = p.getElementsByTagName('title')[0]?.textContent || 'Műsor';
-                const desc = p.getElementsByTagName('desc')[0]?.textContent || '';
-                if (!db[chId]) db[chId] = [];
-                db[chId].push({ start, stop, title, desc });
-            }
-
-            for (let id in db) db[id].sort((a, b) => a.start - b.start);
-            return db;
-        }
-
         function getEpgForChannel(ch, targetTime = new Date()) {
             const id = ch.id || sanitizeId(ch.name);
             const list = epgDB[id] || [];
@@ -656,7 +630,6 @@
 
         function getSortedGroupNames() {
             const fixedTops = ["⭐ Élő Magyar Csatornák", "⏪ Visszanézhető Csatornák"];
-            
             let others = groupNames.filter(g => !fixedTops.includes(g));
             
             if (savedCategoryOrder && savedCategoryOrder.length > 0) {
@@ -798,6 +771,7 @@
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById('viewChannels').classList.add('active');
             renderCategorySidebar(type);
+            scrollToChannelListOnMobile();
             
             const list = document.getElementById('channelListView');
             list.innerHTML = '';
@@ -840,6 +814,7 @@
                     card.onclick = () => {
                         playChannel(ch, null);
                         setTimeout(() => { video.currentTime = item.time; }, 1500);
+                        scrollToPlayerOnMobile();
                     };
                     
                     gridDiv.appendChild(card);
@@ -847,7 +822,6 @@
                 
                 list.appendChild(gridDiv);
             }
-            scrollToPlayerOnMobile();
         }
 
         function deleteContinueItem(chId) {
@@ -945,11 +919,12 @@
                 div.className = `channel-item ${activeChannel === ch ? 'active' : ''}`;
                 div.innerHTML = `
                     <div class="c-logo">${ch.logo ? `<img src="${ch.logo}" />` : `<i class="fa-solid fa-video"></i>`}</div>
-                    <div class="c-info"><div class="c-name">${ch.name}</div><div class="c-epg">Sorozat epizód</div></div>
+                    <div class="c-info"><div class="c-name">${ch.name}</div><div class="c-epg">S${ep.info.season} E${ep.info.episode} epizód</div></div>
                 `;
                 div.onclick = () => { playChannel(ch, div); scrollToPlayerOnMobile(); };
                 list.appendChild(div);
             });
+            scrollToChannelListOnMobile();
         }
 
         function openCategory(group) {
@@ -959,8 +934,10 @@
             document.getElementById('channelViewTitle').textContent = group;
             renderCategorySidebar(group);
             renderChannelsForGroup(group);
+            scrollToChannelListOnMobile();
             
-            if (!epgFullyLoaded && !isVodGroup(group) && !group.startsWith("⭐") && !group.startsWith("⏪")) { 
+            // CSAK AZ ÉLŐ MAGYAR CSATORNÁK MAPPÁNÁL TÖLTJÜK LE AZ EPG-T
+            if (!epgFullyLoaded && group === "⭐ Élő Magyar Csatornák") { 
                 loadEPG(); 
             }
         }
@@ -973,6 +950,57 @@
             renderDashboard();
         }
 
+        // AKADÁSMENTES WEB WORKER AZ EPG FELDOLGOZÁSÁHOZ
+        const epgWorkerCode = `
+        self.onmessage = function(e) {
+            const { xmlText, filterIds } = e.data;
+            const db = {};
+            const limitDate = new Date(); 
+            limitDate.setDate(limitDate.getDate() - 1);
+            
+            const programmes = xmlText.split('<programme');
+            for(let i = 1; i < programmes.length; i++) {
+                const chunk = programmes[i];
+                const chMatch = chunk.match(/channel="([^"]+)"/);
+                if(!chMatch) continue;
+                
+                const chId = chMatch[1].toLowerCase().replace(/\\.hu/g,'').replace(/[^a-z0-9]/g,'');
+                if(!filterIds.includes(chId)) continue;
+                
+                const startMatch = chunk.match(/start="([^"]+)"/);
+                const stopMatch = chunk.match(/stop="([^"]+)"/);
+                if(!startMatch || !stopMatch) continue;
+                
+                const parseDate = (str) => {
+                    const year = str.slice(0, 4), month = str.slice(4, 6), day = str.slice(6, 8);
+                    const hour = str.slice(8, 10), min = str.slice(10, 12), sec = str.slice(12, 14) || "00";
+                    let tz = "+01:00";
+                    const parts = str.split(' ');
+                    if (parts.length > 1 && parts[1].length === 5) {
+                        tz = parts[1].slice(0, 3) + ":" + parts[1].slice(3, 5);
+                    }
+                    return new Date(\`\${year}-\${month}-\${day}T\${hour}:\${min}:\${sec}\${tz}\`);
+                };
+                
+                const start = parseDate(startMatch[1]);
+                const stop = parseDate(stopMatch[1]);
+                if(stop < limitDate) continue;
+                
+                const titleMatch = chunk.match(/<title[^>]*>([^<]+)<\\/title>/);
+                const title = titleMatch ? titleMatch[1] : 'Műsor';
+                
+                const descMatch = chunk.match(/<desc[^>]*>([^<]+)<\\/desc>/);
+                const desc = descMatch ? descMatch[1] : '';
+                
+                if(!db[chId]) db[chId] = [];
+                db[chId].push({ start, stop, title, desc });
+            }
+            
+            for (let id in db) db[id].sort((a, b) => a.start - b.start);
+            self.postMessage({ db });
+        };
+        `;
+
         async function loadEPG() {
             if (epgLoading || epgFullyLoaded) return;
             epgLoading = true;
@@ -981,18 +1009,27 @@
                 const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getEpg`);
                 const text = await res.text();
                 
-                const filterIds = new Set();
-                allChannels.forEach(ch => filterIds.add(ch.id || sanitizeId(ch.name)));
+                // CSAK AZ "ÉLŐ MAGYAR CSATORNÁK" AZONOSÍTÓIT SZŰRJÜK KI AZ EPG-HEZ
+                const filterIds = Array.from(new Set(
+                    allChannels
+                    .filter(ch => ch.group === "⭐ Élő Magyar Csatornák")
+                    .map(ch => ch.id || sanitizeId(ch.name))
+                ));
+
+                const blob = new Blob([epgWorkerCode], {type: 'application/javascript'});
+                const worker = new Worker(URL.createObjectURL(blob));
                 
-                const parsed = parseEPG(text, filterIds);
-                Object.assign(epgDB, parsed); 
+                worker.onmessage = function(e) {
+                    Object.assign(epgDB, e.data.db); 
+                    epgFullyLoaded = true; 
+                    epgLoading = false;
+                    updateStatus('epg', 'ok', 'Kész');
+                    renderChannelsForGroup(activeGroup);
+                    if (activeChannel) updateEpgMini(activeChannel);
+                    worker.terminate();
+                };
                 
-                epgFullyLoaded = true; 
-                epgLoading = false;
-                updateStatus('epg', 'ok', 'Kész');
-                
-                renderChannelsForGroup(activeGroup);
-                if (activeChannel) updateEpgMini(activeChannel);
+                worker.postMessage({ xmlText: text, filterIds });
             } catch (e) { 
                 epgLoading = false; 
                 updateStatus('epg', 'error', 'Hiba'); 
@@ -1084,16 +1121,7 @@
                 loadFill.style.width = '100%'; loadPercent.textContent = '100';
             } else {
                 if (mpegts.isSupported()) {
-                    mpegtsPlayer = mpegts.createPlayer({ 
-                        type: 'mse', 
-                        isLive: true, 
-                        url: ch.url 
-                    }, { 
-                        enableWorker: true, 
-                        stashInitialSize: 384, 
-                        enableStashBuffer: true, 
-                        liveBufferLatencyChasing: false 
-                    });
+                    mpegtsPlayer = mpegts.createPlayer({ type: 'mse', isLive: true, url: ch.url }, { enableWorker: true, stashInitialSize: 384, enableStashBuffer: true, liveBufferLatencyChasing: false });
                     mpegtsPlayer.attachMediaElement(video);
                     mpegtsPlayer.load();
                     forceAudioUnmute();
@@ -1139,32 +1167,22 @@
             }
         });
 
-        // ----------------------------------------------------
-        // CLOUD SYNC: MENTÉS MINDEN ESZKÖZRE GOOGLE SCRIPTEN KERESZTÜL
-        // ----------------------------------------------------
         function syncContinueListToCloud(force = false) {
             const now = Date.now();
-            // Csak ~20 másodpercenként küldjük el a Google szerverének (hogy ne tiltsanak le rate limit miatt), KIVÉVE ha erőszakolt (force) mentés van pl törlésnél.
             if (!force && now - lastCloudSyncTime < 20000) return;
             lastCloudSyncTime = now;
-
-            // Minimalista csomagot készítünk, hogy kicsi maradjon az adat
             const minimalData = continueCloudList.map(item => ({ id: item.id, time: item.time, pct: item.pct }));
             const encoded = encodeURIComponent(JSON.stringify(minimalData));
-            
-            fetch(`${GOOGLE_SCRIPT_URL}?action=saveContinue&data=${encoded}`)
-                .catch(err => console.error("Cloud sync hiba:", err));
+            fetch(`${GOOGLE_SCRIPT_URL}?action=saveContinue&data=${encoded}`).catch(err => console.error("Cloud sync hiba:", err));
         }
 
         function saveCurrentPosition() {
             if (!video || !activeChannel || !video.duration || video.duration < 30) return;
-
             const currentTime = video.currentTime;
             const duration = video.duration;
             const timeLeft = duration - currentTime;
             const pct = Math.round((currentTime / duration) * 100);
 
-            // Csak akkor mentjük, ha VOD (filmek/sorozatok) típusú a mappa. Élő TV-t felesleges menteni a folytatáshoz.
             if (!isVodGroup(activeChannel.group)) return;
 
             continueCloudList = continueCloudList.filter(x => x.id !== activeChannel.id);
@@ -1180,7 +1198,6 @@
 
         video.addEventListener('timeupdate', () => {
             if (!video.duration || video.duration < 30) return; 
-
             const currentTime = video.currentTime;
             const timeLeft = video.duration - currentTime;
 
@@ -1188,7 +1205,6 @@
                 lastSavedTime = currentTime; 
                 saveCurrentPosition();
             }
-
             if (timeLeft <= 30 && !popupTriggered) { popupTriggered = true; triggerVideoEndPopup(); }
         });
 
@@ -1231,7 +1247,6 @@
             if (liveNextOverlayInterval) clearInterval(liveNextOverlayInterval);
             const overlay = document.getElementById('liveNextOverlay');
             overlay.style.display = 'none';
-
             if (isVodGroup(ch.group)) return; 
 
             liveNextOverlayInterval = setInterval(() => {
@@ -1258,14 +1273,12 @@
 
         function updateEpgMini(ch) {
             const box = document.getElementById('epgMini');
-            
             if (isVodGroup(ch.group)) {
                 box.innerHTML = `<div class="epg-now"><i class="fa-solid fa-film"></i> ${ch.name}</div><div style="font-size:12px; color:var(--accent-cyan);">Média tartalom</div><div class="epg-desc">Ez egy fix videofájl / film, nem tartozik hozzá élő műsorújság. Javaslat: Ha nincs hangja a filmnek, próbáld meg egy másik böngészőből lejátszani. Jó szórakozást! 🍿</div>`;
                 return;
             }
 
             const data = getEpgForChannel(ch);
-
             if (!data || (!data.now && !data.next)) {
                 box.innerHTML = `<div class="epg-now"><i class="fa-solid fa-tv"></i> ${ch.name}</div><div style="font-size:12px; color:var(--text-muted);">Nincs elérhető adat</div><div class="epg-desc">Nem található élő műsorinformáció ehhez a csatornához.</div>`;
                 return;
@@ -1273,30 +1286,12 @@
 
             let html = `<div class="epg-now" style="color: var(--accent-cyan);"><i class="fa-solid fa-circle-info"></i> Műsorújság - ${ch.name}</div>`;
             html += `<div class="epg-timeline-list">`;
-
             if (data.now) {
-                html += `
-                    <div class="epg-timeline-item current-live">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <span class="epg-title">🔴 MOST: ${data.now.title}</span>
-                            <span class="epg-time">${formatTime(data.now.start)} - ${formatTime(data.now.stop)}</span>
-                        </div>
-                        ${data.now.desc ? `<div class="epg-desc" style="margin-top:6px;">${data.now.desc}</div>` : ''}
-                    </div>
-                `;
+                html += `<div class="epg-timeline-item current-live"><div style="display:flex; justify-content:space-between; align-items:center;"><span class="epg-title">🔴 MOST: ${data.now.title}</span><span class="epg-time">${formatTime(data.now.start)} - ${formatTime(data.now.stop)}</span></div>${data.now.desc ? `<div class="epg-desc" style="margin-top:6px;">${data.now.desc}</div>` : ''}</div>`;
             }
-
             if (data.next) {
-                html += `
-                    <div class="epg-timeline-item">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <span class="epg-title">⏭ KÖVETKEZIK: ${data.next.title}</span>
-                            <span class="epg-time">${formatTime(data.next.start)} - ${formatTime(data.next.stop)}</span>
-                        </div>
-                    </div>
-                `;
+                html += `<div class="epg-timeline-item"><div style="display:flex; justify-content:space-between; align-items:center;"><span class="epg-title">⏭ KÖVETKEZIK: ${data.next.title}</span><span class="epg-time">${formatTime(data.next.start)} - ${formatTime(data.next.stop)}</span></div></div>`;
             }
-
             html += `</div>`;
             box.innerHTML = html;
         }
@@ -1304,22 +1299,21 @@
         async function initSystem() {
             updateStatus('m3u', 'warn', 'Betöltés...');
             try {
-                const gas = await fetch(GOOGLE_SCRIPT_URL);
+                const gas = await fetch(`${GOOGLE_SCRIPT_URL}?session_id=${mySessionId}`);
                 const gasData = await gas.json();
-                mySessionId = gasData.session_id;
-                document.getElementById('activeUsersCount').textContent = gasData.active_viewers + " online";
+                
+                document.getElementById('activeUsersCount').textContent = (gasData.active_viewers || 1) + " online";
+                document.getElementById('expireText').innerText = "Lejárat: " + (gasData.expire_date || "Nincs adat");
 
-                currentM3uUrl = gasData.m3u_url;
-                currentEpgUrl = gasData.epg_url;
-                currentApiUrl = gasData.api_url;
+                currentM3uUrl = gasData.m3u_url || "";
+                currentEpgUrl = gasData.epg_url || "";
+                currentApiUrl = gasData.api_url || "";
                 savedCategoryOrder = gasData.category_order || [];
                 
-                // M3U letöltése
                 const m3uRes = await fetch(`${GOOGLE_SCRIPT_URL}?action=getM3u`);
                 const m3uText = await m3uRes.text();
                 allChannels = parseM3U(m3uText);
 
-                // Felhő alapú folytatás lista összerakása (megkeresi a letöltött listában az ID-kat)
                 const cloudSavedRaw = gasData.continue_watching || [];
                 continueCloudList = cloudSavedRaw.map(cItem => {
                     const foundCh = allChannels.find(x => x.id === cItem.id);
@@ -1342,21 +1336,20 @@
                 renderDashboard();
                 renderCategorySidebar(null);
                 
-                // Inicializálás után eldugjuk a loader-t (feltéve ha a Netflix animáció már végzett vele, azt CSS-ben időzítettük)
                 setTimeout(() => {
                     const loader = document.getElementById('globalLoader');
                     loader.style.opacity = '0';
                     setTimeout(() => loader.style.display = 'none', 400);
                 }, 4000);
 
-                loadEPG();
+                // Automatikus EPG szinkronizálás inicializáláskor (ha esetleg egyből az Élő Magyar Csatornák mappa nyílna meg)
+                // loadEPG(); -> Ezt kivettük innen, hogy csak mappa megnyitásakor töltsön be, ne fogja meg a kezdeti rendszert.
 
-                // Heartbeat a sessionnek
                 setInterval(async () => {
                     try {
                         const pulse = await fetch(`${GOOGLE_SCRIPT_URL}?action=heartbeat&session_id=${mySessionId}`);
                         const pData = await pulse.json();
-                        document.getElementById('activeUsersCount').textContent = pData.active_viewers + " online";
+                        document.getElementById('activeUsersCount').textContent = (pData.active_viewers || 1) + " online";
                     } catch(_) {}
                 }, 20000);
 
