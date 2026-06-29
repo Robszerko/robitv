@@ -30,6 +30,7 @@
             --radius-md: 12px;
             --radius-sm: 8px;
             --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --netflix-red: #E50914;
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Inter',sans-serif; background:var(--bg-primary); color:var(--text-primary); height:100vh; display:flex; flex-direction:column; overflow:hidden; }
@@ -38,9 +39,22 @@
         ::-webkit-scrollbar-thumb { background:rgba(0,229,255,0.3); border-radius:20px; }
         ::-webkit-scrollbar-thumb:hover { background:var(--accent-cyan); }
 
+        /* NETFLIX INTRO ANIMATION */
+        #introAnim { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999999; display: flex; align-items: center; justify-content: center; flex-direction: column; animation: fadeOutIntro 0.5s ease 3.5s forwards; }
+        .intro-n { color: var(--netflix-red); font-size: 150px; font-weight: 900; font-family: Impact, sans-serif; opacity: 0; transform: scale(0.5); animation: popN 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .intro-glitch { display: none; text-align: center; color: #fff; animation: showGlitch 2s ease forwards; }
+        .intro-glitch h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 50px; font-weight: 800; background: linear-gradient(135deg, #fff 30%, var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 15px rgba(0,229,255,0.4)); margin-bottom: 10px; }
+        .intro-glitch p { color: var(--text-muted); font-size: 16px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        
+        @keyframes popN { 0% { opacity: 0; transform: scale(0.5); } 30% { opacity: 1; transform: scale(1.1); } 80% { opacity: 1; transform: scale(1); } 90% { opacity: 0; filter: blur(10px); transform: scale(1.5); } 100% { opacity: 0; display: none; } }
+        @keyframes showGlitch { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOutIntro { to { opacity: 0; visibility: hidden; } }
+
+        /* VICCES TÖLTŐKÉPERNYŐ */
         .global-loader { position: fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-primary); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; transition: opacity 0.4s ease; }
-        .loader-spinner { width: 50px; height: 50px; border: 5px solid rgba(0,229,255,0.1); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite; }
+        .loader-spinner { width: 60px; height: 60px; border: 6px solid rgba(0,229,255,0.1); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite; box-shadow: 0 0 20px rgba(0,229,255,0.2); }
         @keyframes spin { to { transform: rotate(360deg); } }
+        .funny-quote { font-size:14px; font-weight:500; color:var(--text-secondary); margin-top:12px; text-align:center; max-width: 400px; line-height: 1.5; font-style: italic; }
 
         header { padding:12px 24px; background:rgba(8,11,20,0.85); backdrop-filter:blur(12px); border-bottom:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center; z-index:20; flex-shrink:0; gap:20px; }
         .logo { font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none; transition: var(--transition); flex-shrink:0; }
@@ -131,7 +145,7 @@
         .channel-item .c-name { font-weight:600; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .channel-item .c-epg { font-size:11px; color:var(--text-secondary); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-        .player-wrapper { width:100%; background:#000; border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--glass-shadow); position:relative; padding-top: 56.25%; flex-shrink:0; border:1px solid var(--glass-border); }
+        .player-wrapper { width:100%; background:#000; border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--glass-shadow); position:relative; padding-top: 56.25%; flex-shrink:0; border:1px solid var(--glass-border); scroll-margin-top: 80px; }
         .player-wrapper video, .player-wrapper .plyr { position: absolute; top: 0; left: 0; width: 100% !important; height: 100% !important; }
         
         .stream-alert-box { display: none; background: rgba(255, 42, 95, 0.15); border: 1px solid var(--accent-magenta); border-radius: var(--radius-md); padding: 12px 16px; font-size: 13px; font-weight: 600; color: #fff; align-items: center; gap: 10px; animation: fadeIn 0.3s ease; }
@@ -180,12 +194,14 @@
             .status-panel { flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
             .status-badge { padding: 4px 10px; font-size: 11px; }
             
-            .container { flex-direction: column; }
-            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--glass-border); max-height: 200px; flex-shrink: 0; }
+            .container { flex-direction: column; overflow-y: auto; }
+            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--glass-border); max-height: max-content; flex-shrink: 0; }
             
-            #viewChannels.active { display: flex; flex-direction: column; padding: 10px; gap: 12px; }
-            .left-panel { order: 2; flex: 1; min-height: 350px; }
+            #viewChannels.active { display: flex; flex-direction: column; padding: 10px; gap: 12px; overflow: visible; }
+            
+            /* A JÁTÉKOS MOBILON LEGYEN FELÜL! */
             .right-panel { order: 1; flex: none; overflow: visible; }
+            .left-panel { order: 2; flex: none; min-height: 450px; overflow: visible; }
             
             .dashboard-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
             .dash-card { padding: 16px 10px; }
@@ -198,12 +214,20 @@
 </head>
 <body>
 
-    <div class="global-loader" id="globalLoader">
-        <div class="loader-spinner"></div>
-        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:16px; font-weight:700; text-align:center; color: var(--accent-cyan);">
-            📺 RobiTV Premium<br>
-            <span style="font-size:13px; font-weight:400; color:var(--text-secondary); margin-top:6px; display:inline-block;">Csatornak szinkronizalasa... Kerlek varj! ☕</span>
+    <div id="introAnim">
+        <div class="intro-n" id="introN">N</div>
+        <div class="intro-glitch" id="introGlitch">
+            <h1>RobiTV Premium</h1>
+            <p>Felejtsd el a többít.</p>
         </div>
+    </div>
+
+    <div class="global-loader" id="globalLoader" style="display: none;">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:20px; font-weight:800; text-align:center; color: var(--accent-cyan); margin-bottom: 10px;">
+            <i class="fa-solid fa-bolt" style="color:var(--accent-magenta);"></i> RobiTV
+        </div>
+        <div class="loader-spinner"></div>
+        <div class="funny-quote" id="loadingJoke">Csatornák szinkronizálása... Kérlek várj!</div>
     </div>
 
     <header>
@@ -213,12 +237,12 @@
         
         <div class="header-search-wrap">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" id="headerSearchInput" placeholder="Kereses adok, filmek, sorozatok kozott (min. 3 karakter)..." oninput="executeHeaderSearch()" />
+            <input type="text" id="headerSearchInput" placeholder="Keresés adók, filmek, sorozatok között (min. 3 karakter)..." oninput="executeHeaderSearch()" />
             <div class="search-results-box" id="headerSearchResults"></div>
         </div>
 
         <div class="status-panel">
-            <div class="status-badge" id="expireStatus" onclick="checkAdminPin()" style="background:rgba(251, 191, 36, 0.04); border-color:rgba(251, 191, 36, 0.15); cursor: pointer;"><i class="fa-regular fa-calendar" style="color:var(--accent-cyan);"></i><span id="expireText" style="color:#fff;">Lejarat: Lekeres...</span></div>
+            <div class="status-badge" id="expireStatus" onclick="checkAdminPin()" style="background:rgba(251, 191, 36, 0.04); border-color:rgba(251, 191, 36, 0.15); cursor: pointer;"><i class="fa-regular fa-calendar" style="color:var(--accent-cyan);"></i><span id="expireText" style="color:#fff;">Lejárat: Lekérés...</span></div>
             <div class="status-badge" id="m3uStatus"><div class="dot"></div><span id="m3uText">M3U..</span></div>
             <div class="status-badge" id="epgStatus"><div class="dot"></div><span id="epgText">EPG..</span></div>
             <div class="status-badge" style="background:rgba(0, 225, 255, 0.05); border-color:rgba(0, 225, 255, 0.2);"><div class="dot ok"></div><span id="activeUsersCount" style="color:var(--accent-cyan);">1 online</span></div>
@@ -228,8 +252,8 @@
     <div class="container">
         <aside class="sidebar">
             <div class="sidebar-header">
-                <h2><i class="fa-regular fa-folder"></i> Kategoriak</h2>
-                <i class="fa-solid fa-arrows-up-down" style="color:var(--text-muted); font-size:12px; cursor:help;" title="A fooldalon (Irányítópult) tudod húzással módosítani a sorrendet!"></i>
+                <h2><i class="fa-regular fa-folder"></i> Kategóriák</h2>
+                <i class="fa-solid fa-arrows-up-down" style="color:var(--text-muted); font-size:12px; cursor:help;" title="A főoldalon (Irányítópult) tudod húzással módosítani a sorrendet!"></i>
             </div>
             <div class="category-list" id="categoryList"></div>
         </aside>
@@ -237,8 +261,8 @@
         <main class="main-content">
             <div class="view active" id="viewDashboard">
                 <div style="margin-bottom:16px;">
-                    <h2 style="font-size:18px; font-weight:700;">📺 Valassz egy listat</h2>
-                    <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">Tipp: Fogd meg az egerrel a kártyákat és húzd őket saját sorrend kialakításához!</p>
+                    <h2 style="font-size:18px; font-weight:700;">📺 Válassz egy listát</h2>
+                    <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">Tipp: Fogd meg az egérrel a kártyákat és húzd őket saját sorrend kialakításához!</p>
                 </div>
                 <div class="dashboard-grid" id="dashboardGrid"></div>
             </div>
@@ -247,7 +271,7 @@
                 <div class="left-panel">
                     <div class="channel-view-header">
                         <button class="back-btn" onclick="goToDashboard()"><i class="fa-solid fa-arrow-left"></i></button>
-                        <div class="view-title" id="channelViewTitle">Csatornak</div>
+                        <div class="view-title" id="channelViewTitle">Csatornák</div>
                     </div>
                     <div class="channel-list-view" id="channelListView"></div>
                 </div>
@@ -258,9 +282,9 @@
                         
                         <div class="video-slide-popup" id="videoSlidePopup">
                             <button class="popup-close" onclick="closeSlidePopup()"><i class="fa-solid fa-xmark"></i></button>
-                            <div class="popup-tag" id="popupTag">Kovetkezo resz</div>
-                            <div class="popup-title" id="popupTitle">Musor cim</div>
-                            <button class="popup-btn" id="popupBtn">Megtekintes</button>
+                            <div class="popup-tag" id="popupTag">Következő rész</div>
+                            <div class="popup-title" id="popupTitle">Műsor cím</div>
+                            <button class="popup-btn" id="popupBtn">Megtekintés</button>
                         </div>
 
                         <video id="player" playsinline controls></video>
@@ -268,7 +292,7 @@
                     
                     <div class="stream-alert-box" id="streamAlertBox">
                         <i class="fa-solid fa-circle-exclamation" style="color:var(--accent-magenta); font-size:16px;"></i>
-                        <span id="streamAlertText">Hoppa! Ez az adas az atlagosnal lassabban tolt be. Kerlek varj meg egy pillanatot... 📺</span>
+                        <span id="streamAlertText">Hoppá! Ez az adás az átlagosnál lassabban tölt be. Kérlek várj még egy pillanatot... 📺</span>
                     </div>
 
                     <div class="load-progress-wrap">
@@ -277,8 +301,8 @@
                     </div>
                     
                     <div class="epg-mini" id="epgMini">
-                        <div class="epg-now"><i class="fa-solid fa-tv"></i> Nincs kivalasztott adas</div>
-                        <div class="epg-desc">Kattints a bal oldali listaban egy csatornara vagy mappara.</div>
+                        <div class="epg-now"><i class="fa-solid fa-tv"></i> Nincs kiválasztott adás</div>
+                        <div class="epg-desc">Kattints a bal oldali listában egy csatornára vagy mappára.</div>
                     </div>
                 </div>
             </div>
@@ -287,36 +311,48 @@
 
     <div class="modal-overlay" id="adminModal">
         <div class="modal-box">
-            <div class="modal-title"><i class="fa-solid fa-gear"></i> RobiTV Kozponti Beallitasok</div>
+            <div class="modal-title"><i class="fa-solid fa-gear"></i> RobiTV Központi Beállítások</div>
             <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Ha az M3U kitöltött, a rendszer mentés után azonnal megpróbálja leszinkronizálni a rajta található összes tartalmat.</p>
             
             <div class="form-group">
-                <label for="inputM3u">M3U URL cime:</label>
+                <label for="inputM3u">M3U URL címe:</label>
                 <input type="text" id="inputM3u" />
             </div>
             <div class="form-group">
-                <label for="inputEpg">XMLTV EPG URL cime (Opcionalis):</label>
+                <label for="inputEpg">XMLTV EPG URL címe (Opcionális):</label>
                 <input type="text" id="inputEpg" />
             </div>
             <div class="form-group">
-                <label for="inputApi">Player API URL cime (Opcionalis):</label>
+                <label for="inputApi">Player API URL címe (Opcionális):</label>
                 <input type="text" id="inputApi" />
             </div>
             
             <div class="modal-actions">
-                <button class="btn btn-cancel" onclick="closeAdminModal()">Megse</button>
-                <button class="btn btn-save" id="btnSaveAdmin" onclick="saveAdminUrls()">Mentes</button>
+                <button class="btn btn-cancel" onclick="closeAdminModal()">Mégse</button>
+                <button class="btn btn-save" id="btnSaveAdmin" onclick="saveAdminUrls()">Mentés</button>
             </div>
         </div>
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxrWOSdaLKO2b1rLADSXdAlxYWM-1wkUVVxH5kfexkdpcYOkRrVquYxB3NjV8lmadUe/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwQ6BMut0hHl4yWr6ikFaeFeI_qJARjQz6Uxfn7odFLKeKOzK7il_c7QKeBAdwkKlRCPw/exec"; 
+
+        const jokes = [
+            "Hálózat optimalizálása... mehetsz is addig egy 15 kilométeres sétára.",
+            "Marcipán macska épp a szerverkábelt rágja, kis türelmet...",
+            "Készülnek a 90-es évekbeli Euro-pop jinglek a háttérben...",
+            "Love is Blind dráma letöltése folyamatban...",
+            "Lattafa Asad illatfelhő fújása a kódra...",
+            "Golyó.html scriptek összehangolása...",
+            "RobiTV Premium betöltése... Izomépítés 99%."
+        ];
 
         let allChannels = [];
         let channelsByGroup = {};
         let groupNames = [];
         let savedCategoryOrder = [];
+        let continueCloudList = []; // FELHŐBŐL ÉRKEZŐ LISTA
+        
         let activeGroup = null;
         let activeChannel = null;
         
@@ -324,7 +360,7 @@
         let mpegtsPlayer = null;
         let plyrInstance = null;
         let epgDB = {};              
-        let epgFullyLoaded = false; // ÚJ VÁLTOZÓ: Így csak egyszer kérjük le az összes EPG-t!
+        let epgFullyLoaded = false; 
         let epgLoading = false;
         let mySessionId = null;
 
@@ -337,6 +373,7 @@
         let popupTriggered = false;
         
         let lastSavedTime = 0; 
+        let lastCloudSyncTime = 0; // Throttle a Google Script kíméléséhez
         let playAttemptTime = 0;
 
         let draggedGroupName = null;
@@ -344,6 +381,25 @@
         const video = document.getElementById('player');
         const loadFill = document.getElementById('loadFill');
         const loadPercent = document.getElementById('loadPercent');
+
+        // INTRO ANIMÁCIÓ KEZELÉSE
+        setTimeout(() => {
+            const n = document.getElementById('introN');
+            const glitch = document.getElementById('introGlitch');
+            setTimeout(() => { glitch.style.display = 'block'; }, 1200);
+            setTimeout(() => { 
+                document.getElementById('introAnim').style.display = 'none';
+                document.getElementById('globalLoader').style.display = 'flex';
+                document.getElementById('loadingJoke').innerText = jokes[Math.floor(Math.random() * jokes.length)];
+            }, 3500);
+        }, 100);
+
+        setInterval(() => {
+            if(document.getElementById('globalLoader').style.display === 'flex') {
+                document.getElementById('loadingJoke').innerText = jokes[Math.floor(Math.random() * jokes.length)];
+            }
+        }, 4000);
+
 
         function resetToHome() {
             if (hls) { hls.destroy(); hls = null; }
@@ -356,7 +412,7 @@
             
             if (streamLoadTimer) clearTimeout(streamLoadTimer);
             document.getElementById('streamAlertBox').style.display = 'none';
-            document.getElementById('epgMini').innerHTML = `<div class="epg-now"><i class="fa-solid fa-tv"></i> Nincs kivalasztott adas</div><div class="epg-desc">Kattints a bal oldali listaban egy csatornara vagy mappara.</div>`;
+            document.getElementById('epgMini').innerHTML = `<div class="epg-now"><i class="fa-solid fa-tv"></i> Nincs kiválasztott adás</div><div class="epg-desc">Kattints a bal oldali listában egy csatornára vagy mappára.</div>`;
             document.getElementById('headerSearchInput').value = '';
             document.getElementById('headerSearchResults').style.display = 'none';
             
@@ -395,9 +451,9 @@
         }
 
         function checkAdminPin() {
-            const pin = prompt("Kerlek, add meg a 4 jegyu szerkesztoi kodot a tovabblepeshez:");
+            const pin = prompt("Kérlek, add meg a 4 jegyű szerkesztői kódot a továbblépéshez:");
             if (pin === "0000") openAdminModal();
-            else if (pin !== null) alert("❌ Hibas szerkesztoi kod! Belepes megtagadva.");
+            else if (pin !== null) alert("❌ Hibás szerkesztői kód! Belépés megtagadva.");
         }
 
         function openAdminModal() {
@@ -412,14 +468,14 @@
             const m3uVal = document.getElementById('inputM3u').value.trim();
             const epgVal = document.getElementById('inputEpg').value.trim();
             const apiVal = document.getElementById('inputApi').value.trim();
-            if (!m3uVal) { alert("Az M3U URL kitoltese minimum feltetel a menteshez!"); return; }
+            if (!m3uVal) { alert("Az M3U URL kitöltése minimum feltétel a mentéshez!"); return; }
 
             try {
                 const sendUrl = `${GOOGLE_SCRIPT_URL}?action=setUrls&m3u=${encodeURIComponent(m3uVal)}&epg=${encodeURIComponent(epgVal)}&api=${encodeURIComponent(apiVal)}`;
                 const res = await fetch(sendUrl);
                 const data = await res.json();
-                if (data.status === "success") { alert("Sikeres mentes! A system azonnal frissiti es beolvassa a listakat."); location.reload(); }
-            } catch(e) { alert("Hiba tortent a mentes soran."); }
+                if (data.status === "success") { alert("Sikeres mentés! A system azonnal frissíti és beolvassa a listákat."); location.reload(); }
+            } catch(e) { alert("Hiba történt a mentés során."); }
         }
 
         function executeHeaderSearch() {
@@ -432,7 +488,7 @@
             const filtered = allChannels.filter(ch => ch.name.toLowerCase().includes(query) || (ch.group && ch.group.toLowerCase().includes(query)));
 
             if (filtered.length === 0) {
-                box.innerHTML = `<div style="padding: 14px; text-align: center; color: var(--text-muted); font-size: 13px;"><i class="fa-solid fa-face-frown"></i> Nincs talalat...</div>`;
+                box.innerHTML = `<div style="padding: 14px; text-align: center; color: var(--text-muted); font-size: 13px;"><i class="fa-solid fa-face-frown"></i> Nincs találat...</div>`;
                 box.style.display = 'block'; return;
             }
 
@@ -445,7 +501,7 @@
                 div.innerHTML = `
                     <div class="sr-logo">${isSeriesItem ? `<i class="fa-solid fa-folder" style="color:#fbbf24; font-size:14px;"></i>` : (ch.logo ? `<img src="${ch.logo}" />` : `<i class="fa-solid fa-play" style="color:var(--text-muted); font-size:12px;"></i>`)}</div>
                     <div class="sr-info">
-                        <div class="sr-name" style="${isSeriesItem ? 'color:#fbbf24;' : ''}">${isSeriesItem ? `[MAPPA] ${info.seriesName} (${info.season}. evad ${info.episode}. resz)` : ch.name}</div>
+                        <div class="sr-name" style="${isSeriesItem ? 'color:#fbbf24;' : ''}">${isSeriesItem ? `[MAPPA] ${info.seriesName} (${info.season}. évad ${info.episode}. rész)` : ch.name}</div>
                         <div class="sr-group"><i class="fa-regular fa-folder"></i> ${ch.group}</div>
                     </div>
                 `;
@@ -455,12 +511,10 @@
             box.style.display = 'block';
         }
 
-        function scrollToChannelListOnMobile() {
+        function scrollToPlayerOnMobile() {
             if (window.innerWidth <= 900) {
-                const leftPanel = document.querySelector('.left-panel');
-                if (leftPanel) {
-                    leftPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+                const wrapper = document.getElementById('playerWrapper');
+                if (wrapper) wrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
@@ -499,7 +553,7 @@
                 setTimeout(() => { const activeEl = document.querySelector('.channel-item.active'); if (activeEl) activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 400);
             }
             
-            scrollToChannelListOnMobile();
+            scrollToPlayerOnMobile();
 
             if (!epgFullyLoaded && !isVodGroup(ch.group) && !ch.group.startsWith("⭐") && !ch.group.startsWith("⏪")) {
                 loadEPG(); 
@@ -530,7 +584,7 @@
             for (let i=0; i<lines.length; i++) {
                 const line = lines[i].trim();
                 if (line.startsWith('#EXTINF:')) {
-                    const entry = { name:'Ismeretlen', logo:'', url:'', id:'', group:'Egyeb', isCatchup: false };
+                    const entry = { name:'Ismeretlen', logo:'', url:'', id:'', group:'Egyéb', isCatchup: false };
                     const nameParts = line.split(',');
                     if (nameParts.length > 1) entry.name = nameParts.pop().trim();
                     const logoMatch = line.match(/tvg-logo="([^"]+)"/);
@@ -539,7 +593,7 @@
                     if (idMatch) entry.id = sanitizeId(idMatch[1]); else entry.id = sanitizeId(entry.name);
                     
                     const groupMatch = line.match(/group-title="([^"]+)"/);
-                    let initialGroup = groupMatch ? groupMatch[1] || 'Egyeb' : 'Egyeb';
+                    let initialGroup = groupMatch ? groupMatch[1] || 'Egyéb' : 'Egyéb';
                     const initialGroupLower = initialGroup.toLowerCase();
 
                     if (line.match(/catchup="([^"]+)"/i) || line.match(/catchup-days="([^"]+)"/i) || line.match(/tvg-rec="([^"]+)"/i) || line.match(/timeshift="([^"]+)"/i)) {
@@ -578,7 +632,7 @@
                 
                 const start = parseEpgDate(startStr); const stop = parseEpgDate(stopStr);
                 if (stop < limitDate) continue;
-                const title = p.getElementsByTagName('title')[0]?.textContent || 'Musor';
+                const title = p.getElementsByTagName('title')[0]?.textContent || 'Műsor';
                 const desc = p.getElementsByTagName('desc')[0]?.textContent || '';
                 if (!db[chId]) db[chId] = [];
                 db[chId].push({ start, stop, title, desc });
@@ -643,7 +697,7 @@
             if (draggedGroupName && draggedGroupName !== targetGroupName) {
                 const fixedTops = ["⭐ Élő Magyar Csatornák", "⏪ Visszanézhető Csatornák"];
                 if (fixedTops.includes(draggedGroupName) || fixedTops.includes(targetGroupName)) {
-                    alert("A fix kiemelt mappák (Magyar, Visszanéző) helye nem változtatható!");
+                    alert("A fix kiemelt mappák helye nem változtatható!");
                     return;
                 }
 
@@ -670,18 +724,17 @@
             try {
                 const encoded = encodeURIComponent(JSON.stringify(orderArray));
                 await fetch(`${GOOGLE_SCRIPT_URL}?action=saveOrder&order=${encoded}`);
-            } catch(e) { console.log("Hiba a sorrend mentésekor", e); }
+            } catch(e) {}
         }
 
         function renderDashboard() {
             const grid = document.getElementById('dashboardGrid');
             grid.innerHTML = '';
 
-            const continueList = JSON.parse(localStorage.getItem('robi_continue_watching') || '[]');
-            if (continueList.length > 0) {
+            if (continueCloudList.length > 0) {
                 const card = document.createElement('div');
                 card.className = 'dash-card special';
-                card.innerHTML = `<i class="fa-solid fa-clock-rotate-left"></i><div class="dash-name">Folytasd ahol abbahagytad</div><div class="dash-count">${continueList.length} mentett film</div>`;
+                card.innerHTML = `<i class="fa-solid fa-clock-rotate-left"></i><div class="dash-name">Folytasd ahol abbahagytad</div><div class="dash-count">${continueCloudList.length} mentett film</div>`;
                 card.onclick = () => openSpecialCategory('continue');
                 grid.appendChild(card);
             }
@@ -705,7 +758,7 @@
                 
                 let icon = group.includes("Visszanézhető") ? '<i class="fa-solid fa-clock-rotate-left" style="color:#fbbf24;"></i>' : '<i class="fa-solid fa-folder-open"></i>';
 
-                card.innerHTML = `${icon}<div class="dash-name">${group}</div><div class="dash-count">${count} ado</div>`;
+                card.innerHTML = `${icon}<div class="dash-name">${group}</div><div class="dash-count">${count} adó</div>`;
                 card.onclick = () => openCategory(group);
                 grid.appendChild(card);
             });
@@ -715,11 +768,10 @@
             const list = document.getElementById('categoryList');
             list.innerHTML = '';
 
-            const continueList = JSON.parse(localStorage.getItem('robi_continue_watching') || '[]');
-            if (continueList.length > 0) {
+            if (continueCloudList.length > 0) {
                 const div = document.createElement('div');
                 div.className = `category-card ${activeName === 'continue' ? 'active' : ''}`;
-                div.innerHTML = `<span class="category-name" style="color:var(--accent-magenta);"><i class="fa-solid fa-clock-rotate-left"></i> Folytatas</span><span class="category-count">${continueList.length}</span>`;
+                div.innerHTML = `<span class="category-name" style="color:var(--accent-magenta);"><i class="fa-solid fa-clock-rotate-left"></i> Folytatás</span><span class="category-count">${continueCloudList.length}</span>`;
                 div.onclick = () => openSpecialCategory('continue');
                 list.appendChild(div);
             }
@@ -752,12 +804,11 @@
 
             if (type === 'continue') {
                 document.getElementById('channelViewTitle').textContent = "🍿 Folytasd ahol abbahagytad";
-                const continueList = JSON.parse(localStorage.getItem('robi_continue_watching') || '[]');
                 
                 const gridDiv = document.createElement('div');
                 gridDiv.className = 'continue-grid';
                 
-                continueList.forEach((item) => {
+                continueCloudList.forEach((item) => {
                     const ch = item.chSource;
                     const mins = Math.round(item.time / 60);
                     
@@ -769,25 +820,25 @@
                             <div class="play-overlay"><i class="fa-solid fa-circle-play"></i></div>
                         </div>
                         <div class="continue-info">
-                            <div class="continue-title">${item.name}</div>
+                            <div class="continue-title">${ch.name}</div>
                             <div class="continue-meta">
-                                <span>${mins} percnel</span>
+                                <span>${mins} percnél</span>
                                 <span style="color:var(--accent-cyan); font-weight:700;">${item.pct}%</span>
                             </div>
                             <div class="continue-progress-bg">
                                 <div class="continue-progress-fill" style="width: ${item.pct}%;"></div>
                             </div>
                         </div>
-                        <button class="delete-continue-btn" title="Torles"><i class="fa-solid fa-trash-can"></i></button>
+                        <button class="delete-continue-btn" title="Törlés"><i class="fa-solid fa-trash-can"></i></button>
                     `;
                     
                     card.querySelector('.delete-continue-btn').onclick = (e) => {
                         e.stopPropagation();
-                        deleteContinueItem(item.name);
+                        deleteContinueItem(ch.id);
                     };
                     
                     card.onclick = () => {
-                        playChannel(item.chSource, null);
+                        playChannel(ch, null);
                         setTimeout(() => { video.currentTime = item.time; }, 1500);
                     };
                     
@@ -796,14 +847,13 @@
                 
                 list.appendChild(gridDiv);
             }
-            scrollToChannelListOnMobile();
+            scrollToPlayerOnMobile();
         }
 
-        function deleteContinueItem(name) {
-            if (confirm(`Biztosan torolni szeretned a listadrol a(z) "${name}" adast?`)) {
-                let currentSaved = JSON.parse(localStorage.getItem('robi_continue_watching') || '[]');
-                currentSaved = currentSaved.filter(x => x.name !== name);
-                localStorage.setItem('robi_continue_watching', JSON.stringify(currentSaved));
+        function deleteContinueItem(chId) {
+            if (confirm(`Biztosan törölni szeretnéd a listádról ezt az adást?`)) {
+                continueCloudList = continueCloudList.filter(x => x.id !== chId);
+                syncContinueListToCloud(true);
                 openSpecialCategory('continue');
                 renderDashboard();
             }
@@ -844,11 +894,11 @@
             nestedData.forEach(node => {
                 if (node.type === 'standalone') {
                     const ch = node.ch;
-                    let text = "Film / Media tartalom";
+                    let text = "Film / Média tartalom";
                     
                     if (!isVOD) {
                         const epgInfo = getEpgForChannel(ch);
-                        text = epgInfo && epgInfo.now ? `<span style="color:var(--accent-magenta);">🔴 MOST:</span> ${epgInfo.now.title}` : 'Kattints a betolteshez...';
+                        text = epgInfo && epgInfo.now ? `<span style="color:var(--accent-magenta);">🔴 MOST:</span> ${epgInfo.now.title}` : 'Kattints a betöltéshez...';
                     }
                     
                     const div = document.createElement('div');
@@ -857,14 +907,14 @@
                         <div class="c-logo">${ch.logo ? `<img src="${ch.logo}" />` : `<i class="fa-solid fa-tv"></i>`}</div>
                         <div class="c-info"><div class="c-name">${ch.name}</div><div class="c-epg">${text}</div></div>
                     `;
-                    div.onclick = () => playChannel(ch, div);
+                    div.onclick = () => { playChannel(ch, div); scrollToPlayerOnMobile(); };
                     list.appendChild(div);
                 } else if (node.type === 'series') {
                     const div = document.createElement('div');
                     div.className = `channel-item`;
                     div.innerHTML = `
                         <div class="c-logo" style="background: rgba(251, 191, 36, 0.1); border-color: rgba(251, 191, 36, 0.3);"><i class="fa-solid fa-folder" style="color: #fbbf24;"></i></div>
-                        <div class="c-info"><div class="c-name" style="color: #fbbf24;">[MAPPA] ${node.name}</div><div class="c-epg">${node.episodes.length} epizod elerheto</div></div>
+                        <div class="c-info"><div class="c-name" style="color: #fbbf24;">[MAPPA] ${node.name}</div><div class="c-epg">${node.episodes.length} epizód elérhető</div></div>
                     `;
                     div.onclick = () => openSeriesFolder(node);
                     list.appendChild(div);
@@ -881,7 +931,7 @@
             backDiv.className = `channel-item`;
             backDiv.innerHTML = `
                 <div class="c-logo" style="background: rgba(255,255,255,0.05);"><i class="fa-solid fa-folder-open"></i></div>
-                <div class="c-info"><div class="c-name" style="color: var(--accent-cyan);">.. [Vissza a szulomappahoz]</div></div>
+                <div class="c-info"><div class="c-name" style="color: var(--accent-cyan);">.. [Vissza a szülőmappához]</div></div>
             `;
             backDiv.onclick = () => {
                 document.getElementById('channelViewTitle').textContent = activeGroup;
@@ -895,12 +945,11 @@
                 div.className = `channel-item ${activeChannel === ch ? 'active' : ''}`;
                 div.innerHTML = `
                     <div class="c-logo">${ch.logo ? `<img src="${ch.logo}" />` : `<i class="fa-solid fa-video"></i>`}</div>
-                    <div class="c-info"><div class="c-name">${ch.name}</div><div class="c-epg">Sorozat epizod</div></div>
+                    <div class="c-info"><div class="c-name">${ch.name}</div><div class="c-epg">Sorozat epizód</div></div>
                 `;
-                div.onclick = () => playChannel(ch, div);
+                div.onclick = () => { playChannel(ch, div); scrollToPlayerOnMobile(); };
                 list.appendChild(div);
             });
-            scrollToChannelListOnMobile();
         }
 
         function openCategory(group) {
@@ -911,9 +960,6 @@
             renderCategorySidebar(group);
             renderChannelsForGroup(group);
             
-            scrollToChannelListOnMobile();
-
-            // Módosítás: EPG betöltése csak egyszer!
             if (!epgFullyLoaded && !isVodGroup(group) && !group.startsWith("⭐") && !group.startsWith("⏪")) { 
                 loadEPG(); 
             }
@@ -927,7 +973,6 @@
             renderDashboard();
         }
 
-        // Módosított EPG betöltő: Csak egyszer fut le és mindent betölt
         async function loadEPG() {
             if (epgLoading || epgFullyLoaded) return;
             epgLoading = true;
@@ -942,9 +987,9 @@
                 const parsed = parseEPG(text, filterIds);
                 Object.assign(epgDB, parsed); 
                 
-                epgFullyLoaded = true; // Készen vagyunk vele örökre (ebben a munkamenetben)!
+                epgFullyLoaded = true; 
                 epgLoading = false;
-                updateStatus('epg', 'ok', 'Kesz');
+                updateStatus('epg', 'ok', 'Kész');
                 
                 renderChannelsForGroup(activeGroup);
                 if (activeChannel) updateEpgMini(activeChannel);
@@ -1007,7 +1052,6 @@
                 };
             } else if (isM3u8) {
                 if (Hls.isSupported()) {
-                    // Módosított HLS konfiguráció a stabilabb lejátszásért (lowLatency kikapcsolva)
                     hls = new Hls({ 
                         enableWorker: true, 
                         lowLatencyMode: false, 
@@ -1040,7 +1084,6 @@
                 loadFill.style.width = '100%'; loadPercent.textContent = '100';
             } else {
                 if (mpegts.isSupported()) {
-                    // Módosított MPEGTS konfiguráció: Pufferelés engedélyezése az akadozás ellen
                     mpegtsPlayer = mpegts.createPlayer({ 
                         type: 'mse', 
                         isLive: true, 
@@ -1079,7 +1122,7 @@
                 const alertBox = document.getElementById('streamAlertBox');
                 alertBox.style.display = 'flex';
                 alertBox.style.background = 'rgba(255, 42, 95, 0.25)';
-                document.getElementById('streamAlertText').innerHTML = `❌ <strong>Sajnaljuk, ez a tartalom jelenleg nem erheto el!</strong> A forrasszerver offline vagy szakadas tortent.`;
+                document.getElementById('streamAlertText').innerHTML = `❌ <strong>Sajnáljuk, ez a tartalom jelenleg nem elérhető!</strong> A forrásszerver offline vagy szakadás történt.`;
                 if (plyrInstance) plyrInstance.stop();
             }
             saveCurrentPosition();
@@ -1091,10 +1134,27 @@
                 const alertBox = document.getElementById('streamAlertBox');
                 alertBox.style.display = 'flex';
                 alertBox.style.background = 'rgba(255, 42, 95, 0.25)';
-                document.getElementById('streamAlertText').innerHTML = `❌ <strong>Hiba tortent a betolteskor!</strong> A stream nem elerheto vagy megszakadt.`;
+                document.getElementById('streamAlertText').innerHTML = `❌ <strong>Hiba történt a betöltéskor!</strong> A stream nem elérhető vagy megszakadt.`;
                 if (plyrInstance) plyrInstance.stop();
             }
         });
+
+        // ----------------------------------------------------
+        // CLOUD SYNC: MENTÉS MINDEN ESZKÖZRE GOOGLE SCRIPTEN KERESZTÜL
+        // ----------------------------------------------------
+        function syncContinueListToCloud(force = false) {
+            const now = Date.now();
+            // Csak ~20 másodpercenként küldjük el a Google szerverének (hogy ne tiltsanak le rate limit miatt), KIVÉVE ha erőszakolt (force) mentés van pl törlésnél.
+            if (!force && now - lastCloudSyncTime < 20000) return;
+            lastCloudSyncTime = now;
+
+            // Minimalista csomagot készítünk, hogy kicsi maradjon az adat
+            const minimalData = continueCloudList.map(item => ({ id: item.id, time: item.time, pct: item.pct }));
+            const encoded = encodeURIComponent(JSON.stringify(minimalData));
+            
+            fetch(`${GOOGLE_SCRIPT_URL}?action=saveContinue&data=${encoded}`)
+                .catch(err => console.error("Cloud sync hiba:", err));
+        }
 
         function saveCurrentPosition() {
             if (!video || !activeChannel || !video.duration || video.duration < 30) return;
@@ -1104,28 +1164,27 @@
             const timeLeft = duration - currentTime;
             const pct = Math.round((currentTime / duration) * 100);
 
-            let currentSaved = JSON.parse(localStorage.getItem('robi_continue_watching') || '[]');
-            currentSaved = currentSaved.filter(x => x.name !== activeChannel.name);
+            // Csak akkor mentjük, ha VOD (filmek/sorozatok) típusú a mappa. Élő TV-t felesleges menteni a folytatáshoz.
+            if (!isVodGroup(activeChannel.group)) return;
+
+            continueCloudList = continueCloudList.filter(x => x.id !== activeChannel.id);
 
             if (pct >= 1 && timeLeft > 60) {
-                const cleanChannelObj = { id: activeChannel.id, name: activeChannel.name, logo: activeChannel.logo, group: activeChannel.group, url: activeChannel.url };
-                currentSaved.unshift({ name: activeChannel.name, time: currentTime, pct: pct, chSource: cleanChannelObj });
-                if (currentSaved.length > 12) currentSaved.pop(); 
-                localStorage.setItem('robi_continue_watching', JSON.stringify(currentSaved));
+                continueCloudList.unshift({ id: activeChannel.id, time: currentTime, pct: pct, chSource: activeChannel });
+                if (continueCloudList.length > 12) continueCloudList.pop(); 
+                syncContinueListToCloud(false);
             } else if (timeLeft <= 60) {
-                localStorage.setItem('robi_continue_watching', JSON.stringify(currentSaved));
+                syncContinueListToCloud(true);
             }
         }
 
-        // Módosítás: Teljesítménynövelés (Throttle a LocalStorage írására)
         video.addEventListener('timeupdate', () => {
             if (!video.duration || video.duration < 30) return; 
 
             const currentTime = video.currentTime;
             const timeLeft = video.duration - currentTime;
 
-            // Csak ~10 másodpercenként ír a memóriába, ami megelőzi a mikroakadást (stutter)
-            if (activeChannel && currentTime > 0 && Math.abs(currentTime - lastSavedTime) >= 10) {
+            if (activeChannel && currentTime > 0 && Math.abs(currentTime - lastSavedTime) >= 15) {
                 lastSavedTime = currentTime; 
                 saveCurrentPosition();
             }
@@ -1133,7 +1192,7 @@
             if (timeLeft <= 30 && !popupTriggered) { popupTriggered = true; triggerVideoEndPopup(); }
         });
 
-        window.addEventListener('beforeunload', saveCurrentPosition);
+        window.addEventListener('beforeunload', () => { saveCurrentPosition(); syncContinueListToCloud(true); });
 
         function triggerVideoEndPopup() {
             const popup = document.getElementById('videoSlidePopup');
@@ -1151,17 +1210,17 @@
                 });
 
                 if (nextEp) {
-                    tag.textContent = "Kovetkezo resz inditasa"; title.textContent = nextEp.name;
+                    tag.textContent = "Következő rész indítása"; title.textContent = nextEp.name;
                     btn.onclick = () => { playChannel(nextEp); closeSlidePopup(); };
                     popup.classList.add('show'); return;
                 }
             }
 
-            tag.textContent = "A RobiTV ajanlja:";
-            const moviePool = allChannels.filter(ch => !parseSeriesInfo(ch.name).isSeries && !ch.group.includes('Csatornak'));
+            tag.textContent = "A RobiTV ajánlja:";
+            const moviePool = allChannels.filter(ch => !parseSeriesInfo(ch.name).isSeries && !ch.group.includes('Csatornák'));
             const randomMovie = moviePool.length > 0 ? moviePool[Math.floor(Math.random() * moviePool.length)] : allChannels[Math.floor(Math.random() * allChannels.length)];
 
-            title.textContent = randomMovie.name; btn.textContent = "Megtekintes";
+            title.textContent = randomMovie.name; btn.textContent = "Megtekintés";
             btn.onclick = () => { playChannel(randomMovie); closeSlidePopup(); };
             popup.classList.add('show');
         }
@@ -1187,8 +1246,8 @@
                     if (timeLeftMins === 5 && overlay.style.display === 'none') {
                         overlay.innerHTML = `
                             <div style="font-size:10px; font-weight:800; color:var(--accent-magenta); letter-spacing:1px;"><i class="fa-solid fa-bolt"></i> ROBITV</div>
-                            <div style="font-size:13px; font-weight:700; color:#fff; margin-top:2px;">Mindjart kovetkezik: ${data.next.title}</div>
-                            <div style="font-size:11px; color:var(--accent-cyan); margin-top:1px;">Kezdesi ido: ${formatTime(data.next.start)}</div>
+                            <div style="font-size:13px; font-weight:700; color:#fff; margin-top:2px;">Mindjárt következik: ${data.next.title}</div>
+                            <div style="font-size:11px; color:var(--accent-cyan); margin-top:1px;">Kezdési idő: ${formatTime(data.next.start)}</div>
                         `;
                         overlay.style.display = 'block';
                         setTimeout(() => { overlay.style.display = 'none'; }, 15000);
@@ -1201,18 +1260,18 @@
             const box = document.getElementById('epgMini');
             
             if (isVodGroup(ch.group)) {
-                box.innerHTML = `<div class="epg-now"><i class="fa-solid fa-film"></i> ${ch.name}</div><div style="font-size:12px; color:var(--accent-cyan);">Media tartalom</div><div class="epg-desc">Ez egy fix videofajl / film, nem tartozik hozza elo musorujsag. Javaslat: Ha nincs hangja a filmnek, probald meg egy masik bongeszobol (pl. Edge vagy Safari) lejatszani. Jo szorakozast! 🍿</div>`;
+                box.innerHTML = `<div class="epg-now"><i class="fa-solid fa-film"></i> ${ch.name}</div><div style="font-size:12px; color:var(--accent-cyan);">Média tartalom</div><div class="epg-desc">Ez egy fix videofájl / film, nem tartozik hozzá élő műsorújság. Javaslat: Ha nincs hangja a filmnek, próbáld meg egy másik böngészőből lejátszani. Jó szórakozást! 🍿</div>`;
                 return;
             }
 
             const data = getEpgForChannel(ch);
 
             if (!data || (!data.now && !data.next)) {
-                box.innerHTML = `<div class="epg-now"><i class="fa-solid fa-tv"></i> ${ch.name}</div><div style="font-size:12px; color:var(--text-muted);">Nincs elerheto adat</div><div class="epg-desc">Nem talalhato elo musorinformacio ehhez a csatornahoz.</div>`;
+                box.innerHTML = `<div class="epg-now"><i class="fa-solid fa-tv"></i> ${ch.name}</div><div style="font-size:12px; color:var(--text-muted);">Nincs elérhető adat</div><div class="epg-desc">Nem található élő műsorinformáció ehhez a csatornához.</div>`;
                 return;
             }
 
-            let html = `<div class="epg-now" style="color: var(--accent-cyan);"><i class="fa-solid fa-circle-info"></i> Musorujsag - ${ch.name}</div>`;
+            let html = `<div class="epg-now" style="color: var(--accent-cyan);"><i class="fa-solid fa-circle-info"></i> Műsorújság - ${ch.name}</div>`;
             html += `<div class="epg-timeline-list">`;
 
             if (data.now) {
@@ -1243,7 +1302,7 @@
         }
 
         async function initSystem() {
-            updateStatus('m3u', 'warn', 'Betoltes...');
+            updateStatus('m3u', 'warn', 'Betöltés...');
             try {
                 const gas = await fetch(GOOGLE_SCRIPT_URL);
                 const gasData = await gas.json();
@@ -1254,25 +1313,19 @@
                 currentEpgUrl = gasData.epg_url;
                 currentApiUrl = gasData.api_url;
                 savedCategoryOrder = gasData.category_order || [];
-
-                setInterval(async () => {
-                    try {
-                        const pulse = await fetch(`${GOOGLE_SCRIPT_URL}?action=heartbeat&session_id=${mySessionId}`);
-                        const pData = await pulse.json();
-                        document.getElementById('activeUsersCount').textContent = pData.active_viewers + " online";
-                    } catch(_) {}
-                }, 20000);
-
-                fetch(`${GOOGLE_SCRIPT_URL}?action=getApi`).then(r => r.json()).then(api => {
-                    if (api?.user_info?.exp_date) {
-                        const d = new Date(parseInt(api.user_info.exp_date) * 1000);
-                        document.getElementById('expireText').textContent = "Lejarat: " + d.toISOString().split('T')[0];
-                    } else { document.getElementById('expireText').textContent = "Lejarat: Aktiv"; }
-                }).catch(() => {});
-
+                
+                // M3U letöltése
                 const m3uRes = await fetch(`${GOOGLE_SCRIPT_URL}?action=getM3u`);
                 const m3uText = await m3uRes.text();
                 allChannels = parseM3U(m3uText);
+
+                // Felhő alapú folytatás lista összerakása (megkeresi a letöltött listában az ID-kat)
+                const cloudSavedRaw = gasData.continue_watching || [];
+                continueCloudList = cloudSavedRaw.map(cItem => {
+                    const foundCh = allChannels.find(x => x.id === cItem.id);
+                    if(foundCh) return { id: foundCh.id, time: cItem.time, pct: cItem.pct, chSource: foundCh };
+                    return null;
+                }).filter(x => x !== null);
 
                 channelsByGroup = {};
                 allChannels.forEach(ch => {
@@ -1284,21 +1337,32 @@
                 if (catchupChannels.length > 0) channelsByGroup["⏪ Visszanézhető Csatornák"] = catchupChannels;
                 
                 groupNames = Object.keys(channelsByGroup);
-
-                updateStatus('m3u', 'ok', allChannels.length + " ado");
+                updateStatus('m3u', 'ok', allChannels.length + " adó");
                 
-                const loader = document.getElementById('globalLoader');
-                loader.style.opacity = '0';
-                setTimeout(() => loader.style.display = 'none', 400);
-
                 renderDashboard();
                 renderCategorySidebar(null);
                 
-                // Első betöltéskor behúzzuk az EPG-t!
+                // Inicializálás után eldugjuk a loader-t (feltéve ha a Netflix animáció már végzett vele, azt CSS-ben időzítettük)
+                setTimeout(() => {
+                    const loader = document.getElementById('globalLoader');
+                    loader.style.opacity = '0';
+                    setTimeout(() => loader.style.display = 'none', 400);
+                }, 4000);
+
                 loadEPG();
+
+                // Heartbeat a sessionnek
+                setInterval(async () => {
+                    try {
+                        const pulse = await fetch(`${GOOGLE_SCRIPT_URL}?action=heartbeat&session_id=${mySessionId}`);
+                        const pData = await pulse.json();
+                        document.getElementById('activeUsersCount').textContent = pData.active_viewers + " online";
+                    } catch(_) {}
+                }, 20000);
+
             } catch (e) { 
                 updateStatus('m3u', 'error', 'Szerverhiba'); 
-                document.getElementById('globalLoader').innerHTML = `<div style="color:var(--accent-magenta); font-weight:700;">Szerver kapcsolodasi hiba! Ellenorizd a Google Script linkedet!</div>`;
+                document.getElementById('globalLoader').innerHTML = `<div style="color:var(--accent-magenta); font-weight:700;">Szerver kapcsolódási hiba! Ellenőrizd a Google Script linkedet!</div>`;
             }
 
             plyrInstance = new Plyr(video, { controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'], autoplay: true });
