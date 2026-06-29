@@ -1,0 +1,1286 @@
+﻿<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>RobiTV Prémium – IPTV Player</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mpegts.js@1.7.3/dist/mpegts.min.js"></script>
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+
+    <style>
+        :root {
+            --bg-primary: #080b14;
+            --bg-secondary: #0e121f;
+            --bg-card: #141a2b;
+            --bg-card-hover: #1a1f35;
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --glass-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
+            --accent-magenta: #ff2a5f;
+            --accent-cyan: #00e5ff;
+            --text-primary: #f0f4ff;
+            --text-secondary: #98a2b3;
+            --text-muted: #5a6a7e;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:var(--bg-primary); color:var(--text-primary); height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+        ::-webkit-scrollbar { width:6px; }
+        ::-webkit-scrollbar-track { background:transparent; }
+        ::-webkit-scrollbar-thumb { background:rgba(0,229,255,0.3); border-radius:20px; }
+        ::-webkit-scrollbar-thumb:hover { background:var(--accent-cyan); }
+
+        .global-loader { position: fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-primary); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; transition: opacity 0.4s ease; }
+        .loader-spinner { width: 50px; height: 50px; border: 5px solid rgba(0,229,255,0.1); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        header { padding:12px 24px; background:rgba(8,11,20,0.85); backdrop-filter:blur(12px); border-bottom:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center; z-index:20; flex-shrink:0; gap:20px; }
+        .logo { font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none; transition: var(--transition); flex-shrink:0; }
+        .logo i { color:var(--accent-magenta); font-size:24px; filter:drop-shadow(0 0 8px rgba(255,42,95,0.5)); }
+        .logo span { background:linear-gradient(135deg,#fff 30%,var(--accent-cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .logo small { font-size:13px; font-weight:400; color:var(--text-muted); -webkit-text-fill-color:var(--text-muted); margin-left:4px; }
+
+        .header-search-wrap { position: relative; flex: 1; max-width: 480px; }
+        .header-search-wrap i.search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; }
+        .header-search-wrap input { width: 100%; padding: 10px 16px 10px 42px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border); border-radius: var(--radius-md); color: #fff; font-size: 13px; transition: var(--transition); font-family: 'Inter', sans-serif; }
+        .header-search-wrap input:focus { background: rgba(255, 255, 255, 0.08); border-color: var(--accent-cyan); outline: none; box-shadow: 0 0 15px rgba(0, 229, 255, 0.15); }
+        
+        .search-results-box { position: absolute; top: calc(100% + 8px); left: 0; width: 100%; background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: var(--radius-md); box-shadow: var(--glass-shadow); max-height: 420px; overflow-y: auto; display: none; z-index: 999999; }
+        .search-result-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; cursor: pointer; transition: var(--transition); border-bottom: 1px solid rgba(255,255,255,0.02); }
+        .search-result-item:hover { background: var(--bg-card-hover); }
+        .search-result-item .sr-logo { width: 32px; height: 32px; background: rgba(0,0,0,0.2); border-radius: 4px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--glass-border); flex-shrink:0; }
+        .search-result-item .sr-logo img { max-width: 90%; max-height: 90%; object-fit: contain; }
+        .search-result-item .sr-info { flex: 1; min-width: 0; }
+        .search-result-item .sr-name { font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .search-result-item .sr-group { font-size: 11px; color: var(--accent-cyan); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .status-panel { display:flex; gap:12px; align-items:center; flex-shrink:0; }
+        .status-badge { padding:6px 14px; background:rgba(255,255,255,0.03); border:1px solid var(--glass-border); border-radius:40px; font-size:12px; font-weight:600; color:var(--text-secondary); display:flex; align-items:center; gap:8px; }
+        .status-badge .dot { width:8px; height:8px; border-radius:50%; background:#ff4444; }
+        .status-badge .dot.ok { background:#00ff88; box-shadow:0 0 8px #00ff88; }
+        .status-badge .dot.warn { background:#fbbf24; box-shadow:0 0 8px #fbbf24; }
+
+        .container { display:flex; flex:1; overflow:hidden; position:relative; }
+        .sidebar { width:280px; background:var(--bg-secondary); border-right:1px solid var(--glass-border); display:flex; flex-direction:column; flex-shrink:0; transition: var(--transition); }
+        .sidebar-header { padding:16px 20px; border-bottom:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center;}
+        .sidebar-header h2 { font-size:15px; font-weight:700; color:var(--text-secondary); }
+        .sidebar-header h2 i { color:var(--accent-cyan); margin-right:6px; }
+
+        .category-list { flex:1; overflow-y:auto; padding:8px; }
+        .category-card { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-radius:var(--radius-sm); cursor:pointer; transition:var(--transition); margin-bottom:2px; border:1px solid transparent; }
+        .category-card:hover { background:rgba(255,255,255,0.04); }
+        .category-card.active { background:rgba(255,42,95,0.12); border-color:var(--accent-magenta); }
+        .category-name { font-weight:600; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px; }
+        .category-count { background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:20px; font-size:11px; color:var(--text-secondary); }
+
+        .main-content { flex:1; display:flex; flex-direction:column; overflow:hidden; background:var(--bg-primary); }
+        .view { display:none; height:100%; width:100%; padding:20px; overflow-y:auto; }
+        .view.active { display:flex; flex-direction:column; }
+
+        #viewChannels.active { display:grid; grid-template-columns: 340px 1fr; gap: 20px; overflow: hidden; padding: 16px; }
+        .left-panel { display:flex; flex-direction:column; overflow:hidden; background:var(--bg-secondary); border-radius:var(--radius-md); border:1px solid var(--glass-border); }
+        .right-panel { display:flex; flex-direction:column; overflow-y:auto; gap:14px; padding-right:4px; position: relative; }
+
+        .dashboard-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; }
+        .dash-card { background:var(--bg-card); border:1px solid var(--glass-border); border-radius:var(--radius-md); padding:22px 16px; cursor:grab; transition:var(--transition); text-align:center; position: relative; overflow: hidden; }
+        .dash-card:active { cursor: grabbing; }
+        .dash-card:hover { background:var(--bg-card-hover); border-color:var(--accent-cyan); transform:translateY(-3px); box-shadow: 0 6px 20px rgba(0,229,255,0.15); }
+        .dash-card.drag-over { border: 2px dashed var(--accent-magenta); background: rgba(255,42,95,0.1); }
+        .dash-card i { font-size:32px; color:var(--accent-cyan); margin-bottom:10px; pointer-events: none; }
+        .dash-card.pinned i { color: #fbbf24; }
+        .dash-card.special i { color: var(--accent-magenta); }
+        .dash-card .dash-name { font-weight:700; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; pointer-events: none; }
+        .dash-card .dash-count { font-size:12px; color:var(--text-muted); margin-top:4px; pointer-events: none; }
+
+        /* Új Continue Nézet CSS */
+        .continue-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; padding: 10px; width:100%;}
+        .continue-card-lg { background: var(--bg-secondary); border: 1px solid var(--glass-border); border-radius: var(--radius-md); overflow: hidden; position: relative; cursor: pointer; transition: var(--transition); }
+        .continue-card-lg:hover { border-color: var(--accent-cyan); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,229,255,0.15); }
+        .continue-poster { width: 100%; height: 135px; background: #000; position: relative; display: flex; align-items: center; justify-content: center; }
+        .continue-poster img { max-width: 100%; max-height: 100%; object-fit: cover; opacity: 0.8; }
+        .continue-poster .play-overlay { position: absolute; inset:0; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; }
+        .continue-card-lg:hover .play-overlay { opacity: 1; }
+        .continue-poster .play-overlay i { font-size: 40px; color: var(--accent-cyan); filter: drop-shadow(0 0 10px rgba(0,229,255,0.8)); }
+        .continue-info { padding: 12px; }
+        .continue-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .continue-meta { font-size: 12px; color: var(--text-secondary); margin-bottom: 10px; display: flex; justify-content: space-between; }
+        .continue-progress-bg { height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+        .continue-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-magenta)); border-radius: 4px; }
+        .delete-continue-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: #fff; border: 1px solid rgba(255,255,255,0.2); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; z-index: 10; }
+        .delete-continue-btn:hover { background: var(--accent-magenta); border-color: var(--accent-magenta); transform: scale(1.1); }
+
+        .channel-view-header { padding:14px; border-bottom:1px solid var(--glass-border); display:flex; align-items:center; gap:12px; flex-shrink:0; }
+        .back-btn { background:rgba(255,255,255,0.05); border:none; color:var(--text-secondary); width:32px; height:32px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+        .back-btn:hover { background:rgba(255,255,255,0.1); color:#fff; }
+        .view-title { font-size:15px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1; }
+
+        .channel-list-view { flex:1; overflow-y:auto; padding:6px; }
+        .channel-item { display:flex; gap:10px; padding:10px; border-radius:var(--radius-sm); cursor:pointer; border:1px solid transparent; transition:var(--transition); align-items:center; margin-bottom:2px; position: relative; }
+        .channel-item:hover { background:rgba(255,255,255,0.03); }
+        .channel-item.active { background:rgba(255,42,95,0.12); border-color:var(--accent-magenta); }
+        .channel-item .c-logo { width:38px; height:38px; background:rgba(0,0,0,0.3); border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0; border:1px solid var(--glass-border); overflow:hidden; }
+        .channel-item .c-logo img { max-width:95%; max-height:95%; object-fit:contain; }
+        .channel-item .c-info { flex:1; min-width:0; padding-right:10px; }
+        .channel-item .c-name { font-weight:600; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .channel-item .c-epg { font-size:11px; color:var(--text-secondary); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+        .player-wrapper { width:100%; background:#000; border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--glass-shadow); position:relative; padding-top: 56.25%; flex-shrink:0; border:1px solid var(--glass-border); }
+        .player-wrapper video, .player-wrapper .plyr { position: absolute; top: 0; left: 0; width: 100% !important; height: 100% !important; }
+        
+        .stream-alert-box { display: none; background: rgba(255, 42, 95, 0.15); border: 1px solid var(--accent-magenta); border-radius: var(--radius-md); padding: 12px 16px; font-size: 13px; font-weight: 600; color: #fff; align-items: center; gap: 10px; animation: fadeIn 0.3s ease; }
+
+        .video-slide-popup { position: absolute; bottom: 85px; right: 20px; width: 290px; background: rgba(14, 18, 31, 0.96); backdrop-filter: blur(15px); border: 1px solid var(--accent-cyan); border-radius: var(--radius-md); padding: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: none; transform: translateY(30px); opacity: 0; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 2147483647 !important; }
+        .video-slide-popup.show { display: block; transform: translateY(0); opacity: 1; }
+        .popup-close { position: absolute; top: 8px; right: 8px; background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; }
+        .popup-close:hover { color: #fff; }
+        .popup-tag { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-magenta); margin-bottom: 4px; }
+        .popup-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .popup-btn { width: 100%; padding: 8px; background: var(--accent-cyan); color: #000; border: none; border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; margin-top: 6px; }
+
+        .live-next-overlay { position: absolute; top: 20px; left: 20px; background: rgba(8, 11, 20, 0.95); border-left: 4px solid var(--accent-magenta); padding: 12px 18px; border-radius: 4px var(--radius-sm) var(--radius-sm) 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: none; z-index: 2147483647 !important; animation: slideInLeft 0.4s ease; }
+        @keyframes slideInLeft { from { transform: translateX(-50px); opacity:0; } to { transform: translateX(0); opacity:1; } }
+
+        .load-progress-wrap { display:flex; align-items:center; gap:12px; padding:0 4px; flex-shrink:0; }
+        .load-progress-track { flex:1; height:4px; background:rgba(255,255,255,0.05); border-radius:10px; overflow:hidden; }
+        .load-progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--accent-cyan),var(--accent-magenta)); transition:width 0.1s ease; }
+        .load-progress-text { font-size:11px; font-weight:700; color:var(--text-secondary); min-width:35px; text-align:right; }
+
+        .epg-mini { background:var(--bg-card); border-radius:var(--radius-md); padding:16px; border:1px solid var(--glass-border); display: flex; flex-direction: column; gap: 10px; }
+        .epg-now { font-size:15px; font-weight:700; color:#fff; display:flex; align-items:center; gap:8px;}
+        .epg-desc { font-size:12px; color:var(--text-secondary); line-height:1.4; }
+        .epg-timeline-list { display: flex; flex-direction: column; gap: 8px; }
+        .epg-timeline-item { padding: 12px 14px; border-radius: var(--radius-sm); border-left: 3px solid var(--text-muted); background: rgba(255,255,255,0.02); display:flex; flex-direction:column; gap:4px; }
+        .epg-timeline-item.current-live { border-left-color: var(--accent-magenta); background: rgba(255, 42, 95, 0.1); border-top: 1px solid rgba(255, 42, 95, 0.2); border-right: 1px solid rgba(255, 42, 95, 0.2); border-bottom: 1px solid rgba(255, 42, 95, 0.2); }
+        .epg-title { font-size: 14px; font-weight: 700; color: #fff; }
+        .epg-time { font-size: 12px; color: var(--accent-cyan); font-family: monospace; font-weight:600;}
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(4, 6, 12, 0.9); backdrop-filter: blur(8px); z-index: 9999; display: none; align-items: center; justify-content: center; }
+        .modal-box { background: var(--bg-card); border: 1px solid var(--accent-cyan); width: 90%; max-width: 550px; border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--glass-shadow); }
+        .modal-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        .modal-title i { color: var(--accent-cyan); }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+        .form-group input { width: 100%; padding: 12px; background: var(--bg-primary); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: #fff; font-family: 'Inter', sans-serif; font-size: 13px; }
+        .form-group input:focus { border-color: var(--accent-cyan); outline: none; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
+        .btn { padding: 10px 18px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; cursor: pointer; border: none; }
+        .btn-cancel { background: transparent; border: 1px solid var(--glass-border); color: var(--text-secondary); }
+        .btn-save { background: var(--accent-magenta); color: #fff; }
+
+        @media (max-width: 900px) {
+            header { flex-wrap: wrap; padding: 12px 16px; gap: 12px; }
+            .header-search-wrap { order: 3; width: 100%; max-width: none; }
+            .status-panel { flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+            .status-badge { padding: 4px 10px; font-size: 11px; }
+            
+            .container { flex-direction: column; }
+            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--glass-border); max-height: 200px; flex-shrink: 0; }
+            
+            #viewChannels.active { display: flex; flex-direction: column; padding: 10px; gap: 12px; }
+            .left-panel { order: 2; flex: 1; min-height: 350px; }
+            .right-panel { order: 1; flex: none; overflow: visible; }
+            
+            .dashboard-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+            .dash-card { padding: 16px 10px; }
+            .continue-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+            
+            .player-wrapper { border-radius: var(--radius-md); }
+            .video-slide-popup { width: calc(100% - 20px); right: 10px; bottom: 70px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="global-loader" id="globalLoader">
+        <div class="loader-spinner"></div>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:16px; font-weight:700; text-align:center; color: var(--accent-cyan);">
+            📺 RobiTV Premium<br>
+            <span style="font-size:13px; font-weight:400; color:var(--text-secondary); margin-top:6px; display:inline-block;">Csatornak szinkronizalasa... Kerlek varj! ☕</span>
+        </div>
+    </div>
+
+    <header>
+        <div class="logo" onclick="resetToHome()">
+            <i class="fa-solid fa-bolt"></i><span>RobiTV</span><small>Premium</small>
+        </div>
+        
+        <div class="header-search-wrap">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="headerSearchInput" placeholder="Kereses adok, filmek, sorozatok kozott (min. 3 karakter)..." oninput="executeHeaderSearch()" />
+            <div class="search-results-box" id="headerSearchResults"></div>
+        </div>
+
+        <div class="status-panel">
+            <div class="status-badge" id="expireStatus" onclick="checkAdminPin()" style="background:rgba(251, 191, 36, 0.04); border-color:rgba(251, 191, 36, 0.15); cursor: pointer;"><i class="fa-regular fa-calendar" style="color:var(--accent-cyan);"></i><span id="expireText" style="color:#fff;">Lejarat: Lekeres...</span></div>
+            <div class="status-badge" id="m3uStatus"><div class="dot"></div><span id="m3uText">M3U..</span></div>
+            <div class="status-badge" id="epgStatus"><div class="dot"></div><span id="epgText">EPG..</span></div>
+            <div class="status-badge" style="background:rgba(0, 225, 255, 0.05); border-color:rgba(0, 225, 255, 0.2);"><div class="dot ok"></div><span id="activeUsersCount" style="color:var(--accent-cyan);">1 online</span></div>
+        </div>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fa-regular fa-folder"></i> Kategoriak</h2>
+                <i class="fa-solid fa-arrows-up-down" style="color:var(--text-muted); font-size:12px; cursor:help;" title="A fooldalon (Irányítópult) tudod húzással módosítani a sorrendet!"></i>
+            </div>
+            <div class="category-list" id="categoryList"></div>
+        </aside>
+
+        <main class="main-content">
+            <div class="view active" id="viewDashboard">
+                <div style="margin-bottom:16px;">
+                    <h2 style="font-size:18px; font-weight:700;">📺 Valassz egy listat</h2>
+                    <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">Tipp: Fogd meg az egerrel a kártyákat és húzd őket saját sorrend kialakításához!</p>
+                </div>
+                <div class="dashboard-grid" id="dashboardGrid"></div>
+            </div>
+
+            <div class="view" id="viewChannels">
+                <div class="left-panel">
+                    <div class="channel-view-header">
+                        <button class="back-btn" onclick="goToDashboard()"><i class="fa-solid fa-arrow-left"></i></button>
+                        <div class="view-title" id="channelViewTitle">Csatornak</div>
+                    </div>
+                    <div class="channel-list-view" id="channelListView"></div>
+                </div>
+
+                <div class="right-panel">
+                    <div class="player-wrapper" id="playerWrapper">
+                        <div class="live-next-overlay" id="liveNextOverlay"></div>
+                        
+                        <div class="video-slide-popup" id="videoSlidePopup">
+                            <button class="popup-close" onclick="closeSlidePopup()"><i class="fa-solid fa-xmark"></i></button>
+                            <div class="popup-tag" id="popupTag">Kovetkezo resz</div>
+                            <div class="popup-title" id="popupTitle">Musor cim</div>
+                            <button class="popup-btn" id="popupBtn">Megtekintes</button>
+                        </div>
+
+                        <video id="player" playsinline controls></video>
+                    </div>
+                    
+                    <div class="stream-alert-box" id="streamAlertBox">
+                        <i class="fa-solid fa-circle-exclamation" style="color:var(--accent-magenta); font-size:16px;"></i>
+                        <span id="streamAlertText">Hoppa! Ez az adas az atlagosnal lassabban tolt be. Kerlek varj meg egy pillanatot... 📺</span>
+                    </div>
+
+                    <div class="load-progress-wrap">
+                        <div class="load-progress-track"><div class="load-progress-fill" id="loadFill"></div></div>
+                        <div class="load-progress-text"><span id="loadPercent">0</span>%</div>
+                    </div>
+                    
+                    <div class="epg-mini" id="epgMini">
+                        <div class="epg-now"><i class="fa-solid fa-tv"></i> Nincs kivalasztott adas</div>
+                        <div class="epg-desc">Kattints a bal oldali listaban egy csatornara vagy mappara.</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="adminModal">
+        <div class="modal-box">
+            <div class="modal-title"><i class="fa-solid fa-gear"></i> RobiTV Kozponti Beallitasok</div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Ha az M3U kitöltött, a rendszer mentés után azonnal megpróbálja leszinkronizálni a rajta található összes tartalmat.</p>
+            
+            <div class="form-group">
+                <label for="inputM3u">M3U URL cime:</label>
+                <input type="text" id="inputM3u" />
+            </div>
+            <div class="form-group">
+                <label for="inputEpg">XMLTV EPG URL cime (Opcionalis):</label>
+                <input type="text" id="inputEpg" />
+            </div>
+            <div class="form-group">
+                <label for="inputApi">Player API URL cime (Opcionalis):</label>
+                <input type="text" id="inputApi" />
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="closeAdminModal()">Megse</button>
+                <button class="btn btn-save" id="btnSaveAdmin" onclick="saveAdminUrls()">Mentes</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxrWOSdaLKO2b1rLADSXdAlxYWM-1wkUVVxH5kfexkdpcYOkRrVquYxB3NjV8lmadUe/exec"; // VIGYÁZAT! Ha újra közzéteszed a Scriptet, lehet új URL-t kapsz!
+
+        let allChannels = [];
+        let channelsByGroup = {};
+        let groupNames = [];
+        let savedCategoryOrder = [];
+        let activeGroup = null;
+        let activeChannel = null;
+        
+        let hls = null;
+        let mpegtsPlayer = null;
+        let plyrInstance = null;
+        let epgDB = {};              
+        let epgLoadedForGroup = null; 
+        let epgLoading = false;
+        let mySessionId = null;
+
+        let currentM3uUrl = "";
+        let currentEpgUrl = "";
+        let currentApiUrl = "";
+
+        let streamLoadTimer = null;
+        let liveNextOverlayInterval = null;
+        let popupTriggered = false;
+        
+        let lastSavedTime = 0; 
+        let playAttemptTime = 0;
+
+        // Drag & Drop
+        let draggedGroupName = null;
+
+        const video = document.getElementById('player');
+        const loadFill = document.getElementById('loadFill');
+        const loadPercent = document.getElementById('loadPercent');
+
+        function resetToHome() {
+            if (hls) { hls.destroy(); hls = null; }
+            if (mpegtsPlayer) { mpegtsPlayer.unload(); mpegtsPlayer.destroy(); mpegtsPlayer = null; }
+            if (plyrInstance) plyrInstance.stop();
+            
+            activeChannel = null;
+            popupTriggered = false;
+            lastSavedTime = 0;
+            
+            if (streamLoadTimer) clearTimeout(streamLoadTimer);
+            document.getElementById('streamAlertBox').style.display = 'none';
+            document.getElementById('epgMini').innerHTML = `<div class="epg-now"><i class="fa-solid fa-tv"></i> Nincs kivalasztott adas</div><div class="epg-desc">Kattints a bal oldali listaban egy csatornara vagy mappara.</div>`;
+            document.getElementById('headerSearchInput').value = '';
+            document.getElementById('headerSearchResults').style.display = 'none';
+            
+            loadFill.style.width = '0%'; loadPercent.textContent = '0';
+            goToDashboard();
+        }
+
+        function updateStatus(type, state, msg) {
+            const el = document.getElementById(`${type}Status`);
+            if (!el) return;
+            const dot = el.querySelector('.dot');
+            const txt = document.getElementById(`${type}Text`);
+            if(dot) dot.className = 'dot ' + (state === 'ok' ? 'ok' : state === 'warn' ? 'warn' : 'error');
+            if (txt) txt.innerText = msg;
+        }
+
+        function sanitizeId(str) { return str ? str.toLowerCase().replace(/\.hu/g,'').replace(/[^a-z0-9]/g,'') : ''; }
+        function formatTime(d) { return d.toLocaleTimeString('hu-HU', { hour:'2-digit', minute:'2-digit' }); }
+
+        function isVodGroup(groupName) {
+            if (!groupName) return false;
+            const g = groupName.toLowerCase();
+            return g.includes('film') || g.includes('mozi') || g.includes('sorozat') || g.includes('vod') || g.includes('cinema');
+        }
+
+        function parseEpgDate(str) {
+            if (!str) return new Date();
+            const year = str.slice(0, 4); const month = str.slice(4, 6); const day = str.slice(6, 8);
+            const hour = str.slice(8, 10); const min = str.slice(10, 12); const sec = str.slice(12, 14) || "00";
+            let tz = "+01:00"; 
+            const parts = str.split(' ');
+            if (parts.length > 1 && parts[1].length === 5) {
+                tz = parts[1].slice(0, 3) + ":" + parts[1].slice(3, 5);
+            }
+            return new Date(`${year}-${month}-${day}T${hour}:${min}:${sec}${tz}`);
+        }
+
+        function checkAdminPin() {
+            const pin = prompt("Kerlek, add meg a 4 jegyu szerkesztoi kodot a tovabblepeshez:");
+            if (pin === "0000") openAdminModal();
+            else if (pin !== null) alert("❌ Hibas szerkesztoi kod! Belepes megtagadva.");
+        }
+
+        function openAdminModal() {
+            document.getElementById('inputM3u').value = currentM3uUrl;
+            document.getElementById('inputEpg').value = currentEpgUrl;
+            document.getElementById('inputApi').value = currentApiUrl;
+            document.getElementById('adminModal').style.display = 'flex';
+        }
+        function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; }
+
+        async function saveAdminUrls() {
+            const m3uVal = document.getElementById('inputM3u').value.trim();
+            const epgVal = document.getElementById('inputEpg').value.trim();
+            const apiVal = document.getElementById('inputApi').value.trim();
+            if (!m3uVal) { alert("Az M3U URL kitoltese minimum feltetel a menteshez!"); return; }
+
+            try {
+                const sendUrl = `${GOOGLE_SCRIPT_URL}?action=setUrls&m3u=${encodeURIComponent(m3uVal)}&epg=${encodeURIComponent(epgVal)}&api=${encodeURIComponent(apiVal)}`;
+                const res = await fetch(sendUrl);
+                const data = await res.json();
+                if (data.status === "success") { alert("Sikeres mentes! A system azonnal frissiti es beolvassa a listakat."); location.reload(); }
+            } catch(e) { alert("Hiba tortent a mentes soran."); }
+        }
+
+        function executeHeaderSearch() {
+            const input = document.getElementById('headerSearchInput');
+            const box = document.getElementById('headerSearchResults');
+            const query = input.value.trim().toLowerCase();
+
+            if (query.length < 3) { box.innerHTML = ''; box.style.display = 'none'; return; }
+
+            const filtered = allChannels.filter(ch => ch.name.toLowerCase().includes(query) || (ch.group && ch.group.toLowerCase().includes(query)));
+
+            if (filtered.length === 0) {
+                box.innerHTML = `<div style="padding: 14px; text-align: center; color: var(--text-muted); font-size: 13px;"><i class="fa-solid fa-face-frown"></i> Nincs talalat...</div>`;
+                box.style.display = 'block'; return;
+            }
+
+            box.innerHTML = '';
+            filtered.slice(0, 25).forEach(ch => {
+                const info = parseSeriesInfo(ch.name);
+                const isSeriesItem = info.isSeries;
+                const div = document.createElement('div');
+                div.className = 'search-result-item';
+                div.innerHTML = `
+                    <div class="sr-logo">${isSeriesItem ? `<i class="fa-solid fa-folder" style="color:#fbbf24; font-size:14px;"></i>` : (ch.logo ? `<img src="${ch.logo}" />` : `<i class="fa-solid fa-play" style="color:var(--text-muted); font-size:12px;"></i>`)}</div>
+                    <div class="sr-info">
+                        <div class="sr-name" style="${isSeriesItem ? 'color:#fbbf24;' : ''}">${isSeriesItem ? `[MAPPA] ${info.seriesName} (${info.season}. evad ${info.episode}. resz)` : ch.name}</div>
+                        <div class="sr-group"><i class="fa-regular fa-folder"></i> ${ch.group}</div>
+                    </div>
+                `;
+                div.onclick = () => { box.style.display = 'none'; input.value = ''; openChannelFromSearch(ch); };
+                box.appendChild(div);
+            });
+            box.style.display = 'block';
+        }
+
+        function openChannelFromSearch(ch) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('viewChannels').classList.add('active');
+            
+            activeGroup = ch.group;
+            renderCategorySidebar(ch.group);
+            const info = parseSeriesInfo(ch.name);
+            
+            if (info.isSeries) {
+                const groupChs = channelsByGroup[ch.group] || [];
+                const eps = [];
+                groupChs.forEach(c => {
+                    const cInf = parseSeriesInfo(c.name);
+                    if (cInf.isSeries && cInf.seriesName === info.seriesName) eps.push({ ch: c, info: cInf });
+                });
+                
+                const seriesNode = { type: 'series', name: info.seriesName, episodes: eps };
+                seriesNode.episodes.sort((a, b) => {
+                    if (a.info.season !== b.info.season) return a.info.season - b.info.season;
+                    return a.info.episode - b.info.episode;
+                });
+                
+                openSeriesFolder(seriesNode);
+                const exactEp = seriesNode.episodes.find(e => e.info.season === info.season && e.info.episode === info.episode);
+                if (exactEp) {
+                    playChannel(exactEp.ch, null);
+                    setTimeout(() => { document.querySelectorAll('.channel-item').forEach(el => { if (el.innerText.includes(ch.name)) el.classList.add('active'); }); }, 300);
+                }
+            } else {
+                document.getElementById('channelViewTitle').textContent = ch.group;
+                renderChannelsForGroup(ch.group);
+                playChannel(ch, null);
+                setTimeout(() => { const activeEl = document.querySelector('.channel-item.active'); if (activeEl) activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 400);
+            }
+            if (epgLoadedForGroup !== ch.group && !epgLoading && !ch.group.startsWith("⭐") && !ch.group.startsWith("⏪") && !isVodGroup(ch.group)) loadEPGForGroup(ch.group); 
+        }
+
+        document.addEventListener('click', (e) => {
+            const wrap = document.querySelector('.header-search-wrap');
+            if (wrap && !wrap.contains(e.target)) document.getElementById('headerSearchResults').style.display = 'none';
+        });
+
+        function parseSeriesInfo(name) {
+            let match;
+            match = name.match(/(.+?)\s+[sS](\d+)\s*[eE](\d+)/);
+            if (match) return { isSeries: true, seriesName: match[1].trim(), season: parseInt(match[2]), episode: parseInt(match[3]) };
+            match = name.match(/(.+?)\s+(\d+)\.\s*évad\s+(\d+)\.\s*rész/i);
+            if (match) return { isSeries: true, seriesName: match[1].trim(), season: parseInt(match[2]), episode: parseInt(match[3]) };
+            match = name.match(/(.+?)\s+(\d+)\.\s*rész/i);
+            if (match) return { isSeries: true, seriesName: match[1].trim(), season: 1, episode: parseInt(match[2]) };
+            match = name.match(/(.+?)\s+(?:ep|epizód|rész)\s*(\d+)/i);
+            if (match) return { isSeries: true, seriesName: match[1].trim(), season: 1, episode: parseInt(match[2]) };
+            return { isSeries: false, seriesName: name, season: 0, episode: 0 };
+        }
+
+        function parseM3U(data) {
+            const lines = data.split('\n');
+            const result = [];
+            for (let i=0; i<lines.length; i++) {
+                const line = lines[i].trim();
+                if (line.startsWith('#EXTINF:')) {
+                    const entry = { name:'Ismeretlen', logo:'', url:'', id:'', group:'Egyeb', isCatchup: false };
+                    const nameParts = line.split(',');
+                    if (nameParts.length > 1) entry.name = nameParts.pop().trim();
+                    const logoMatch = line.match(/tvg-logo="([^"]+)"/);
+                    if (logoMatch) entry.logo = logoMatch[1];
+                    const idMatch = line.match(/tvg-id="([^"]+)"/);
+                    if (idMatch) entry.id = sanitizeId(idMatch[1]); else entry.id = sanitizeId(entry.name);
+                    
+                    const groupMatch = line.match(/group-title="([^"]+)"/);
+                    let initialGroup = groupMatch ? groupMatch[1] || 'Egyeb' : 'Egyeb';
+                    const initialGroupLower = initialGroup.toLowerCase();
+
+                    // Visszanéző (Catch-up) detektálás
+                    if (line.match(/catchup="([^"]+)"/i) || line.match(/catchup-days="([^"]+)"/i) || line.match(/tvg-rec="([^"]+)"/i) || line.match(/timeshift="([^"]+)"/i)) {
+                        entry.isCatchup = true;
+                    }
+
+                    // Szigorúbb Magyar Élő Csatorna detektálás
+                    if ((initialGroupLower.includes('magyar') || initialGroupLower === 'hungary' || initialGroupLower === 'hu') && !isVodGroup(initialGroup)) {
+                        entry.group = "⭐ Élő Magyar Csatornák";
+                    } else {
+                        entry.group = initialGroup;
+                    }
+
+                    if (i + 1 < lines.length && lines[i+1].trim().startsWith('http')) {
+                        entry.url = lines[i+1].trim();
+                        i++;
+                    }
+                    if (entry.url) result.push(entry);
+                }
+            }
+            return result;
+        }
+
+        function parseEPG(xmlText, filterIds) {
+            const db = {};
+            const parser = new DOMParser();
+            const xml = parser.parseFromString(xmlText, 'text/xml');
+            const programmes = xml.getElementsByTagName('programme');
+            const limitDate = new Date(); limitDate.setDate(limitDate.getDate() - 1);
+
+            for (let i=0; i<programmes.length; i++) {
+                const p = programmes[i];
+                let chId = sanitizeId(p.getAttribute('channel'));
+                if (!chId || !filterIds.has(chId)) continue;
+                const startStr = p.getAttribute('start'); const stopStr = p.getAttribute('stop');
+                if(!startStr || !stopStr) continue;
+                
+                const start = parseEpgDate(startStr); const stop = parseEpgDate(stopStr);
+                if (stop < limitDate) continue;
+                const title = p.getElementsByTagName('title')[0]?.textContent || 'Musor';
+                const desc = p.getElementsByTagName('desc')[0]?.textContent || '';
+                if (!db[chId]) db[chId] = [];
+                db[chId].push({ start, stop, title, desc });
+            }
+
+            for (let id in db) db[id].sort((a, b) => a.start - b.start);
+            return db;
+        }
+
+        function getEpgForChannel(ch, targetTime = new Date()) {
+            const id = ch.id || sanitizeId(ch.name);
+            const list = epgDB[id] || [];
+            if (!list.length) return null;
+            let current = null, next = null;
+            for (let p of list) {
+                if (targetTime >= p.start && targetTime < p.stop) { current = p; continue; }
+                if (current && p.start >= current.stop) { next = p; break; }
+            }
+            return { now: current, next: next };
+        }
+
+        // --- SORTING LOGIKA ---
+        function getSortedGroupNames() {
+            // A rögzített kategóriákat mindig előre tesszük
+            const fixedTops = ["⭐ Élő Magyar Csatornák", "⏪ Visszanézhető Csatornák"];
+            
+            // Ha van felhőből származó egyedi sorrend, azt alkalmazzuk a többire
+            let others = groupNames.filter(g => !fixedTops.includes(g));
+            
+            if (savedCategoryOrder && savedCategoryOrder.length > 0) {
+                others.sort((a, b) => {
+                    let idxA = savedCategoryOrder.indexOf(a);
+                    let idxB = savedCategoryOrder.indexOf(b);
+                    if (idxA === -1) idxA = 9999;
+                    if (idxB === -1) idxB = 9999;
+                    return idxA - idxB;
+                });
+            } else {
+                // Default ABC sorrend
+                others.sort((a,b) => a.localeCompare(b));
+            }
+            
+            let finalArray = [];
+            fixedTops.forEach(f => { if(groupNames.includes(f)) finalArray.push(f); });
+            return finalArray.concat(others);
+        }
+
+        // DRAG AND DROP EVENTS
+        function handleDragStart(e, groupName) {
+            draggedGroupName = groupName;
+            e.dataTransfer.effectAllowed = 'move';
+            e.target.style.opacity = '0.5';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            const card = e.currentTarget;
+            card.classList.add('drag-over');
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+
+        function handleDrop(e, targetGroupName) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            if (draggedGroupName && draggedGroupName !== targetGroupName) {
+                // Csak az "others" listában változtatunk sorrendet (fixeket nem lehet elhúzni, vagy ha mégis, a mentésnél okosnak kell lenni)
+                const fixedTops = ["⭐ Élő Magyar Csatornák", "⏪ Visszanézhető Csatornák"];
+                if (fixedTops.includes(draggedGroupName) || fixedTops.includes(targetGroupName)) {
+                    alert("A fix kiemelt mappák (Magyar, Visszanéző) helye nem változtatható!");
+                    return;
+                }
+
+                let currentOrder = getSortedGroupNames().filter(g => !fixedTops.includes(g));
+                const fromIdx = currentOrder.indexOf(draggedGroupName);
+                const toIdx = currentOrder.indexOf(targetGroupName);
+                
+                if (fromIdx > -1 && toIdx > -1) {
+                    currentOrder.splice(fromIdx, 1);
+                    currentOrder.splice(toIdx, 0, draggedGroupName);
+                    
+                    savedCategoryOrder = currentOrder; // frissítjük a lokális memóriát
+                    saveOrderToCloud(savedCategoryOrder); // felküldjük a szerverre
+                    
+                    renderDashboard();
+                    renderCategorySidebar(activeGroup);
+                }
+            }
+        }
+
+        function handleDragEnd(e) { e.target.style.opacity = '1'; draggedGroupName = null; }
+
+        async function saveOrderToCloud(orderArray) {
+            try {
+                const encoded = encodeURIComponent(JSON.stringify(orderArray));
+                await fetch(`${GOOGLE_SCRIPT_URL}?action=saveOrder&order=${encoded}`);
+            } catch(e) { console.log("Hiba a sorrend mentésekor", e); }
+        }
+
+        function renderDashboard() {
+            const grid = document.getElementById('dashboardGrid');
+            grid.innerHTML = '';
+
+            const continueList = JSON.parse(localStorage.getItem('robi_continue_watching') || '[]');
+            if (continueList.length > 0) {
+                const card = document.createElement('div');
+                card.className = 'dash-card special';
+                card.innerHTML = `<i class="fa-solid fa-clock-rotate-left"></i><div class="dash-name">Folytasd ahol abbahagytad</div><div class="dash-count">${continueList.length} mentett film</div>`;
+                card.onclick = () => openSpecialCategory('continue');
+                grid.appendChild(card);
+            }
+
+            const sortedGroups = getSortedGroupNames();
+
+            sortedGroups.forEach(group => {
+                const count = channelsByGroup[group]?.length || 0;
+                const isFixed = group === "⭐ Élő Magyar Csatornák" || group === "⏪ Visszanézhető Csatornák";
+                
+                const card = document.createElement('div');
+                card.className = `dash-card ${group === "⭐ Élő Magyar Csatornák" ? 'pinned' : ''}`;
+                if(!isFixed) {
+                    card.setAttribute('draggable', 'true');
+                    card.addEventListener('dragstart', (e) => handleDragStart(e, group));
+                    card.addEventListener('dragover', handleDragOver);
+                    card.addEventListener('dragleave', handleDragLeave);
+                    card.addEventListener('drop', (e) => handleDrop(e, group));
+                    card.addEventListener('dragend', handleDragEnd);
+                }
+                
+                let icon = group.includes("Visszanézhető") ? '<i class="fa-solid fa-clock-rotate-left" style="color:#fbbf24;"></i>' : '<i class="fa-solid fa-folder-open"></i>';
+
+                card.innerHTML = `${icon}<div class="dash-name">${group}</div><div class="dash-count">${count} ado</div>`;
+                card.onclick = () => openCategory(group);
+                grid.appendChild(card);
+            });
+        }
+
+        function renderCategorySidebar(activeName) {
+            const list = document.getElementById('categoryList');
+            list.innerHTML = '';
+
+            const continueList = JSON.parse(localStorage.getItem('robi_continue_watching') || '[]');
+            if (continueList.length > 0) {
+                const div = document.createElement('div');
+                div.className = `category-card ${activeName === 'continue' ? 'active' : ''}`;
+                div.innerHTML = `<span class="category-name" style="color:var(--accent-magenta);"><i class="fa-solid fa-clock-rotate-left"></i> Folytatas</span><span class="category-count">${continueList.length}</span>`;
+                div.onclick = () => openSpecialCategory('continue');
+                list.appendChild(div);
+            }
+
+            const sortedGroups = getSortedGroupNames();
+
+            sortedGroups.forEach(group => {
+                const count = channelsByGroup[group]?.length || 0;
+                const div = document.createElement('div');
+                div.className = `category-card ${group === activeName ? 'active' : ''}`;
+                
+                let displayGroup = group;
+                if(group === "⭐ Élő Magyar Csatornák") displayGroup = '📌 ' + group;
+                if(group === "⏪ Visszanézhető Csatornák") displayGroup = '⏪ Visszanézhető';
+
+                div.innerHTML = `<span class="category-name">${displayGroup}</span><span class="category-count">${count}</span>`;
+                div.onclick = () => openCategory(group);
+                list.appendChild(div);
+            });
+        }
+
+        function openSpecialCategory(type) {
+            activeGroup = type;
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('viewChannels').classList.add('active');
+            renderCategorySidebar(type);
+            
+            const list = document.getElementById('channelListView');
+            list.innerHTML = '';
+
+            if (type === 'continue') {
+                document.getElementById('channelViewTitle').textContent = "🍿 Folytasd ahol abbahagytad";
+                const continueList = JSON.parse(localStorage.getItem('robi_continue_watching') || '[]');
+                
+                const gridDiv = document.createElement('div');
+                gridDiv.className = 'continue-grid';
+                
+                continueList.forEach((item) => {
+                    const ch = item.chSource;
+                    const mins = Math.round(item.time / 60);
+                    
+                    const card = document.createElement('div');
+                    card.className = 'continue-card-lg';
+                    card.innerHTML = `
+                        <div class="continue-poster">
+                            ${ch.logo ? `<img src="${ch.logo}" />` : `<i class="fa-solid fa-clapperboard" style="font-size:40px; color:var(--text-muted);"></i>`}
+                            <div class="play-overlay"><i class="fa-solid fa-circle-play"></i></div>
+                        </div>
+                        <div class="continue-info">
+                            <div class="continue-title">${item.name}</div>
+                            <div class="continue-meta">
+                                <span>${mins} percnel</span>
+                                <span style="color:var(--accent-cyan); font-weight:700;">${item.pct}%</span>
+                            </div>
+                            <div class="continue-progress-bg">
+                                <div class="continue-progress-fill" style="width: ${item.pct}%;"></div>
+                            </div>
+                        </div>
+                        <button class="delete-continue-btn" title="Torles"><i class="fa-solid fa-trash-can"></i></button>
+                    `;
+                    
+                    card.querySelector('.delete-continue-btn').onclick = (e) => {
+                        e.stopPropagation();
+                        deleteContinueItem(item.name);
+                    };
+                    
+                    card.onclick = () => {
+                        playChannel(item.chSource, null);
+                        setTimeout(() => { video.currentTime = item.time; }, 1500);
+                    };
+                    
+                    gridDiv.appendChild(card);
+                });
+                
+                list.appendChild(gridDiv);
+            }
+        }
+
+        function deleteContinueItem(name) {
+            if (confirm(`Biztosan torolni szeretned a listadrol a(z) "${name}" adast?`)) {
+                let currentSaved = JSON.parse(localStorage.getItem('robi_continue_watching') || '[]');
+                currentSaved = currentSaved.filter(x => x.name !== name);
+                localStorage.setItem('robi_continue_watching', JSON.stringify(currentSaved));
+                openSpecialCategory('continue');
+                renderDashboard();
+            }
+        }
+
+        function renderChannelsForGroup(group) {
+            const list = document.getElementById('channelListView');
+            const chs = channelsByGroup[group] || [];
+            list.innerHTML = '';
+            
+            const isVOD = isVodGroup(group);
+            
+            const nestedData = [];
+            const seriesMap = {};
+
+            chs.forEach(ch => {
+                const info = parseSeriesInfo(ch.name);
+                if (info.isSeries) {
+                    if (!seriesMap[info.seriesName]) {
+                        seriesMap[info.seriesName] = { type: 'series', name: info.seriesName, episodes: [] };
+                        nestedData.push(seriesMap[info.seriesName]);
+                    }
+                    seriesMap[info.seriesName].episodes.push({ ch, info });
+                } else {
+                    nestedData.push({ type: 'standalone', name: ch.name, ch: ch });
+                }
+            });
+
+            nestedData.forEach(node => {
+                if (node.type === 'series') {
+                    node.episodes.sort((a, b) => {
+                        if (a.info.season !== b.info.season) return a.info.season - b.info.season;
+                        return a.info.episode - b.info.episode;
+                    });
+                }
+            });
+
+            nestedData.forEach(node => {
+                if (node.type === 'standalone') {
+                    const ch = node.ch;
+                    let text = "Film / Media tartalom";
+                    
+                    if (!isVOD) {
+                        const epgInfo = getEpgForChannel(ch);
+                        text = epgInfo && epgInfo.now ? `<span style="color:var(--accent-magenta);">🔴 MOST:</span> ${epgInfo.now.title}` : 'Kattints a betolteshez...';
+                    }
+                    
+                    const div = document.createElement('div');
+                    div.className = `channel-item ${activeChannel === ch ? 'active' : ''}`;
+                    div.innerHTML = `
+                        <div class="c-logo">${ch.logo ? `<img src="${ch.logo}" />` : `<i class="fa-solid fa-tv"></i>`}</div>
+                        <div class="c-info"><div class="c-name">${ch.name}</div><div class="c-epg">${text}</div></div>
+                    `;
+                    div.onclick = () => playChannel(ch, div);
+                    list.appendChild(div);
+                } else if (node.type === 'series') {
+                    const div = document.createElement('div');
+                    div.className = `channel-item`;
+                    div.innerHTML = `
+                        <div class="c-logo" style="background: rgba(251, 191, 36, 0.1); border-color: rgba(251, 191, 36, 0.3);"><i class="fa-solid fa-folder" style="color: #fbbf24;"></i></div>
+                        <div class="c-info"><div class="c-name" style="color: #fbbf24;">[MAPPA] ${node.name}</div><div class="c-epg">${node.episodes.length} epizod elerheto</div></div>
+                    `;
+                    div.onclick = () => openSeriesFolder(node);
+                    list.appendChild(div);
+                }
+            });
+        }
+
+        function openSeriesFolder(seriesNode) {
+            const list = document.getElementById('channelListView');
+            document.getElementById('channelViewTitle').innerHTML = `<span style="color:#98a2b3; cursor:pointer;" onclick="renderChannelsForGroup('${activeGroup}')">${activeGroup}</span> &gt; <span style="color:#fbbf24;">${seriesNode.name}</span>`;
+            list.innerHTML = '';
+            
+            const backDiv = document.createElement('div');
+            backDiv.className = `channel-item`;
+            backDiv.innerHTML = `
+                <div class="c-logo" style="background: rgba(255,255,255,0.05);"><i class="fa-solid fa-folder-open"></i></div>
+                <div class="c-info"><div class="c-name" style="color: var(--accent-cyan);">.. [Vissza a szulomappahoz]</div></div>
+            `;
+            backDiv.onclick = () => {
+                document.getElementById('channelViewTitle').textContent = activeGroup;
+                renderChannelsForGroup(activeGroup);
+            };
+            list.appendChild(backDiv);
+
+            seriesNode.episodes.forEach(ep => {
+                const ch = ep.ch;
+                const div = document.createElement('div');
+                div.className = `channel-item ${activeChannel === ch ? 'active' : ''}`;
+                div.innerHTML = `
+                    <div class="c-logo">${ch.logo ? `<img src="${ch.logo}" />` : `<i class="fa-solid fa-video"></i>`}</div>
+                    <div class="c-info"><div class="c-name">${ch.name}</div><div class="c-epg">Sorozat epizod</div></div>
+                `;
+                div.onclick = () => playChannel(ch, div);
+                list.appendChild(div);
+            });
+        }
+
+        function openCategory(group) {
+            activeGroup = group;
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('viewChannels').classList.add('active');
+            document.getElementById('channelViewTitle').textContent = group;
+            renderCategorySidebar(group);
+            renderChannelsForGroup(group);
+            
+            if (epgLoadedForGroup !== group && !epgLoading && !group.startsWith("⭐") && !group.startsWith("⏪") && !isVodGroup(group)) { 
+                loadEPGForGroup(group); 
+            }
+        }
+
+        function goToDashboard() {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('viewDashboard').classList.add('active');
+            activeGroup = null;
+            renderCategorySidebar(null);
+            renderDashboard();
+        }
+
+        async function loadEPGForGroup(group) {
+            if (epgLoading) return;
+            epgLoading = true;
+            updateStatus('epg', 'warn', 'EPG szinkron...');
+            try {
+                const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getEpg`);
+                const text = await res.text();
+                
+                const filterIds = new Set();
+                allChannels.forEach(ch => filterIds.add(ch.id || sanitizeId(ch.name)));
+                
+                const parsed = parseEPG(text, filterIds);
+                Object.assign(epgDB, parsed); 
+                
+                epgLoadedForGroup = group;
+                epgLoading = false;
+                updateStatus('epg', 'ok', 'Kesz');
+                
+                renderChannelsForGroup(activeGroup || group);
+                if (activeChannel) updateEpgMini(activeChannel);
+            } catch (e) { epgLoading = false; updateStatus('epg', 'error', 'Hiba'); }
+        }
+
+        function forceAudioUnmute() {
+            video.muted = false;
+            video.volume = 1.0;
+            if(plyrInstance) { plyrInstance.muted = false; plyrInstance.volume = 1; }
+        }
+
+        function playChannel(ch, el) {
+            activeChannel = ch;
+            popupTriggered = false;
+            lastSavedTime = 0; 
+            closeSlidePopup();
+            
+            const alertBox = document.getElementById('streamAlertBox');
+            alertBox.style.display = 'none';
+            alertBox.style.background = 'rgba(255, 42, 95, 0.15)';
+            document.getElementById('streamAlertText').innerText = 'Hoppá! Ez az adás az átlagosnál lassabban tölt be. Kérlek várj még egy pillanatot... 📺';
+
+            if (el) {
+                document.querySelectorAll('.channel-item').forEach(item => item.classList.remove('active'));
+                el.classList.add('active');
+            }
+
+            if (hls) { hls.destroy(); hls = null; }
+            if (mpegtsPlayer) { mpegtsPlayer.unload(); mpegtsPlayer.destroy(); mpegtsPlayer = null; }
+            plyrInstance.stop();
+            
+            loadFill.style.width = '0%'; loadPercent.textContent = '0';
+
+            if (streamLoadTimer) clearTimeout(streamLoadTimer);
+            streamLoadTimer = setTimeout(() => {
+                document.getElementById('streamAlertBox').style.display = 'flex';
+            }, 25000);
+
+            if (!ch.url) return;
+
+            const urlLower = ch.url.toLowerCase();
+            const isStaticMovie = urlLower.includes('.mp4') || urlLower.includes('.mkv') || urlLower.includes('.avi');
+            const isM3u8 = urlLower.includes('.m3u8');
+
+            forceAudioUnmute();
+
+            if (isStaticMovie) {
+                video.src = ch.url;
+                plyrInstance.play();
+                video.onprogress = () => {
+                    if (video.duration) {
+                        const pct = (video.buffered.length ? video.buffered.end(video.buffered.length - 1) : 0) / video.duration * 100;
+                        loadFill.style.width = Math.min(100, Math.round(pct)) + '%';
+                        loadPercent.textContent = Math.min(100, Math.round(pct));
+                    }
+                };
+            } else if (isM3u8) {
+                if (Hls.isSupported()) {
+                    hls = new Hls({ 
+                        enableWorker: true, lowLatencyMode: true, autoStartLoad: true, capLevelToPlayerSize: true, defaultAudioCodec: 'mp4a.40.2'
+                    });
+                    hls.loadSource(ch.url);
+                    hls.attachMedia(video);
+                    
+                    hls.on(Hls.Events.AUDIO_TRACKS_UPDATED, (e, data) => {
+                        if (data.audioTracks && data.audioTracks.length > 0) {
+                            let hunIdx = data.audioTracks.findIndex(t => t.name.toLowerCase().includes('hun') || t.name.toLowerCase().includes('magyar'));
+                            if(hunIdx !== -1) hls.audioTrack = hunIdx;
+                        }
+                    });
+                    
+                    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                        forceAudioUnmute();
+                        plyrInstance.play();
+                    });
+
+                    hls.on(Hls.Events.ERROR, (e, data) => { if (data.fatal && data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError(); });
+                } else {
+                    video.src = ch.url;
+                    plyrInstance.play();
+                }
+                loadFill.style.width = '100%'; loadPercent.textContent = '100';
+            } else {
+                if (mpegts.isSupported()) {
+                    mpegtsPlayer = mpegts.createPlayer({ type: 'mse', isLive: true, url: ch.url }, { enableWorker: true, stashInitialSize: 128, enableStashBuffer: false, liveBufferLatencyChasing: true });
+                    mpegtsPlayer.attachMediaElement(video);
+                    mpegtsPlayer.load();
+                    forceAudioUnmute();
+                    mpegtsPlayer.play();
+                    loadFill.style.width = '100%'; loadPercent.textContent = '100';
+                } else {
+                    video.src = ch.url;
+                    plyrInstance.play();
+                }
+            }
+            updateEpgMini(ch);
+            startLiveNextOverlayMonitor(ch);
+        }
+
+        video.addEventListener('playing', () => {
+            if (streamLoadTimer) clearTimeout(streamLoadTimer);
+            document.getElementById('streamAlertBox').style.display = 'none';
+            forceAudioUnmute();
+        });
+
+        video.addEventListener('play', () => { playAttemptTime = Date.now(); });
+        
+        video.addEventListener('pause', () => {
+            if (Date.now() - playAttemptTime < 1500 && video.currentTime === 0 && activeChannel) {
+                if (streamLoadTimer) clearTimeout(streamLoadTimer);
+                const alertBox = document.getElementById('streamAlertBox');
+                alertBox.style.display = 'flex';
+                alertBox.style.background = 'rgba(255, 42, 95, 0.25)';
+                document.getElementById('streamAlertText').innerHTML = `❌ <strong>Sajnaljuk, ez a tartalom jelenleg nem erheto el!</strong> A forrasszerver offline vagy szakadas tortent.`;
+                if (plyrInstance) plyrInstance.stop();
+            }
+            saveCurrentPosition();
+        });
+
+        video.addEventListener('error', () => {
+            if (activeChannel) {
+                if (streamLoadTimer) clearTimeout(streamLoadTimer);
+                const alertBox = document.getElementById('streamAlertBox');
+                alertBox.style.display = 'flex';
+                alertBox.style.background = 'rgba(255, 42, 95, 0.25)';
+                document.getElementById('streamAlertText').innerHTML = `❌ <strong>Hiba tortent a betolteskor!</strong> A stream nem elerheto vagy megszakadt.`;
+                if (plyrInstance) plyrInstance.stop();
+            }
+        });
+
+        function saveCurrentPosition() {
+            if (!video || !activeChannel || !video.duration || video.duration < 30) return;
+
+            const currentTime = video.currentTime;
+            const duration = video.duration;
+            const timeLeft = duration - currentTime;
+            const pct = Math.round((currentTime / duration) * 100);
+
+            let currentSaved = JSON.parse(localStorage.getItem('robi_continue_watching') || '[]');
+            currentSaved = currentSaved.filter(x => x.name !== activeChannel.name);
+
+            if (pct >= 1 && timeLeft > 60) {
+                const cleanChannelObj = { id: activeChannel.id, name: activeChannel.name, logo: activeChannel.logo, group: activeChannel.group, url: activeChannel.url };
+                currentSaved.unshift({ name: activeChannel.name, time: currentTime, pct: pct, chSource: cleanChannelObj });
+                if (currentSaved.length > 12) currentSaved.pop(); 
+                localStorage.setItem('robi_continue_watching', JSON.stringify(currentSaved));
+            } else if (timeLeft <= 60) {
+                localStorage.setItem('robi_continue_watching', JSON.stringify(currentSaved));
+            }
+        }
+
+        video.addEventListener('timeupdate', () => {
+            if (!video.duration || video.duration < 30) return; 
+
+            const currentTime = video.currentTime;
+            const timeLeft = video.duration - currentTime;
+
+            if (activeChannel && Math.abs(currentTime - lastSavedTime) >= 1) {
+                lastSavedTime = currentTime; saveCurrentPosition();
+            }
+
+            if (timeLeft <= 30 && !popupTriggered) { popupTriggered = true; triggerVideoEndPopup(); }
+        });
+
+        window.addEventListener('beforeunload', saveCurrentPosition);
+
+        function triggerVideoEndPopup() {
+            const popup = document.getElementById('videoSlidePopup');
+            const tag = document.getElementById('popupTag');
+            const title = document.getElementById('popupTitle');
+            const btn = document.getElementById('popupBtn');
+
+            const info = parseSeriesInfo(activeChannel.name);
+            
+            if (info.isSeries) {
+                const currentGroupChs = channelsByGroup[activeChannel.group] || [];
+                const nextEp = currentGroupChs.find(ch => {
+                    const cInf = parseSeriesInfo(ch.name);
+                    return cInf.isSeries && cInf.seriesName === info.seriesName && cInf.season === info.season && cInf.episode === (info.episode + 1);
+                });
+
+                if (nextEp) {
+                    tag.textContent = "Kovetkezo resz inditasa"; title.textContent = nextEp.name;
+                    btn.onclick = () => { playChannel(nextEp); closeSlidePopup(); };
+                    popup.classList.add('show'); return;
+                }
+            }
+
+            tag.textContent = "A RobiTV ajanlja:";
+            const moviePool = allChannels.filter(ch => !parseSeriesInfo(ch.name).isSeries && !ch.group.includes('Csatornak'));
+            const randomMovie = moviePool.length > 0 ? moviePool[Math.floor(Math.random() * moviePool.length)] : allChannels[Math.floor(Math.random() * allChannels.length)];
+
+            title.textContent = randomMovie.name; btn.textContent = "Megtekintes";
+            btn.onclick = () => { playChannel(randomMovie); closeSlidePopup(); };
+            popup.classList.add('show');
+        }
+
+        function closeSlidePopup() { document.getElementById('videoSlidePopup').classList.remove('show'); }
+
+        function startLiveNextOverlayMonitor(ch) {
+            if (liveNextOverlayInterval) clearInterval(liveNextOverlayInterval);
+            const overlay = document.getElementById('liveNextOverlay');
+            overlay.style.display = 'none';
+
+            if (isVodGroup(ch.group)) return; 
+
+            liveNextOverlayInterval = setInterval(() => {
+                if (video.duration) return; 
+
+                const data = getEpgForChannel(ch);
+                if (data && data.now && data.next) {
+                    const nowTime = new Date();
+                    const timeLeftMs = data.now.stop - nowTime;
+                    const timeLeftMins = Math.floor(timeLeftMs / 1000 / 60);
+
+                    if (timeLeftMins === 5 && overlay.style.display === 'none') {
+                        overlay.innerHTML = `
+                            <div style="font-size:10px; font-weight:800; color:var(--accent-magenta); letter-spacing:1px;"><i class="fa-solid fa-bolt"></i> ROBITV</div>
+                            <div style="font-size:13px; font-weight:700; color:#fff; margin-top:2px;">Mindjart kovetkezik: ${data.next.title}</div>
+                            <div style="font-size:11px; color:var(--accent-cyan); margin-top:1px;">Kezdesi ido: ${formatTime(data.next.start)}</div>
+                        `;
+                        overlay.style.display = 'block';
+                        setTimeout(() => { overlay.style.display = 'none'; }, 15000);
+                    }
+                }
+            }, 30000);
+        }
+
+        // ÚJ EPG MINI MEGJELENÍTÉS (Csak aktuális és következő)
+        function updateEpgMini(ch) {
+            const box = document.getElementById('epgMini');
+            
+            if (isVodGroup(ch.group)) {
+                box.innerHTML = `<div class="epg-now"><i class="fa-solid fa-film"></i> ${ch.name}</div><div style="font-size:12px; color:var(--accent-cyan);">Media tartalom</div><div class="epg-desc">Ez egy fix videofajl / film, nem tartozik hozza elo musorujsag. Javaslat: Ha nincs hangja a filmnek, probald meg egy masik bongeszobol (pl. Edge vagy Safari) lejatszani. Jo szorakozast! 🍿</div>`;
+                return;
+            }
+
+            const data = getEpgForChannel(ch);
+
+            if (!data || (!data.now && !data.next)) {
+                box.innerHTML = `<div class="epg-now"><i class="fa-solid fa-tv"></i> ${ch.name}</div><div style="font-size:12px; color:var(--text-muted);">Nincs elerheto adat</div><div class="epg-desc">Nem talalhato elo musorinformacio ehhez a csatornahoz.</div>`;
+                return;
+            }
+
+            let html = `<div class="epg-now" style="color: var(--accent-cyan);"><i class="fa-solid fa-circle-info"></i> Musorujsag - ${ch.name}</div>`;
+            html += `<div class="epg-timeline-list">`;
+
+            if (data.now) {
+                html += `
+                    <div class="epg-timeline-item current-live">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span class="epg-title">🔴 MOST: ${data.now.title}</span>
+                            <span class="epg-time">${formatTime(data.now.start)} - ${formatTime(data.now.stop)}</span>
+                        </div>
+                        ${data.now.desc ? `<div class="epg-desc" style="margin-top:6px;">${data.now.desc}</div>` : ''}
+                    </div>
+                `;
+            }
+
+            if (data.next) {
+                html += `
+                    <div class="epg-timeline-item">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span class="epg-title">⏭ KÖVETKEZIK: ${data.next.title}</span>
+                            <span class="epg-time">${formatTime(data.next.start)} - ${formatTime(data.next.stop)}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += `</div>`;
+            box.innerHTML = html;
+        }
+
+        async function initSystem() {
+            updateStatus('m3u', 'warn', 'Betoltes...');
+            try {
+                const gas = await fetch(GOOGLE_SCRIPT_URL);
+                const gasData = await gas.json();
+                mySessionId = gasData.session_id;
+                document.getElementById('activeUsersCount').textContent = gasData.active_viewers + " online";
+
+                currentM3uUrl = gasData.m3u_url;
+                currentEpgUrl = gasData.epg_url;
+                currentApiUrl = gasData.api_url;
+                savedCategoryOrder = gasData.category_order || [];
+
+                setInterval(async () => {
+                    try {
+                        const pulse = await fetch(`${GOOGLE_SCRIPT_URL}?action=heartbeat&session_id=${mySessionId}`);
+                        const pData = await pulse.json();
+                        document.getElementById('activeUsersCount').textContent = pData.active_viewers + " online";
+                    } catch(_) {}
+                }, 20000);
+
+                fetch(`${GOOGLE_SCRIPT_URL}?action=getApi`).then(r => r.json()).then(api => {
+                    if (api?.user_info?.exp_date) {
+                        const d = new Date(parseInt(api.user_info.exp_date) * 1000);
+                        document.getElementById('expireText').textContent = "Lejarat: " + d.toISOString().split('T')[0];
+                    } else { document.getElementById('expireText').textContent = "Lejarat: Aktiv"; }
+                }).catch(() => {});
+
+                const m3uRes = await fetch(`${GOOGLE_SCRIPT_URL}?action=getM3u`);
+                const m3uText = await m3uRes.text();
+                allChannels = parseM3U(m3uText);
+
+                channelsByGroup = {};
+                allChannels.forEach(ch => {
+                    if (!channelsByGroup[ch.group]) channelsByGroup[ch.group] = [];
+                    channelsByGroup[ch.group].push(ch);
+                });
+                
+                // Ha vannak visszanézhető csatornák, dedikált mappát hozunk létre
+                const catchupChannels = allChannels.filter(c => c.isCatchup);
+                if (catchupChannels.length > 0) channelsByGroup["⏪ Visszanézhető Csatornák"] = catchupChannels;
+                
+                groupNames = Object.keys(channelsByGroup);
+
+                updateStatus('m3u', 'ok', allChannels.length + " ado");
+                
+                const loader = document.getElementById('globalLoader');
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 400);
+
+                renderDashboard();
+                renderCategorySidebar(null);
+                
+                loadEPGForGroup("⭐ Élő Magyar Csatornák");
+            } catch (e) { 
+                updateStatus('m3u', 'error', 'Szerverhiba'); 
+                document.getElementById('globalLoader').innerHTML = `<div style="color:var(--accent-magenta); font-weight:700;">Szerver kapcsolodasi hiba! Ellenorizd a Google Script linkedet!</div>`;
+            }
+
+            plyrInstance = new Plyr(video, { controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'], autoplay: true });
+            
+            setTimeout(() => {
+                const plyrContainer = document.querySelector('.plyr');
+                if (plyrContainer) {
+                    plyrContainer.appendChild(document.getElementById('liveNextOverlay'));
+                    plyrContainer.appendChild(document.getElementById('videoSlidePopup'));
+                }
+            }, 1000);
+        }
+
+        window.onload = initSystem;
+    </script>
+</body>
+</html>
