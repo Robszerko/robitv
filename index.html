@@ -112,7 +112,6 @@
             to { opacity: 0; visibility: hidden; } 
         }
 
-        /* Tökéletesített mobilos igazítás törés nélkül */
         @media (max-width: 600px) {
             .intro-logo {
                 font-size: 32px;
@@ -535,7 +534,7 @@
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyS5OrDZdC0tKLA9osC14_a2AXeUWLU5ZAUYf6Dt8aJjzaPIgk_oTiI-W8y3bpgJRJ58A/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwx6z7N1BuPWX5XO4Ruo7NHAHrsmvGoUlFGIvjVuyqbhpjm0ysiIcXryZaH4J8Y5v3FEg/exec"; 
 
         const jokes = [
             "Bitek és bájtok sorba rendezése...",
@@ -545,7 +544,11 @@
             "Keresem a távirányítót a szerverszobában...",
             "Az EPG mátrix dekódolása...",
             "Kérlek várj, a szerver épp a kávéját issza...",
-            "Pufferek feltöltése illegálisan jó tartalommal..."
+            "Pufferek feltöltése illegálisan jó tartalommal...",
+            "Szerverkábelek fésülése...",
+            "A bitek polírozása folyamatban...",
+            "A router éppen mély levegőt vesz...",
+            "Pufferelés a fénysebesség 99%-ával..."
         ];
 
         let allChannels = [];
@@ -579,6 +582,7 @@
         let playAttemptTime = 0;
         let draggedGroupName = null;
         let pendingResumeTime = 0;
+        let loadingJokeInterval = null;
 
         const loadFill = document.getElementById('loadFill');
         const loadPercent = document.getElementById('loadPercent');
@@ -592,10 +596,17 @@
             });
         }
 
+        // Vicces szövegek dinamikus váltogatása a betöltés alatt
+        loadingJokeInterval = setInterval(() => {
+            const jokeEl = document.getElementById('loadingJoke');
+            if (jokeEl) {
+                jokeEl.innerText = jokes[Math.floor(Math.random() * jokes.length)];
+            }
+        }, 2200);
+
         setTimeout(() => { 
             document.getElementById('introAnim').style.display = 'none';
             document.getElementById('globalLoader').style.display = 'flex';
-            document.getElementById('loadingJoke').innerText = jokes[Math.floor(Math.random() * jokes.length)];
         }, 7000);
 
         function resetToHome() {
@@ -856,16 +867,30 @@
             return result;
         }
 
-        function getEpgForChannel(ch, targetTime = new Date()) {
+        function getFullEpgForChannel(ch, targetTime = new Date()) {
             const id = ch.id || sanitizeId(ch.name);
             const list = epgDB[id] || [];
             if (!list.length) return null;
-            let current = null, next = null;
-            for (let p of list) {
-                if (targetTime >= p.start && targetTime < p.stop) { current = p; continue; }
-                if (current && p.start >= current.stop) { next = p; break; }
+            
+            let current = null;
+            let upcoming = [];
+            
+            for (let i = 0; i < list.length; i++) {
+                const p = list[i];
+                if (targetTime >= p.start && targetTime < p.stop) {
+                    current = p;
+                } else if (p.start >= targetTime) {
+                    upcoming.push(p);
+                }
             }
-            return { now: current, next: next };
+            
+            return { now: current, upcoming: upcoming.slice(0, 6) }; // Legfeljebb a következő 6 műsor
+        }
+
+        function getEpgForChannel(ch, targetTime = new Date()) {
+            const data = getFullEpgForChannel(ch, targetTime);
+            if (!data) return null;
+            return { now: data.now, next: data.upcoming ? data.upcoming[0] : null };
         }
 
         function getSortedGroupNames() {
@@ -1429,40 +1454,70 @@
         function updateEpgMini(ch) {
             const box = document.getElementById('epgMini');
             if (!box) return;
+            
             if (isVodGroup(ch.group)) {
-                box.innerHTML = `<div class="epg-now"><i class="fa-solid fa-film"></i> ${ch.name}</div><div style="font-size:12px; color:var(--accent-cyan);">Média tartalom</div><div class="epg-desc">Ez egy fix videofájl / film, nem tartozik hozzá élő műsorújság. Javaslat: Ha nincs hangja a filmnek, próbáld meg egy másik böngészőből lejátszani. Jó szórakozást! 🍿</div>`;
+                box.innerHTML = `
+                    <div class="epg-now"><i class="fa-solid fa-film"></i> ${ch.name}</div>
+                    <div style="font-size:12px; color:var(--accent-cyan); margin-bottom: 4px;">Média tartalom</div>
+                    <div class="epg-desc">Ez egy fix videofájl / film, nem tartozik hozzá élő műsorújság. Javaslat: Ha nincs hangja a filmnek, próbáld meg egy másik böngészőből lejátszani. Jó szórakozást! 🍿</div>
+                `;
                 return;
             }
 
-            const data = getEpgForChannel(ch);
-            if (!data || (!data.now && !data.next)) {
-                box.innerHTML = `<div class="epg-now"><i class="fa-solid fa-tv"></i> ${ch.name}</div><div style="font-size:12px; color:var(--text-muted);">Nincs elérhető adat</div><div class="epg-desc">Nem található élő műsorinformáció ehhez a csatornához.</div>`;
+            const data = getFullEpgForChannel(ch);
+            if (!data || (!data.now && (!data.upcoming || data.upcoming.length === 0))) {
+                box.innerHTML = `
+                    <div class="epg-now"><i class="fa-solid fa-tv"></i> ${ch.name}</div>
+                    <div style="font-size:12px; color:var(--text-muted); margin-bottom: 4px;">Nincs elérhető adat</div>
+                    <div class="epg-desc">Nem található élő műsorinformáció ehhez a csatornához.</div>
+                `;
                 return;
             }
 
-            let html = `<div class="epg-now" style="color: var(--accent-cyan);"><i class="fa-solid fa-circle-info"></i> Műsorújság - ${ch.name}</div>`;
-            html += `<div class="epg-timeline-list">`;
+            let html = `
+                <div class="epg-now" style="color: var(--accent-cyan); margin-bottom: 12px; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px;">
+                    <i class="fa-solid fa-circle-info"></i> Műsorújság - ${ch.name}
+                </div>
+            `;
+            html += `<div class="epg-timeline-list" style="display: flex; flex-direction: column; gap: 8px;">`;
+            
             if (data.now) {
-                html += `<div class="epg-timeline-item current-live"><div style="display:flex; justify-content:space-between; align-items:center;"><span class="epg-title">🔴 MOST: ${data.now.title}</span><span class="epg-time">${formatTime(data.now.start)} - ${formatTime(data.now.stop)}</span></div>${data.now.desc ? `<div class="epg-desc" style="margin-top:6px;">${data.now.desc}</div>` : ''}</div>`;
+                html += `
+                    <div class="epg-timeline-item current-live" style="padding: 12px; border-radius: var(--radius-sm); border-left: 3px solid var(--accent-magenta); background: rgba(255, 42, 95, 0.08);">
+                        <div style="display:flex; justify-content:space-between; align-items:center; gap: 10px;">
+                            <span class="epg-title" style="font-weight: 700; color: #fff;">🔴 MOST: ${data.now.title}</span>
+                            <span class="epg-time" style="font-size: 12px; color: var(--accent-cyan); font-family: monospace;">${formatTime(data.now.start)} - ${formatTime(data.now.stop)}</span>
+                        </div>
+                        ${data.now.desc ? `<div class="epg-desc" style="margin-top:6px; font-size:12px; color:var(--text-secondary); line-height:1.4;">${data.now.desc}</div>` : ''}
+                    </div>
+                `;
             }
-            if (data.next) {
-                html += `<div class="epg-timeline-item"><div style="display:flex; justify-content:space-between; align-items:center;"><span class="epg-title">⏭ KÖVETKEZIK: ${data.next.title}</span><span class="epg-time">${formatTime(data.next.start)} - ${formatTime(data.next.stop)}</span></div></div>`;
+            
+            if (data.upcoming && data.upcoming.length > 0) {
+                data.upcoming.forEach((prog, idx) => {
+                    html += `
+                        <div class="epg-timeline-item" style="padding: 10px 12px; border-radius: var(--radius-sm); border-left: 3px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.02); display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                            <span class="epg-title" style="font-size: 13px; font-weight: 500; color: var(--text-primary);">${idx === 0 ? '⏭ KÖVETKEZIK: ' : ''}${prog.title}</span>
+                            <span class="epg-time" style="font-size: 12px; color: var(--text-secondary); font-family: monospace; white-space: nowrap;">${formatTime(prog.start)} - ${formatTime(prog.stop)}</span>
+                        </div>
+                    `;
+                });
             }
+            
             html += `</div>`;
             box.innerHTML = html;
         }
 
         // PRÍMELŐ FUNKCIÓ AZ ANDROID CHROME FELOLDÁSÁRA:
-        // Megelőzi, hogy a mobil böngésző biztonsági okokból blokkolja az aszinkron adásbetöltést!
         function primeVideoElement(video) {
             if (!video) return;
             try {
                 const playPromise = video.play();
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
-                        // sikeres prímelés, a böngésző mostantól megbízhatónak tekinti az elemet
+                        // sikeres prímelés
                     }).catch(() => {
-                        // elkapjuk az üres indítási hibát csendben
+                        // elkapjuk csendben
                     });
                 }
             } catch(e) {}
@@ -1502,7 +1557,7 @@
             if (streamLoadTimer) clearTimeout(streamLoadTimer);
             streamLoadTimer = setTimeout(() => {
                 document.getElementById('streamAlertBox').style.display = 'flex';
-            }, 25000);
+            }, 20000);
 
             if (!ch.url) return;
 
@@ -1538,7 +1593,6 @@
                 };
             } else if (isM3u8) {
                 // MOBIL KÉSZÜLÉKEK (Android & iOS) ESETÉN NATÍV RENDSZER-LEJÁTSZÓT HASZNÁLUNK:
-                // Kikerüli az ExoPlayer / Hls.js MSE hardveres pufferelési inkompatibilitási hibáit
                 if (isMobile) {
                     if (plyrInstance) {
                         plyrInstance.source = {
@@ -1557,7 +1611,7 @@
                         try { video.play(); } catch(e) {}
                     }
                 } else {
-                    // ASZTALI KÖRNYEZETBEN HLS.JS (Mert az asztali Chrome nem támogatja natívan az M3U8-at)
+                    // ASZTALI KÖRNYEZETBEN HLS.JS
                     if (Hls.isSupported()) {
                         hls = new Hls({ 
                             enableWorker: false, 
@@ -1639,46 +1693,18 @@
             startLiveNextOverlayMonitor(ch);
         }
 
-        function saveCurrentPosition() {
-            const video = document.getElementById('player');
-            if (!video || !activeChannel || !video.duration || video.duration < 30) return;
-            const currentTime = video.currentTime;
-            const duration = video.duration;
-            const timeLeft = duration - currentTime;
-            const pct = Math.round((currentTime / duration) * 100);
-
-            if (!isVodGroup(activeChannel.group)) return;
-
-            continueCloudList = continueCloudList.filter(x => x.id !== activeChannel.id);
-
-            if (pct >= 1 && timeLeft > 60) {
-                continueCloudList.unshift({ id: activeChannel.id, time: currentTime, pct: pct, chSource: activeChannel });
-                if (continueCloudList.length > 12) continueCloudList.pop(); 
-                syncContinueListToCloud(false);
-            } else if (timeLeft <= 60) {
-                syncContinueListToCloud(true);
-            }
-        }
-
-        function syncContinueListToCloud(force = false) {
-            const now = Date.now();
-            if (!force && now - lastCloudSyncTime < 20000) return;
-            lastCloudSyncTime = now;
-            const minimalData = continueCloudList.map(item => ({ id: item.id, time: item.time, pct: item.pct }));
-            const encoded = encodeURIComponent(JSON.stringify(minimalData));
-            
-            fetch(`${GOOGLE_SCRIPT_URL}?action=saveContinue&data=${encoded}`, { 
-                method: "GET",
-                keepalive: true 
-            }).catch(err => console.error("Cloud sync hiba:", err));
-        }
-
         async function initSystem() {
             updateStatus('m3u', 'warn', 'Betöltés...');
             try {
-                const gas = await fetch(`${GOOGLE_SCRIPT_URL}?session_id=${mySessionId}`);
-                const gasData = await gas.json();
+                // PÁRHUZAMOSÍTOTT RENDKÍVÜL GYORS KISZOLGÁLÓ INDÍTÁS (Promise.all)
+                const configPromise = fetch(`${GOOGLE_SCRIPT_URL}?session_id=${mySessionId}`).then(r => r.json());
+                const m3uPromise = fetch(`${GOOGLE_SCRIPT_URL}?action=getM3u`).then(r => r.text());
+
+                const [gasData, m3uText] = await Promise.all([configPromise, m3uPromise]);
                 
+                // Időzített viccelődés kikapcsolása a háttérben
+                if (loadingJokeInterval) clearInterval(loadingJokeInterval);
+
                 document.getElementById('activeUsersCount').textContent = (gasData.active_viewers || 1) + " online";
                 
                 let expDateValue = gasData.expire_date || "Nincs adat";
@@ -1694,8 +1720,6 @@
                 savedCategoryOrder = gasData.category_order || [];
                 deletedGroupsList = gasData.deleted_groups || [];
                 
-                const m3uRes = await fetch(`${GOOGLE_SCRIPT_URL}?action=getM3u`);
-                const m3uText = await m3uRes.text();
                 allChannels = parseM3U(m3uText);
 
                 const cloudSavedRaw = gasData.continue_watching || [];
