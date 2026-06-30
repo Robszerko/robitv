@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="hu">
 <head>
     <meta charset="UTF-8" />
@@ -39,15 +39,75 @@
         ::-webkit-scrollbar-thumb { background:rgba(0,229,255,0.3); border-radius:20px; }
         ::-webkit-scrollbar-thumb:hover { background:var(--accent-cyan); }
 
-        #introAnim { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999999; display: flex; align-items: center; justify-content: center; flex-direction: column; animation: fadeOutIntro 0.5s ease 3.5s forwards; }
-        .intro-n { color: var(--netflix-red); font-size: 150px; font-weight: 900; font-family: Impact, sans-serif; opacity: 0; transform: scale(0.5); animation: popN 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-        .intro-glitch { display: none; text-align: center; color: #fff; animation: showGlitch 2s ease forwards; }
-        .intro-glitch h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 50px; font-weight: 800; background: linear-gradient(135deg, #fff 30%, var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 15px rgba(0,229,255,0.4)); margin-bottom: 10px; }
-        .intro-glitch p { color: var(--text-muted); font-size: 16px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        #introAnim { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: #000; 
+            z-index: 9999999; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            flex-direction: column; 
+            gap: 20px;
+            animation: fadeOutIntro 0.5s ease 7s forwards; /* 3 másodperccel meghosszabbítva (4s helyett 7s) */
+        }
         
-        @keyframes popN { 0% { opacity: 0; transform: scale(0.5); } 30% { opacity: 1; transform: scale(1.1); } 80% { opacity: 1; transform: scale(1); } 90% { opacity: 0; filter: blur(10px); transform: scale(1.5); } 100% { opacity: 0; display: none; } }
-        @keyframes showGlitch { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeOutIntro { to { opacity: 0; visibility: hidden; } }
+        .intro-logo { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            font-size: 54px; 
+            font-weight: 800; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            opacity: 0; 
+            transform: scale(0.8); 
+            animation: introPop 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s forwards; 
+        }
+        .intro-logo i { 
+            color: var(--accent-magenta); 
+            font-size: 58px; 
+            filter: drop-shadow(0 0 20px rgba(255,42,95,0.6)); 
+        }
+        .intro-logo span { 
+            background: linear-gradient(135deg, #fff 30%, var(--accent-cyan)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            filter: drop-shadow(0 0 15px rgba(0,229,255,0.3));
+        }
+        .intro-logo small { 
+            font-size: 26px; 
+            font-weight: 400; 
+            color: var(--text-muted); 
+            -webkit-text-fill-color: var(--text-muted); 
+            margin-left: 6px; 
+        }
+        
+        .intro-slogan { 
+            font-size: 15px; 
+            font-weight: 600; 
+            letter-spacing: 4px; 
+            text-transform: uppercase; 
+            color: var(--text-muted); 
+            opacity: 0; 
+            transform: translateY(20px); 
+            animation: introSlideUp 1.5s ease 1.8s forwards; 
+        }
+        
+        @keyframes introPop { 
+            0% { opacity: 0; transform: scale(0.8); } 
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 1; transform: scale(1); } 
+        }
+        @keyframes introSlideUp { 
+            0% { opacity: 0; transform: translateY(20px); } 
+            100% { opacity: 1; transform: translateY(0); } 
+        }
+        @keyframes fadeOutIntro { 
+            to { opacity: 0; visibility: hidden; } 
+        }
 
         .global-loader { position: fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-primary); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; transition: opacity 0.4s ease; }
         .loader-spinner { width: 60px; height: 60px; border: 6px solid rgba(0,229,255,0.1); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite; box-shadow: 0 0 20px rgba(0,229,255,0.2); }
@@ -111,47 +171,6 @@
         .dash-card.special i { color: var(--accent-magenta); }
         .dash-card .dash-name { font-weight:700; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; pointer-events: none; }
         .dash-card .dash-count { font-size:12px; color:var(--text-muted); margin-top:4px; pointer-events: none; }
-
-        .delete-card-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: rgba(0,0,0,0.6);
-            border: 1px solid rgba(255,255,255,0.15);
-            color: var(--text-muted);
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.2s;
-            z-index: 5;
-        }
-        .dash-card:hover .delete-card-btn {
-            color: var(--text-primary);
-            border-color: var(--accent-magenta);
-        }
-        .delete-card-btn:hover {
-            background: var(--accent-magenta) !important;
-            color: #fff !important;
-            transform: scale(1.1);
-        }
-
-        .hide-sidebar-btn {
-            cursor: pointer;
-            padding: 2px 4px;
-            border-radius: 4px;
-            transition: var(--transition);
-            display: none;
-        }
-        .category-card:hover .hide-sidebar-btn {
-            display: inline-block;
-        }
-        .hide-sidebar-btn:hover i {
-            color: var(--accent-magenta) !important;
-        }
 
         .continue-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; padding: 10px; width:100%;}
         .continue-card-lg { background: var(--bg-secondary); border: 1px solid var(--glass-border); border-radius: var(--radius-md); overflow: hidden; position: relative; cursor: pointer; transition: var(--transition); }
@@ -369,16 +388,15 @@
 <body>
 
     <div id="introAnim">
-        <div class="intro-n" id="introN">N</div>
-        <div class="intro-glitch" id="introGlitch">
-            <h1>RobiTV Premium</h1>
-            <p>Felejtsd el a többit.</p>
+        <div class="intro-logo" id="introLogo">
+            <i class="fa-solid fa-bolt"></i><span>RobiTV</span><small>Premium</small>
         </div>
+        <div class="intro-slogan" id="introSlogan">Felejtsd el a többit.</div>
     </div>
 
     <div class="global-loader" id="globalLoader" style="display: none;">
-        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:20px; font-weight:800; text-align:center; color: var(--accent-cyan); margin-bottom: 10px;">
-            <i class="fa-solid fa-bolt" style="color:var(--accent-magenta);"></i> RobiTV
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:26px; font-weight:800; display:flex; align-items:center; gap:10px; color:#fff; margin-bottom: 20px;">
+            <i class="fa-solid fa-bolt" style="color:var(--accent-magenta); font-size:30px; filter:drop-shadow(0 0 10px rgba(255,42,95,0.5));"></i><span>RobiTV</span><small style="font-size:14px; font-weight:400; color:var(--text-muted); margin-left:4px;">Premium</small>
         </div>
         <div class="loader-spinner"></div>
         <div class="funny-quote" id="loadingJoke">Bitek és bájtok sorba rendezése...</div>
@@ -496,7 +514,7 @@
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwQ6BMut0hHl4yWr6ikFaeFeI_qJARjQz6Uxfn7odFLKeKOzK7il_c7QKeBAdwkKlRCPw/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTZr_loxJXStzTq2k9Loncl32aSMCcqDn6qYNg97xVCRorf3khIhVgcRyn-AlEC66NRA/exec"; 
 
         const jokes = [
             "Bitek és bájtok sorba rendezése...",
@@ -541,7 +559,6 @@
         let draggedGroupName = null;
         let pendingResumeTime = 0;
 
-        const video = document.getElementById('player');
         const loadFill = document.getElementById('loadFill');
         const loadPercent = document.getElementById('loadPercent');
 
@@ -552,22 +569,11 @@
             });
         }
 
-        setTimeout(() => {
-            const n = document.getElementById('introN');
-            const glitch = document.getElementById('introGlitch');
-            setTimeout(() => { glitch.style.display = 'block'; }, 1200);
-            setTimeout(() => { 
-                document.getElementById('introAnim').style.display = 'none';
-                document.getElementById('globalLoader').style.display = 'flex';
-                document.getElementById('loadingJoke').innerText = jokes[Math.floor(Math.random() * jokes.length)];
-            }, 3500);
-        }, 100);
-
-        setInterval(() => {
-            if(document.getElementById('globalLoader').style.display === 'flex') {
-                document.getElementById('loadingJoke').innerText = jokes[Math.floor(Math.random() * jokes.length)];
-            }
-        }, 2500);
+        setTimeout(() => { 
+            document.getElementById('introAnim').style.display = 'none';
+            document.getElementById('globalLoader').style.display = 'flex';
+            document.getElementById('loadingJoke').innerText = jokes[Math.floor(Math.random() * jokes.length)];
+        }, 7000);
 
         function resetToHome() {
             if (hls) { hls.destroy(); hls = null; }
@@ -843,7 +849,6 @@
             const fixedTops = ["⭐ Élő Magyar Csatornák", "⏪ Visszanézhető Csatornák"];
             
             let activeGroups = groupNames.filter(g => !deletedGroupsList.includes(g));
-            
             let others = activeGroups.filter(g => !fixedTops.includes(g));
             
             if (savedCategoryOrder && savedCategoryOrder.length > 0) {
@@ -914,20 +919,6 @@
             } catch(e) {}
         }
 
-        function hideCategory(group) {
-            if (confirm(`Biztosan el szeretnéd rejteni a(z) "${group}" kategóriát?`)) {
-                if (!deletedGroupsList.includes(group)) {
-                    deletedGroupsList.push(group);
-                    syncDeletedGroupsToCloud();
-                    renderDashboard();
-                    renderCategorySidebar(activeGroup === group ? null : activeGroup);
-                    if (activeGroup === group) {
-                        goToDashboard();
-                    }
-                }
-            }
-        }
-
         function restoreCategory(group) {
             deletedGroupsList = deletedGroupsList.filter(g => g !== group);
             syncDeletedGroupsToCloud();
@@ -977,9 +968,6 @@
                 let icon = group.includes("Visszanézhető") ? '<i class="fa-solid fa-clock-rotate-left" style="color:#fbbf24;"></i>' : '<i class="fa-solid fa-folder-open"></i>';
 
                 card.innerHTML = `
-                    <button class="delete-card-btn" title="Kategória elrejtése" onclick="event.stopPropagation(); hideCategory('${group.replace(/'/g, "\\'")}')">
-                        <i class="fa-solid fa-eye-slash"></i>
-                    </button>
                     ${icon}
                     <div class="dash-name">${group}</div>
                     <div class="dash-count">${count} adó</div>
@@ -1029,9 +1017,6 @@
                     <span class="category-name">${displayGroup}</span>
                     <span style="display:flex; align-items:center; gap:6px;">
                         <span class="category-count">${count}</span>
-                        <span class="hide-sidebar-btn" title="Elrejtés" onclick="event.stopPropagation(); hideCategory('${group.replace(/'/g, "\\'")}')">
-                            <i class="fa-solid fa-eye-slash" style="font-size:11px; color:var(--text-muted);"></i>
-                        </span>
                     </span>
                 `;
                 div.onclick = () => openCategory(group);
@@ -1335,8 +1320,11 @@
         }
 
         function forceAudioUnmute() {
-            video.muted = false;
-            video.volume = 1.0;
+            const video = document.getElementById('player');
+            if (video) {
+                video.muted = false;
+                video.volume = 1.0;
+            }
             if(plyrInstance) {
                 try {
                     plyrInstance.muted = false; 
@@ -1345,7 +1333,104 @@
             }
         }
 
+        function closeSlidePopup() { 
+            const popup = document.getElementById('videoSlidePopup');
+            if (popup) popup.classList.remove('show'); 
+        }
+
+        function triggerVideoEndPopup() {
+            const popup = document.getElementById('videoSlidePopup');
+            const tag = document.getElementById('popupTag');
+            const title = document.getElementById('popupTitle');
+            const btn = document.getElementById('popupBtn');
+            if (!popup || !tag || !title || !btn) return;
+
+            const info = parseSeriesInfo(activeChannel.name);
+            
+            if (info.isSeries) {
+                const currentGroupChs = channelsByGroup[activeChannel.group] || [];
+                const nextEp = currentGroupChs.find(ch => {
+                    const cInf = parseSeriesInfo(ch.name);
+                    return cInf.isSeries && cInf.seriesName === info.seriesName && cInf.season === info.season && cInf.episode === (info.episode + 1);
+                });
+
+                if (nextEp) {
+                    tag.textContent = "Következő rész indítása"; 
+                    title.textContent = nextEp.name;
+                    btn.onclick = () => { playChannel(nextEp); closeSlidePopup(); };
+                    popup.classList.add('show'); 
+                    return;
+                }
+            }
+
+            tag.textContent = "A RobiTV ajánlja:";
+            const moviePool = allChannels.filter(ch => !parseSeriesInfo(ch.name).isSeries && !ch.group.includes('Csatornák'));
+            const randomMovie = moviePool.length > 0 ? moviePool[Math.floor(Math.random() * moviePool.length)] : allChannels[Math.floor(Math.random() * allChannels.length)];
+
+            title.textContent = randomMovie.name; 
+            btn.textContent = "Megtekintés";
+            btn.onclick = () => { playChannel(randomMovie); closeSlidePopup(); };
+            popup.classList.add('show');
+        }
+
+        function startLiveNextOverlayMonitor(ch) {
+            if (liveNextOverlayInterval) clearInterval(liveNextOverlayInterval);
+            const overlay = document.getElementById('liveNextOverlay');
+            if (!overlay) return;
+            overlay.style.display = 'none';
+            if (isVodGroup(ch.group)) return; 
+
+            liveNextOverlayInterval = setInterval(() => {
+                const video = document.getElementById('player');
+                if (video && video.duration) return; 
+
+                const data = getEpgForChannel(ch);
+                if (data && data.now && data.next) {
+                    const nowTime = new Date();
+                    const timeLeftMs = data.now.stop - nowTime;
+                    const timeLeftMins = Math.floor(timeLeftMs / 1000 / 60);
+
+                    if (timeLeftMins === 5 && overlay.style.display === 'none') {
+                        overlay.innerHTML = `
+                            <div style="font-size:10px; font-weight:800; color:var(--accent-magenta); letter-spacing:1px;"><i class="fa-solid fa-bolt"></i> ROBITV</div>
+                            <div style="font-size:13px; font-weight:700; color:#fff; margin-top:2px;">Mindjárt következik: ${data.next.title}</div>
+                            <div style="font-size:11px; color:var(--accent-cyan); margin-top:1px;">Kezdési idő: ${formatTime(data.next.start)}</div>
+                        `;
+                        overlay.style.display = 'block';
+                        setTimeout(() => { overlay.style.display = 'none'; }, 15000);
+                    }
+                }
+            }, 30000);
+        }
+
+        function updateEpgMini(ch) {
+            const box = document.getElementById('epgMini');
+            if (!box) return;
+            if (isVodGroup(ch.group)) {
+                box.innerHTML = `<div class="epg-now"><i class="fa-solid fa-film"></i> ${ch.name}</div><div style="font-size:12px; color:var(--accent-cyan);">Média tartalom</div><div class="epg-desc">Ez egy fix videofájl / film, nem tartozik hozzá élő műsorújság. Javaslat: Ha nincs hangja a filmnek, próbáld meg egy másik böngészőből lejátszani. Jó szórakozást! 🍿</div>`;
+                return;
+            }
+
+            const data = getEpgForChannel(ch);
+            if (!data || (!data.now && !data.next)) {
+                box.innerHTML = `<div class="epg-now"><i class="fa-solid fa-tv"></i> ${ch.name}</div><div style="font-size:12px; color:var(--text-muted);">Nincs elérhető adat</div><div class="epg-desc">Nem található élő műsorinformáció ehhez a csatornához.</div>`;
+                return;
+            }
+
+            let html = `<div class="epg-now" style="color: var(--accent-cyan);"><i class="fa-solid fa-circle-info"></i> Műsorújság - ${ch.name}</div>`;
+            html += `<div class="epg-timeline-list">`;
+            if (data.now) {
+                html += `<div class="epg-timeline-item current-live"><div style="display:flex; justify-content:space-between; align-items:center;"><span class="epg-title">🔴 MOST: ${data.now.title}</span><span class="epg-time">${formatTime(data.now.start)} - ${formatTime(data.now.stop)}</span></div>${data.now.desc ? `<div class="epg-desc" style="margin-top:6px;">${data.now.desc}</div>` : ''}</div>`;
+            }
+            if (data.next) {
+                html += `<div class="epg-timeline-item"><div style="display:flex; justify-content:space-between; align-items:center;"><span class="epg-title">⏭ KÖVETKEZIK: ${data.next.title}</span><span class="epg-time">${formatTime(data.next.start)} - ${formatTime(data.next.stop)}</span></div></div>`;
+            }
+            html += `</div>`;
+            box.innerHTML = html;
+        }
+
         function playChannel(ch, el, resumeTime = 0) {
+            const video = document.getElementById('player'); // DINAMIKUS LEKÉRDEZÉS - MEGELŐZI AZ ÁRVA DOM ELEM HIBÁT
             activeChannel = ch;
             popupTriggered = false;
             lastSavedTime = 0; 
@@ -1355,7 +1440,7 @@
             const alertBox = document.getElementById('streamAlertBox');
             alertBox.style.display = 'none';
             alertBox.style.background = 'rgba(255, 42, 95, 0.15)';
-            document.getElementById('streamAlertText').innerText = 'Hoppá! Ez az adás az átlagosnál lassabban tölt be. Kérlek várj még een pillanatot... 📺';
+            document.getElementById('streamAlertText').innerText = 'Hoppá! Ez az adás az átlagosnál lassabban tölt be. Kérlek várj még egy pillanatot... 📺';
 
             if (el) {
                 document.querySelectorAll('.channel-item').forEach(item => item.classList.remove('active'));
@@ -1401,7 +1486,7 @@
             } else if (isM3u8) {
                 if (Hls.isSupported()) {
                     hls = new Hls({ 
-                        enableWorker: true, 
+                        enableWorker: false, // kikapcsoljuk a workert a local file:/// CORS hiba kiküszöbölésére
                         lowLatencyMode: false, 
                         autoStartLoad: true, 
                         capLevelToPlayerSize: true, 
@@ -1439,7 +1524,7 @@
                 loadFill.style.width = '100%'; loadPercent.textContent = '100';
             } else {
                 if (mpegts.isSupported()) {
-                    mpegtsPlayer = mpegts.createPlayer({ type: 'mse', isLive: true, url: ch.url }, { enableWorker: true, stashInitialSize: 384, enableStashBuffer: true, liveBufferLatencyChasing: false });
+                    mpegtsPlayer = mpegts.createPlayer({ type: 'mse', isLive: true, url: ch.url }, { enableWorker: false, stashInitialSize: 384, enableStashBuffer: true, liveBufferLatencyChasing: false });
                     mpegtsPlayer.attachMediaElement(video);
                     mpegtsPlayer.load();
                     forceAudioUnmute();
@@ -1459,55 +1544,8 @@
             startLiveNextOverlayMonitor(ch);
         }
 
-        video.addEventListener('playing', () => {
-            if (streamLoadTimer) clearTimeout(streamLoadTimer);
-            document.getElementById('streamAlertBox').style.display = 'none';
-            forceAudioUnmute();
-        });
-
-        video.addEventListener('play', () => { playAttemptTime = Date.now(); });
-        
-        video.addEventListener('pause', () => {
-            if (Date.now() - playAttemptTime < 1500 && video.currentTime === 0 && activeChannel) {
-                if (streamLoadTimer) clearTimeout(streamLoadTimer);
-                const alertBox = document.getElementById('streamAlertBox');
-                alertBox.style.display = 'flex';
-                alertBox.style.background = 'rgba(255, 42, 95, 0.25)';
-                document.getElementById('streamAlertText').innerHTML = `❌ <strong>Sajnáljuk, ez a tartalom jelenleg nem elérhető!</strong> A forrásszerver offline vagy szakadás történt.`;
-                if (plyrInstance) {
-                    try { plyrInstance.stop(); } catch(e) {}
-                }
-            }
-            saveCurrentPosition();
-        });
-
-        video.addEventListener('error', () => {
-            if (activeChannel) {
-                if (streamLoadTimer) clearTimeout(streamLoadTimer);
-                const alertBox = document.getElementById('streamAlertBox');
-                alertBox.style.display = 'flex';
-                alertBox.style.background = 'rgba(255, 42, 95, 0.25)';
-                document.getElementById('streamAlertText').innerHTML = `❌ <strong>Hiba történt a betöltéskor!</strong> A stream nem elérhető vagy megszakadt.`;
-                if (plyrInstance) {
-                    try { plyrInstance.stop(); } catch(e) {}
-                }
-            }
-        });
-
-        function syncContinueListToCloud(force = false) {
-            const now = Date.now();
-            if (!force && now - lastCloudSyncTime < 20000) return;
-            lastCloudSyncTime = now;
-            const minimalData = continueCloudList.map(item => ({ id: item.id, time: item.time, pct: item.pct }));
-            const encoded = encodeURIComponent(JSON.stringify(minimalData));
-            
-            fetch(`${GOOGLE_SCRIPT_URL}?action=saveContinue&data=${encoded}`, { 
-                method: "GET",
-                keepalive: true 
-            }).catch(err => console.error("Cloud sync hiba:", err));
-        }
-
         function saveCurrentPosition() {
+            const video = document.getElementById('player');
             if (!video || !activeChannel || !video.duration || video.duration < 30) return;
             const currentTime = video.currentTime;
             const duration = video.duration;
@@ -1527,120 +1565,17 @@
             }
         }
 
-        video.addEventListener('timeupdate', () => {
-            if (!video.duration || video.duration < 30) return; 
-            const currentTime = video.currentTime;
-            const timeLeft = video.duration - currentTime;
-
-            if (activeChannel && currentTime > 0 && Math.abs(currentTime - lastSavedTime) >= 5) { 
-                lastSavedTime = currentTime; 
-                saveCurrentPosition();
-            }
-            if (timeLeft <= 30 && !popupTriggered) { popupTriggered = true; triggerVideoEndPopup(); }
-        });
-
-        video.addEventListener('seeking', saveCurrentPosition);
-        video.addEventListener('seeked', saveCurrentPosition);
-
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'hidden') {
-                saveCurrentPosition();
-                syncContinueListToCloud(true); 
-            }
-        });
-        window.addEventListener('pagehide', () => {
-            saveCurrentPosition();
-            syncContinueListToCloud(true);
-        });
-        window.addEventListener('beforeunload', () => { 
-            saveCurrentPosition(); 
-            syncContinueListToCloud(true); 
-        });
-
-        function triggerVideoEndPopup() {
-            const popup = document.getElementById('videoSlidePopup');
-            const tag = document.getElementById('popupTag');
-            const title = document.getElementById('popupTitle');
-            const btn = document.getElementById('popupBtn');
-
-            const info = parseSeriesInfo(activeChannel.name);
+        function syncContinueListToCloud(force = false) {
+            const now = Date.now();
+            if (!force && now - lastCloudSyncTime < 20000) return;
+            lastCloudSyncTime = now;
+            const minimalData = continueCloudList.map(item => ({ id: item.id, time: item.time, pct: item.pct }));
+            const encoded = encodeURIComponent(JSON.stringify(minimalData));
             
-            if (info.isSeries) {
-                const currentGroupChs = channelsByGroup[activeChannel.group] || [];
-                const nextEp = currentGroupChs.find(ch => {
-                    const cInf = parseSeriesInfo(ch.name);
-                    return cInf.isSeries && cInf.seriesName === info.seriesName && cInf.season === info.season && cInf.episode === (info.episode + 1);
-                });
-
-                if (nextEp) {
-                    tag.textContent = "Következő rész indítása"; title.textContent = nextEp.name;
-                    btn.onclick = () => { playChannel(nextEp); closeSlidePopup(); };
-                    popup.classList.add('show'); return;
-                }
-            }
-
-            tag.textContent = "A RobiTV ajánlja:";
-            const moviePool = allChannels.filter(ch => !parseSeriesInfo(ch.name).isSeries && !ch.group.includes('Csatornák'));
-            const randomMovie = moviePool.length > 0 ? moviePool[Math.floor(Math.random() * moviePool.length)] : allChannels[Math.floor(Math.random() * allChannels.length)];
-
-            title.textContent = randomMovie.name; btn.textContent = "Megtekintés";
-            btn.onclick = () => { playChannel(randomMovie); closeSlidePopup(); };
-            popup.classList.add('show');
-        }
-
-        function closeSlidePopup() { document.getElementById('videoSlidePopup').classList.remove('show'); }
-
-        function startLiveNextOverlayMonitor(ch) {
-            if (liveNextOverlayInterval) clearInterval(liveNextOverlayInterval);
-            const overlay = document.getElementById('liveNextOverlay');
-            overlay.style.display = 'none';
-            if (isVodGroup(ch.group)) return; 
-
-            liveNextOverlayInterval = setInterval(() => {
-                if (video.duration) return; 
-
-                const data = getEpgForChannel(ch);
-                if (data && data.now && data.next) {
-                    const nowTime = new Date();
-                    const timeLeftMs = data.now.stop - nowTime;
-                    const timeLeftMins = Math.floor(timeLeftMs / 1000 / 60);
-
-                    if (timeLeftMins === 5 && overlay.style.display === 'none') {
-                        overlay.innerHTML = `
-                            <div style="font-size:10px; font-weight:800; color:var(--accent-magenta); letter-spacing:1px;"><i class="fa-solid fa-bolt"></i> ROBITV</div>
-                            <div style="font-size:13px; font-weight:700; color:#fff; margin-top:2px;">Mindjárt következik: ${data.next.title}</div>
-                            <div style="font-size:11px; color:var(--accent-cyan); margin-top:1px;">Kezdési idő: ${formatTime(data.next.start)}</div>
-                        `;
-                        overlay.style.display = 'block';
-                        setTimeout(() => { overlay.style.display = 'none'; }, 15000);
-                    }
-                }
-            }, 30000);
-        }
-
-        function updateEpgMini(ch) {
-            const box = document.getElementById('epgMini');
-            if (isVodGroup(ch.group)) {
-                box.innerHTML = `<div class="epg-now"><i class="fa-solid fa-film"></i> ${ch.name}</div><div style="font-size:12px; color:var(--accent-cyan);">Média tartalom</div><div class="epg-desc">Ez egy fix videofájl / film, nem tartozik hozzá élő műsorújság. Javaslat: Ha nincs hangja a filmnek, próbáld meg egy másik böngészőből lejátszani. Jó szórakozást! 🍿</div>`;
-                return;
-            }
-
-            const data = getEpgForChannel(ch);
-            if (!data || (!data.now && !data.next)) {
-                box.innerHTML = `<div class="epg-now"><i class="fa-solid fa-tv"></i> ${ch.name}</div><div style="font-size:12px; color:var(--text-muted);">Nincs elérhető adat</div><div class="epg-desc">Nem található élő műsorinformáció ehhez a csatornához.</div>`;
-                return;
-            }
-
-            let html = `<div class="epg-now" style="color: var(--accent-cyan);"><i class="fa-solid fa-circle-info"></i> Műsorújság - ${ch.name}</div>`;
-            html += `<div class="epg-timeline-list">`;
-            if (data.now) {
-                html += `<div class="epg-timeline-item current-live"><div style="display:flex; justify-content:space-between; align-items:center;"><span class="epg-title">🔴 MOST: ${data.now.title}</span><span class="epg-time">${formatTime(data.now.start)} - ${formatTime(data.now.stop)}</span></div>${data.now.desc ? `<div class="epg-desc" style="margin-top:6px;">${data.now.desc}</div>` : ''}</div>`;
-            }
-            if (data.next) {
-                html += `<div class="epg-timeline-item"><div style="display:flex; justify-content:space-between; align-items:center;"><span class="epg-title">⏭ KÖVETKEZIK: ${data.next.title}</span><span class="epg-time">${formatTime(data.next.start)} - ${formatTime(data.next.stop)}</span></div></div>`;
-            }
-            html += `</div>`;
-            box.innerHTML = html;
+            fetch(`${GOOGLE_SCRIPT_URL}?action=saveContinue&data=${encoded}`, { 
+                method: "GET",
+                keepalive: true 
+            }).catch(err => console.error("Cloud sync hiba:", err));
         }
 
         async function initSystem() {
@@ -1706,10 +1641,73 @@
 
             } catch (e) { 
                 updateStatus('m3u', 'error', 'Szerverhiba'); 
-                document.getElementById('globalLoader').innerHTML = `<div style="color:var(--accent-magenta); font-weight:700;">Szerver kapcsolódási hiba! Ellenőrizd a Google Script linkedet!</div>`;
+                document.getElementById('globalLoader').innerHTML = `<div style="color:var(--accent-magenta); font-weight:700;">Szerver kapcsolódási hiba!</div>`;
             }
 
-            plyrInstance = new Plyr(video, { controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'], autoplay: true });
+            // PLYR INICIALIZÁLÁSA
+            const initialVideo = document.getElementById('player');
+            plyrInstance = new Plyr(initialVideo, { controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'], autoplay: true });
+            
+            // AZ AKTÍV DOM-BAN MARADT VIDEÓ ELEM LEKÉRDEZÉSE AZ ESEMÉNYEKHOZ
+            const activeVideo = document.getElementById('player');
+            if (activeVideo) {
+                activeVideo.addEventListener('playing', () => {
+                    if (streamLoadTimer) clearTimeout(streamLoadTimer);
+                    document.getElementById('streamAlertBox').style.display = 'none';
+                    forceAudioUnmute();
+                });
+
+                activeVideo.addEventListener('play', () => { playAttemptTime = Date.now(); });
+                
+                activeVideo.addEventListener('pause', () => {
+                    if (Date.now() - playAttemptTime < 1500 && activeVideo.currentTime === 0 && activeChannel) {
+                        if (streamLoadTimer) clearTimeout(streamLoadTimer);
+                        const alertBox = document.getElementById('streamAlertBox');
+                        alertBox.style.display = 'flex';
+                        alertBox.style.background = 'rgba(255, 42, 95, 0.25)';
+                        document.getElementById('streamAlertText').innerHTML = `❌ <strong>Sajnáljuk, ez a tartalom jelenleg nem elérhető!</strong> A forrásszerver offline vagy szakadás történt.`;
+                        if (plyrInstance) {
+                            try { plyrInstance.stop(); } catch(e) {}
+                        }
+                    }
+                    saveCurrentPosition();
+                });
+
+                activeVideo.addEventListener('error', () => {
+                    if (activeChannel) {
+                        if (streamLoadTimer) clearTimeout(streamLoadTimer);
+                        const alertBox = document.getElementById('streamAlertBox');
+                        alertBox.style.display = 'flex';
+                        alertBox.style.background = 'rgba(255, 42, 95, 0.25)';
+                        document.getElementById('streamAlertText').innerHTML = `❌ <strong>Hiba történt a betöltéskor!</strong> A stream nem elérhető vagy megszakadt.`;
+                        if (plyrInstance) {
+                            try { plyrInstance.stop(); } catch(e) {}
+                        }
+                    }
+                });
+
+                activeVideo.addEventListener('timeupdate', () => {
+                    if (!activeVideo.duration || activeVideo.duration < 30) return; 
+                    const currentTime = activeVideo.currentTime;
+                    const timeLeft = activeVideo.duration - currentTime;
+
+                    if (activeChannel && currentTime > 0 && Math.abs(currentTime - lastSavedTime) >= 5) { 
+                        lastSavedTime = currentTime; 
+                        saveCurrentPosition();
+                    }
+                    if (timeLeft <= 30 && !popupTriggered) { popupTriggered = true; triggerVideoEndPopup(); }
+                });
+
+                activeVideo.addEventListener('seeking', saveCurrentPosition);
+                activeVideo.addEventListener('seeked', saveCurrentPosition);
+                
+                activeVideo.addEventListener('loadedmetadata', () => {
+                    if (pendingResumeTime > 0) {
+                        activeVideo.currentTime = pendingResumeTime;
+                        pendingResumeTime = 0;
+                    }
+                });
+            }
             
             setTimeout(() => {
                 const plyrContainer = document.querySelector('.plyr');
