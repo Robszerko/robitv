@@ -41,38 +41,38 @@
 
         #introAnim { 
             position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
+            inset: 0;
+            width: 100vw;
+            height: 100vh; 
             background: #000; 
             z-index: 9999999; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             flex-direction: column; 
-            gap: 20px;
+            gap: 16px;
+            overflow: hidden;
             animation: fadeOutIntro 0.5s ease 7s forwards;
         }
         
         .intro-logo { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            font-size: 54px; 
+            font-size: 48px; 
             font-weight: 800; 
             display: flex; 
             align-items: center; 
             justify-content: center;
             gap: 12px; 
             opacity: 0; 
-            transform: scale(0.8); 
-            animation: introPop 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s forwards; 
+            transform: scale(0.9); 
+            animation: introPop 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s forwards; 
             text-align: center;
             width: 100%;
-            padding: 0 20px;
+            padding: 0 16px;
         }
         .intro-logo i { 
             color: var(--accent-magenta); 
-            font-size: 58px; 
+            font-size: 52px; 
             filter: drop-shadow(0 0 20px rgba(255,42,95,0.6)); 
         }
         .intro-logo span { 
@@ -82,7 +82,7 @@
             filter: drop-shadow(0 0 15px rgba(0,229,255,0.3));
         }
         .intro-logo small { 
-            font-size: 26px; 
+            font-size: 24px; 
             font-weight: 400; 
             color: var(--text-muted); 
             -webkit-text-fill-color: var(--text-muted); 
@@ -90,43 +90,42 @@
         }
         
         .intro-slogan { 
-            font-size: 15px; 
+            font-size: 14px; 
             font-weight: 600; 
             letter-spacing: 4px; 
             text-transform: uppercase; 
             color: var(--text-muted); 
             opacity: 0; 
-            transform: translateY(20px); 
-            animation: introSlideUp 1.5s ease 1.8s forwards; 
+            transform: translateY(15px); 
+            animation: introSlideUp 1.2s ease 1.8s forwards; 
         }
         
         @keyframes introPop { 
-            0% { opacity: 0; transform: scale(0.8); } 
-            50% { opacity: 1; transform: scale(1.05); }
+            0% { opacity: 0; transform: scale(0.9); } 
             100% { opacity: 1; transform: scale(1); } 
         }
         @keyframes introSlideUp { 
-            0% { opacity: 0; transform: translateY(20px); } 
+            0% { opacity: 0; transform: translateY(15px); } 
             100% { opacity: 1; transform: translateY(0); } 
         }
         @keyframes fadeOutIntro { 
             to { opacity: 0; visibility: hidden; } 
         }
 
-        /* Reszponzív logó méretezés mobilon, megelőzve az elcsúszást */
+        /* Tökéletesített mobilos igazítás törés nélkül */
         @media (max-width: 600px) {
             .intro-logo {
                 font-size: 32px;
                 gap: 8px;
             }
             .intro-logo i {
-                font-size: 36px;
+                font-size: 34px;
             }
             .intro-logo small {
-                font-size: 18px;
+                font-size: 16px;
             }
             .intro-slogan {
-                font-size: 12px;
+                font-size: 11px;
                 letter-spacing: 2px;
                 padding: 0 10px;
                 text-align: center;
@@ -412,9 +411,7 @@
 <body>
 
     <div id="introAnim">
-        <div class="intro-logo" id="introLogo">
-            <i class="fa-solid fa-bolt"></i><span>RobiTV</span><small>Premium</small>
-        </div>
+        <div class="intro-logo" id="introLogo"><i class="fa-solid fa-bolt"></i><span>RobiTV</span><small>Premium</small></div>
         <div class="intro-slogan" id="introSlogan">Felejtsd el a többit.</div>
     </div>
 
@@ -538,7 +535,7 @@
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyzQ6vgxcK8svwVlQhQs-anCmT5RLBqd7B-TzqSFplxW-oixm7Y70KmjyEgGwNoPpmmOg/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyS5OrDZdC0tKLA9osC14_a2AXeUWLU5ZAUYf6Dt8aJjzaPIgk_oTiI-W8y3bpgJRJ58A/exec"; 
 
         const jokes = [
             "Bitek és bájtok sorba rendezése...",
@@ -585,6 +582,8 @@
 
         const loadFill = document.getElementById('loadFill');
         const loadPercent = document.getElementById('loadPercent');
+
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
         function generateUUID() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -1453,8 +1452,28 @@
             box.innerHTML = html;
         }
 
+        // PRÍMELŐ FUNKCIÓ AZ ANDROID CHROME FELOLDÁSÁRA:
+        // Megelőzi, hogy a mobil böngésző biztonsági okokból blokkolja az aszinkron adásbetöltést!
+        function primeVideoElement(video) {
+            if (!video) return;
+            try {
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        // sikeres prímelés, a böngésző mostantól megbízhatónak tekinti az elemet
+                    }).catch(() => {
+                        // elkapjuk az üres indítási hibát csendben
+                    });
+                }
+            } catch(e) {}
+        }
+
         function playChannel(ch, el, resumeTime = 0) {
             const video = document.getElementById('player'); // DINAMIKUS LEKÉRDEZÉS
+            if (video) {
+                primeVideoElement(video); // AZONNALI SZINKRON AKTIVÁLÁS MOBILRA
+            }
+
             activeChannel = ch;
             popupTriggered = false;
             lastSavedTime = 0; 
@@ -1494,7 +1513,6 @@
             forceAudioUnmute();
 
             if (isStaticMovie) {
-                // Mobilon (iOS/Safari) a Plyr-en keresztüli absztrakt betöltés az optimális módszer
                 if (plyrInstance) {
                     plyrInstance.source = {
                         type: 'video',
@@ -1519,37 +1537,9 @@
                     }
                 };
             } else if (isM3u8) {
-                if (Hls.isSupported()) {
-                    hls = new Hls({ 
-                        enableWorker: false, // CORS warning megelőzése local fáljoknál (file:///)
-                        lowLatencyMode: false, 
-                        autoStartLoad: true, 
-                        capLevelToPlayerSize: true, 
-                        defaultAudioCodec: 'mp4a.40.2',
-                        maxBufferLength: 30,
-                        maxMaxBufferLength: 600
-                    });
-                    hls.loadSource(ch.url);
-                    hls.attachMedia(video);
-                    
-                    hls.on(Hls.Events.AUDIO_TRACKS_UPDATED, (e, data) => {
-                        if (data.audioTracks && data.audioTracks.length > 0) {
-                            let hunIdx = data.audioTracks.findIndex(t => t.name.toLowerCase().includes('hun') || t.name.toLowerCase().includes('magyar'));
-                            if(hunIdx !== -1) hls.audioTrack = hunIdx;
-                        }
-                    });
-                    
-                    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                        forceAudioUnmute();
-                        try { video.play(); } catch(e) {}
-                        if (plyrInstance) {
-                            try { plyrInstance.play(); } catch(e) {}
-                        }
-                    });
-
-                    hls.on(Hls.Events.ERROR, (e, data) => { if (data.fatal && data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError(); });
-                } else {
-                    // MOBILOS (iOS Safari) M3U8 BETÖLTÉS: A Plyr source frissítésével az iOS natív HLS motorja indul el!
+                // MOBIL KÉSZÜLÉKEK (Android & iOS) ESETÉN NATÍV RENDSZER-LEJÁTSZÓT HASZNÁLUNK:
+                // Kikerüli az ExoPlayer / Hls.js MSE hardveres pufferelési inkompatibilitási hibáit
+                if (isMobile) {
                     if (plyrInstance) {
                         plyrInstance.source = {
                             type: 'video',
@@ -1565,6 +1555,55 @@
                         video.src = ch.url;
                         video.load();
                         try { video.play(); } catch(e) {}
+                    }
+                } else {
+                    // ASZTALI KÖRNYEZETBEN HLS.JS (Mert az asztali Chrome nem támogatja natívan az M3U8-at)
+                    if (Hls.isSupported()) {
+                        hls = new Hls({ 
+                            enableWorker: false, 
+                            lowLatencyMode: false, 
+                            autoStartLoad: true, 
+                            capLevelToPlayerSize: true, 
+                            defaultAudioCodec: 'mp4a.40.2',
+                            maxBufferLength: 30,
+                            maxMaxBufferLength: 600
+                        });
+                        hls.loadSource(ch.url);
+                        hls.attachMedia(video);
+                        
+                        hls.on(Hls.Events.AUDIO_TRACKS_UPDATED, (e, data) => {
+                            if (data.audioTracks && data.audioTracks.length > 0) {
+                                let hunIdx = data.audioTracks.findIndex(t => t.name.toLowerCase().includes('hun') || t.name.toLowerCase().includes('magyar'));
+                                if(hunIdx !== -1) hls.audioTrack = hunIdx;
+                            }
+                        });
+                        
+                        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                            forceAudioUnmute();
+                            try { video.play(); } catch(e) {}
+                            if (plyrInstance) {
+                                try { plyrInstance.play(); } catch(e) {}
+                            }
+                        });
+
+                        hls.on(Hls.Events.ERROR, (e, data) => { if (data.fatal && data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError(); });
+                    } else {
+                        if (plyrInstance) {
+                            plyrInstance.source = {
+                                type: 'video',
+                                sources: [
+                                    {
+                                        src: ch.url,
+                                        type: 'application/x-mpegURL'
+                                    }
+                                ]
+                            };
+                            try { plyrInstance.play(); } catch(e) {}
+                        } else {
+                            video.src = ch.url;
+                            video.load();
+                            try { video.play(); } catch(e) {}
+                        }
                     }
                 }
                 loadFill.style.width = '100%'; loadPercent.textContent = '100';
