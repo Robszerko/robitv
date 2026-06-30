@@ -52,7 +52,7 @@
             justify-content: center; 
             flex-direction: column; 
             gap: 20px;
-            animation: fadeOutIntro 0.5s ease 7s forwards; /* 3 másodperccel meghosszabbítva (4s helyett 7s) */
+            animation: fadeOutIntro 0.5s ease 7s forwards;
         }
         
         .intro-logo { 
@@ -61,10 +61,14 @@
             font-weight: 800; 
             display: flex; 
             align-items: center; 
+            justify-content: center;
             gap: 12px; 
             opacity: 0; 
             transform: scale(0.8); 
             animation: introPop 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s forwards; 
+            text-align: center;
+            width: 100%;
+            padding: 0 20px;
         }
         .intro-logo i { 
             color: var(--accent-magenta); 
@@ -107,6 +111,26 @@
         }
         @keyframes fadeOutIntro { 
             to { opacity: 0; visibility: hidden; } 
+        }
+
+        /* Reszponzív logó méretezés mobilon, megelőzve az elcsúszást */
+        @media (max-width: 600px) {
+            .intro-logo {
+                font-size: 32px;
+                gap: 8px;
+            }
+            .intro-logo i {
+                font-size: 36px;
+            }
+            .intro-logo small {
+                font-size: 18px;
+            }
+            .intro-slogan {
+                font-size: 12px;
+                letter-spacing: 2px;
+                padding: 0 10px;
+                text-align: center;
+            }
         }
 
         .global-loader { position: fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-primary); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; transition: opacity 0.4s ease; }
@@ -198,7 +222,7 @@
         .channel-item:hover { background:rgba(255,255,255,0.03); }
         .channel-item.active { background:rgba(255,42,95,0.12); border-color:var(--accent-magenta); }
         .channel-item .c-logo { width:38px; height:38px; background:rgba(0,0,0,0.3); border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0; border:1px solid var(--glass-border); overflow:hidden; }
-        .channel-item .c-logo img { max-width:95%; max-height:95%; object-fit:contain; }
+        .channel-item .c-logo img { max-width:95%; max-height:95%; object-fit: contain; }
         .channel-item .c-info { flex:1; min-width:0; padding-right:10px; }
         .channel-item .c-name { font-weight:600; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .channel-item .c-epg { font-size:11px; color:var(--text-secondary); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -514,7 +538,7 @@
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTZr_loxJXStzTq2k9Loncl32aSMCcqDn6qYNg97xVCRorf3khIhVgcRyn-AlEC66NRA/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyzQ6vgxcK8svwVlQhQs-anCmT5RLBqd7B-TzqSFplxW-oixm7Y70KmjyEgGwNoPpmmOg/exec"; 
 
         const jokes = [
             "Bitek és bájtok sorba rendezése...",
@@ -1430,7 +1454,7 @@
         }
 
         function playChannel(ch, el, resumeTime = 0) {
-            const video = document.getElementById('player'); // DINAMIKUS LEKÉRDEZÉS - MEGELŐZI AZ ÁRVA DOM ELEM HIBÁT
+            const video = document.getElementById('player'); // DINAMIKUS LEKÉRDEZÉS
             activeChannel = ch;
             popupTriggered = false;
             lastSavedTime = 0; 
@@ -1470,11 +1494,22 @@
             forceAudioUnmute();
 
             if (isStaticMovie) {
-                video.src = ch.url;
-                video.load();
-                try { video.play(); } catch(e) {}
+                // Mobilon (iOS/Safari) a Plyr-en keresztüli absztrakt betöltés az optimális módszer
                 if (plyrInstance) {
+                    plyrInstance.source = {
+                        type: 'video',
+                        sources: [
+                            {
+                                src: ch.url,
+                                type: 'video/mp4'
+                            }
+                        ]
+                    };
                     try { plyrInstance.play(); } catch(e) {}
+                } else {
+                    video.src = ch.url;
+                    video.load();
+                    try { video.play(); } catch(e) {}
                 }
                 video.onprogress = () => {
                     if (video.duration) {
@@ -1486,7 +1521,7 @@
             } else if (isM3u8) {
                 if (Hls.isSupported()) {
                     hls = new Hls({ 
-                        enableWorker: false, // kikapcsoljuk a workert a local file:/// CORS hiba kiküszöbölésére
+                        enableWorker: false, // CORS warning megelőzése local fáljoknál (file:///)
                         lowLatencyMode: false, 
                         autoStartLoad: true, 
                         capLevelToPlayerSize: true, 
@@ -1514,11 +1549,22 @@
 
                     hls.on(Hls.Events.ERROR, (e, data) => { if (data.fatal && data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError(); });
                 } else {
-                    video.src = ch.url;
-                    video.load();
-                    try { video.play(); } catch(e) {}
+                    // MOBILOS (iOS Safari) M3U8 BETÖLTÉS: A Plyr source frissítésével az iOS natív HLS motorja indul el!
                     if (plyrInstance) {
+                        plyrInstance.source = {
+                            type: 'video',
+                            sources: [
+                                {
+                                    src: ch.url,
+                                    type: 'application/x-mpegURL'
+                                }
+                            ]
+                        };
                         try { plyrInstance.play(); } catch(e) {}
+                    } else {
+                        video.src = ch.url;
+                        video.load();
+                        try { video.play(); } catch(e) {}
                     }
                 }
                 loadFill.style.width = '100%'; loadPercent.textContent = '100';
@@ -1532,11 +1578,21 @@
                     try { video.play(); } catch(e) {}
                     loadFill.style.width = '100%'; loadPercent.textContent = '100';
                 } else {
-                    video.src = ch.url;
-                    video.load();
-                    try { video.play(); } catch(e) {}
                     if (plyrInstance) {
+                        plyrInstance.source = {
+                            type: 'video',
+                            sources: [
+                                {
+                                    src: ch.url,
+                                    type: 'video/mp4'
+                                }
+                            ]
+                        };
                         try { plyrInstance.play(); } catch(e) {}
+                    } else {
+                        video.src = ch.url;
+                        video.load();
+                        try { video.play(); } catch(e) {}
                     }
                 }
             }
