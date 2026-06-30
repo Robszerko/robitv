@@ -54,7 +54,7 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .funny-quote { font-size:14px; font-weight:500; color:var(--text-secondary); margin-top:12px; text-align:center; max-width: 400px; line-height: 1.5; font-style: italic; }
 
-        header { padding:12px 24px; background:rgba(8,11,20,0.85); backdrop-filter:blur(12px); border-bottom:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center; z-index:20; flex-shrink:0; gap:20px; }
+        header { padding:12px 24px; background:rgba(8,11,20,0.85); backdrop-filter:blur(12px); border-bottom:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center; z-index:20; flex-shrink:0; gap:20px; position: sticky; top: 0; }
         .logo { font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:800; display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none; transition: var(--transition); flex-shrink:0; }
         .logo i { color:var(--accent-magenta); font-size:24px; filter:drop-shadow(0 0 8px rgba(255,42,95,0.5)); }
         .logo span { background:linear-gradient(135deg,#fff 30%,var(--accent-cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
@@ -222,58 +222,140 @@
         .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
         .form-group input { width: 100%; padding: 12px; background: var(--bg-primary); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: #fff; font-family: 'Inter', sans-serif; font-size: 13px; }
         .form-group input:focus { border-color: var(--accent-cyan); outline: none; }
+        
+        .admin-toggle-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            background: rgba(255,255,255,0.02);
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: var(--transition);
+            margin-bottom: 4px;
+        }
+        .admin-toggle-label:hover {
+            background: rgba(255,255,255,0.04);
+            border-color: var(--accent-cyan);
+        }
+        .admin-toggle-input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--accent-cyan);
+            cursor: pointer;
+        }
+        
         .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
         .btn { padding: 10px 18px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; cursor: pointer; border: none; }
         .btn-cancel { background: transparent; border: 1px solid var(--glass-border); color: var(--text-secondary); }
         .btn-save { background: var(--accent-magenta); color: #fff; }
 
         @media (max-width: 900px) {
+            body {
+                overflow-y: auto !important;
+                height: auto !important;
+            }
             header {
-                display: grid;
-                grid-template-columns: auto 1fr;
+                display: flex;
+                flex-wrap: wrap;
                 align-items: center;
-                padding: 10px 16px;
-                gap: 10px;
+                justify-content: space-between;
+                padding: 8px 12px;
+                gap: 6px;
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+                background: rgba(8,11,20,0.95);
+                border-bottom: 1px solid var(--glass-border);
             }
             .logo {
-                grid-column: 1;
-                font-size: 18px;
+                order: 1;
+                font-size: 17px;
+                gap: 5px;
             }
             .logo small {
                 font-size: 10px;
+                margin-left: 2px;
             }
             .status-panel {
-                grid-column: 2;
+                order: 2;
                 display: flex;
-                justify-content: flex-end;
+                align-items: center;
                 gap: 6px;
-                flex-wrap: nowrap;
-            }
-            .header-search-wrap {
-                grid-column: 1 / span 2;
-                width: 100%;
-                max-width: none;
-                margin-top: 4px;
-                order: 3;
+                margin-left: auto;
+                flex-shrink: 0;
             }
             .status-badge {
-                padding: 5px 8px;
-                font-size: 11px;
+                padding: 4px 8px;
+                font-size: 10px;
                 font-weight: 700;
                 white-space: nowrap;
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
                 gap: 4px;
             }
             #m3uStatus, #epgStatus {
                 display: none !important;
             }
+            .header-search-wrap {
+                order: 3;
+                width: 100%;
+                flex-basis: 100%;
+                margin-top: 4px;
+                max-width: none;
+            }
             
-            .container { flex-direction: column; overflow-y: auto; }
-            .sidebar { display: none !important; }
+            .container {
+                display: block;
+                height: auto;
+                overflow: visible;
+            }
+            .sidebar {
+                display: none !important;
+            }
+            .main-content {
+                display: block;
+                height: auto;
+                overflow: visible;
+            }
+            .view {
+                display: none;
+                height: auto;
+                overflow: visible;
+                padding: 10px;
+            }
+            .view.active {
+                display: block;
+            }
             
-            #viewChannels.active { display: flex; flex-direction: column; padding: 10px; gap: 12px; overflow: visible; }
+            #viewChannels.active {
+                display: flex;
+                flex-direction: column;
+                padding: 10px;
+                gap: 12px;
+                overflow: visible;
+            }
             
-            .right-panel { order: 1; flex: none; overflow: visible; }
-            .left-panel { order: 2; flex: none; min-height: 450px; overflow: visible; scroll-margin-top: 20px; }
+            .right-panel {
+                order: 1;
+                height: auto;
+                overflow: visible;
+            }
+            .left-panel {
+                order: 2;
+                height: auto;
+                max-height: 500px;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                scroll-margin-top: 80px;
+            }
+            .channel-list-view {
+                flex: 1;
+                overflow-y: auto;
+                max-height: 400px;
+            }
             
             .dashboard-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
             .dash-card { padding: 16px 10px; }
@@ -384,7 +466,7 @@
     <div class="modal-overlay" id="adminModal">
         <div class="modal-box">
             <div class="modal-title"><i class="fa-solid fa-gear"></i> RobiTV Központi Beállítások</div>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Ha az M3U kitöltött, a rendszer mentés után azonnal megpróbálja leszinkronizálni a rajta található összes tartalmat.</p>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Mentés után a rendszer azonnal leszinkronizálja a rajta található összes tartalmat és a mappák láthatóságát.</p>
             
             <div class="form-group">
                 <label for="inputM3u">M3U URL címe:</label>
@@ -398,6 +480,13 @@
                 <label for="inputApi">Player API URL címe (Opcionális):</label>
                 <input type="text" id="inputApi" />
             </div>
+
+            <div style="margin-top: 16px; border-top: 1px solid var(--glass-border); padding-top: 14px;">
+                <div style="font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 8px;"><i class="fa-solid fa-eye-slash" style="color: var(--accent-cyan);"></i> Mappák kezelése (Ki/Be kapcsolás):</div>
+                <div id="adminGroupList" style="max-height: 160px; overflow-y: auto; background: var(--bg-primary); padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 4px;">
+                    <!-- Dynamically populated from JS -->
+                </div>
+            </div>
             
             <div class="modal-actions">
                 <button class="btn btn-cancel" onclick="closeAdminModal()">Mégse</button>
@@ -407,7 +496,7 @@
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz8oKeD1srjvV1o8dOKYcvDKk1T17eTbtCZAOo3IEOM3yQyf4DveUPeQQK-D6xu1Th7Pg/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwQ6BMut0hHl4yWr6ikFaeFeI_qJARjQz6Uxfn7odFLKeKOzK7il_c7QKeBAdwkKlRCPw/exec"; 
 
         const jokes = [
             "Bitek és bájtok sorba rendezése...",
@@ -530,8 +619,37 @@
             document.getElementById('inputM3u').value = currentM3uUrl;
             document.getElementById('inputEpg').value = currentEpgUrl;
             document.getElementById('inputApi').value = currentApiUrl;
+            
+            const groupListContainer = document.getElementById('adminGroupList');
+            groupListContainer.innerHTML = '';
+            
+            groupNames.forEach(group => {
+                const isHidden = deletedGroupsList.includes(group);
+                const label = document.createElement('label');
+                label.className = 'admin-toggle-label';
+                label.innerHTML = `
+                    <span style="font-size:12px; font-weight:600; color:#fff;">${group}</span>
+                    <input type="checkbox" class="admin-toggle-input" value="${group}" ${!isHidden ? 'checked' : ''} onchange="toggleGroupVisibilityFromAdmin(this)" />
+                `;
+                groupListContainer.appendChild(label);
+            });
+
             document.getElementById('adminModal').style.display = 'flex';
         }
+
+        function toggleGroupVisibilityFromAdmin(checkbox) {
+            const group = checkbox.value;
+            const show = checkbox.checked;
+            
+            if (show) {
+                deletedGroupsList = deletedGroupsList.filter(g => g !== group);
+            } else {
+                if (!deletedGroupsList.includes(group)) {
+                    deletedGroupsList.push(group);
+                }
+            }
+        }
+
         function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; }
 
         async function saveAdminUrls() {
@@ -542,13 +660,16 @@
 
             try {
                 const sendUrl = `${GOOGLE_SCRIPT_URL}?action=setUrls&m3u=${encodeURIComponent(m3uVal)}&epg=${encodeURIComponent(epgVal)}&api=${encodeURIComponent(apiVal)}`;
-                const res = await fetch(sendUrl);
-                const data = await res.json();
-                if (data.status === "success") { 
-                    alert("Sikeres mentés! A rendszer azonnal beolvassa a listákat az új forrásból."); 
-                    setTimeout(() => location.reload(), 500);
-                }
-            } catch(e) { alert("Hiba történt a mentés során."); }
+                await fetch(sendUrl);
+                
+                const encodedDeleted = encodeURIComponent(JSON.stringify(deletedGroupsList));
+                await fetch(`${GOOGLE_SCRIPT_URL}?action=saveDeleted&data=${encodedDeleted}`);
+
+                alert("Sikeres mentés! A rendszer elmentette a beállításokat és a kategória-láthatóságokat."); 
+                setTimeout(() => location.reload(), 500);
+            } catch(e) { 
+                alert("Hiba történt a mentés során."); 
+            }
         }
 
         function executeHeaderSearch() {
@@ -558,7 +679,6 @@
 
             if (query.length < 3) { box.innerHTML = ''; box.style.display = 'none'; return; }
 
-            // Kiszedjük a törölt mappákban szereplő adókat a keresésből
             const filtered = allChannels.filter(ch => {
                 if (deletedGroupsList.includes(ch.group)) return false;
                 return ch.name.toLowerCase().includes(query) || (ch.group && ch.group.toLowerCase().includes(query));
@@ -590,9 +710,9 @@
 
         function scrollToPlayerOnMobile() {
             if (window.innerWidth <= 900) {
-                const container = document.querySelector('.container');
+                const container = document.querySelector('.left-panel');
                 if (container) {
-                    container.scrollTo({ top: 0, behavior: 'smooth' });
+                    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
@@ -722,7 +842,6 @@
         function getSortedGroupNames() {
             const fixedTops = ["⭐ Élő Magyar Csatornák", "⏪ Visszanézhető Csatornák"];
             
-            // Kiszűrjük a törölt mappákat az aktívak közül
             let activeGroups = groupNames.filter(g => !deletedGroupsList.includes(g));
             
             let others = activeGroups.filter(g => !fixedTops.includes(g));
@@ -796,7 +915,7 @@
         }
 
         function hideCategory(group) {
-            if (confirm(`Biztosan el szeretnéd rejteni és törölni a(z) "${group}" kategóriát?`)) {
+            if (confirm(`Biztosan el szeretnéd rejteni a(z) "${group}" kategóriát?`)) {
                 if (!deletedGroupsList.includes(group)) {
                     deletedGroupsList.push(group);
                     syncDeletedGroupsToCloud();
@@ -858,7 +977,7 @@
                 let icon = group.includes("Visszanézhető") ? '<i class="fa-solid fa-clock-rotate-left" style="color:#fbbf24;"></i>' : '<i class="fa-solid fa-folder-open"></i>';
 
                 card.innerHTML = `
-                    <button class="delete-card-btn" title="Kategória törlése" onclick="event.stopPropagation(); hideCategory('${group.replace(/'/g, "\\'")}')">
+                    <button class="delete-card-btn" title="Kategória elrejtése" onclick="event.stopPropagation(); hideCategory('${group.replace(/'/g, "\\'")}')">
                         <i class="fa-solid fa-eye-slash"></i>
                     </button>
                     ${icon}
@@ -869,7 +988,6 @@
                 grid.appendChild(card);
             });
 
-            // Törölt mappák mappa megjelenítése a főoldalon, ha van benne elem
             if (deletedGroupsList.length > 0) {
                 const card = document.createElement('div');
                 card.className = 'dash-card special';
@@ -911,7 +1029,7 @@
                     <span class="category-name">${displayGroup}</span>
                     <span style="display:flex; align-items:center; gap:6px;">
                         <span class="category-count">${count}</span>
-                        <span class="hide-sidebar-btn" title="Törlés" onclick="event.stopPropagation(); hideCategory('${group.replace(/'/g, "\\'")}')">
+                        <span class="hide-sidebar-btn" title="Elrejtés" onclick="event.stopPropagation(); hideCategory('${group.replace(/'/g, "\\'")}')">
                             <i class="fa-solid fa-eye-slash" style="font-size:11px; color:var(--text-muted);"></i>
                         </span>
                     </span>
@@ -920,7 +1038,6 @@
                 list.appendChild(div);
             });
 
-            // Törölt mappák az oldalsávban
             if (deletedGroupsList.length > 0) {
                 const div = document.createElement('div');
                 div.className = `category-card ${activeName === 'deleted' ? 'active' : ''}`;
@@ -1238,7 +1355,7 @@
             const alertBox = document.getElementById('streamAlertBox');
             alertBox.style.display = 'none';
             alertBox.style.background = 'rgba(255, 42, 95, 0.15)';
-            document.getElementById('streamAlertText').innerText = 'Hoppá! Ez az adás az átlagosnál lassabban tölt be. Kérlek várj még egy pillanatot... 📺';
+            document.getElementById('streamAlertText').innerText = 'Hoppá! Ez az adás az átlagosnál lassabban tölt be. Kérlek várj még een pillanatot... 📺';
 
             if (el) {
                 document.querySelectorAll('.channel-item').forEach(item => item.classList.remove('active'));
@@ -1269,6 +1386,8 @@
 
             if (isStaticMovie) {
                 video.src = ch.url;
+                video.load();
+                try { video.play(); } catch(e) {}
                 if (plyrInstance) {
                     try { plyrInstance.play(); } catch(e) {}
                 }
@@ -1302,6 +1421,7 @@
                     
                     hls.on(Hls.Events.MANIFEST_PARSED, () => {
                         forceAudioUnmute();
+                        try { video.play(); } catch(e) {}
                         if (plyrInstance) {
                             try { plyrInstance.play(); } catch(e) {}
                         }
@@ -1310,6 +1430,8 @@
                     hls.on(Hls.Events.ERROR, (e, data) => { if (data.fatal && data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError(); });
                 } else {
                     video.src = ch.url;
+                    video.load();
+                    try { video.play(); } catch(e) {}
                     if (plyrInstance) {
                         try { plyrInstance.play(); } catch(e) {}
                     }
@@ -1322,9 +1444,12 @@
                     mpegtsPlayer.load();
                     forceAudioUnmute();
                     try { mpegtsPlayer.play(); } catch(e) {}
+                    try { video.play(); } catch(e) {}
                     loadFill.style.width = '100%'; loadPercent.textContent = '100';
                 } else {
                     video.src = ch.url;
+                    video.load();
+                    try { video.play(); } catch(e) {}
                     if (plyrInstance) {
                         try { plyrInstance.play(); } catch(e) {}
                     }
@@ -1333,13 +1458,6 @@
             updateEpgMini(ch);
             startLiveNextOverlayMonitor(ch);
         }
-
-        video.addEventListener('loadedmetadata', () => {
-            if (pendingResumeTime > 0) {
-                video.currentTime = pendingResumeTime;
-                pendingResumeTime = 0;
-            }
-        });
 
         video.addEventListener('playing', () => {
             if (streamLoadTimer) clearTimeout(streamLoadTimer);
@@ -1532,7 +1650,13 @@
                 const gasData = await gas.json();
                 
                 document.getElementById('activeUsersCount').textContent = (gasData.active_viewers || 1) + " online";
-                document.getElementById('expireText').innerText = "Lejárat: " + (gasData.expire_date || "Nincs adat");
+                
+                let expDateValue = gasData.expire_date || "Nincs adat";
+                if (window.innerWidth <= 900) {
+                    document.getElementById('expireText').innerText = expDateValue;
+                } else {
+                    document.getElementById('expireText').innerText = "Lejárat: " + expDateValue;
+                }
 
                 currentM3uUrl = gasData.m3u_url || "";
                 currentEpgUrl = gasData.epg_url || "";
