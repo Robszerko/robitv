@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="hu">
 <head>
     <meta charset="UTF-8" />
@@ -30,7 +30,6 @@
             --radius-md: 12px;
             --radius-sm: 8px;
             --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            --netflix-red: #E50914;
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Inter',sans-serif; background:var(--bg-primary); color:var(--text-primary); height:100vh; display:flex; flex-direction:column; overflow:hidden; }
@@ -39,96 +38,21 @@
         ::-webkit-scrollbar-thumb { background:rgba(0,229,255,0.3); border-radius:20px; }
         ::-webkit-scrollbar-thumb:hover { background:var(--accent-cyan); }
 
-        #introAnim { 
-            position: fixed; 
-            inset: 0;
-            width: 100vw;
-            height: 100vh; 
-            background: #000; 
-            z-index: 9999999; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            flex-direction: column; 
-            gap: 16px;
-            overflow: hidden;
-            animation: fadeOutIntro 0.5s ease 7s forwards;
-        }
-        
-        .intro-logo { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            font-size: 48px; 
-            font-weight: 800; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            gap: 12px; 
-            opacity: 0; 
-            transform: scale(0.9); 
-            animation: introPop 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s forwards; 
-            text-align: center;
-            width: 100%;
-            padding: 0 16px;
-        }
-        .intro-logo i { 
-            color: var(--accent-magenta); 
-            font-size: 52px; 
-            filter: drop-shadow(0 0 20px rgba(255,42,95,0.6)); 
-        }
-        .intro-logo span { 
-            background: linear-gradient(135deg, #fff 30%, var(--accent-cyan)); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            filter: drop-shadow(0 0 15px rgba(0,229,255,0.3));
-        }
-        .intro-logo small { 
-            font-size: 24px; 
-            font-weight: 400; 
-            color: var(--text-muted); 
-            -webkit-text-fill-color: var(--text-muted); 
-            margin-left: 6px; 
-        }
-        
-        .intro-slogan { 
-            font-size: 14px; 
-            font-weight: 600; 
-            letter-spacing: 4px; 
-            text-transform: uppercase; 
-            color: var(--text-muted); 
-            opacity: 0; 
-            transform: translateY(15px); 
-            animation: introSlideUp 1.2s ease 1.8s forwards; 
-        }
-        
-        @keyframes introPop { 
-            0% { opacity: 0; transform: scale(0.9); } 
-            100% { opacity: 1; transform: scale(1); } 
-        }
-        @keyframes introSlideUp { 
-            0% { opacity: 0; transform: translateY(15px); } 
-            100% { opacity: 1; transform: translateY(0); } 
-        }
-        @keyframes fadeOutIntro { 
-            to { opacity: 0; visibility: hidden; } 
-        }
+        /* Intro Animáció */
+        #introAnim { position: fixed; inset: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; overflow: hidden; transition: opacity 0.5s ease; }
+        .intro-logo { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 48px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 12px; opacity: 0; transform: scale(0.9); animation: introPop 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s forwards; text-align: center; width: 100%; padding: 0 16px; }
+        .intro-logo i { color: var(--accent-magenta); font-size: 52px; filter: drop-shadow(0 0 20px rgba(255,42,95,0.6)); }
+        .intro-logo span { background: linear-gradient(135deg, #fff 30%, var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 15px rgba(0,229,255,0.3)); }
+        .intro-logo small { font-size: 24px; font-weight: 400; color: var(--text-muted); -webkit-text-fill-color: var(--text-muted); margin-left: 6px; }
+        .intro-slogan { font-size: 14px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--text-muted); opacity: 0; transform: translateY(15px); animation: introSlideUp 1.2s ease 1.8s forwards; }
+        @keyframes introPop { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes introSlideUp { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
 
         @media (max-width: 600px) {
-            .intro-logo {
-                font-size: 32px;
-                gap: 8px;
-            }
-            .intro-logo i {
-                font-size: 34px;
-            }
-            .intro-logo small {
-                font-size: 16px;
-            }
-            .intro-slogan {
-                font-size: 12px;
-                letter-spacing: 2px;
-                padding: 0 10px;
-                text-align: center;
-            }
+            .intro-logo { font-size: 32px; gap: 8px; }
+            .intro-logo i { font-size: 34px; }
+            .intro-logo small { font-size: 16px; }
+            .intro-slogan { font-size: 12px; letter-spacing: 2px; padding: 0 10px; text-align: center; }
         }
 
         .global-loader { position: fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-primary); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; transition: opacity 0.4s ease; }
@@ -166,7 +90,6 @@
         .sidebar { width:280px; background:var(--bg-secondary); border-right:1px solid var(--glass-border); display:flex; flex-direction:column; flex-shrink:0; transition: var(--transition); }
         .sidebar-header { padding:16px 20px; border-bottom:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center;}
         .sidebar-header h2 { font-size:15px; font-weight:700; color:var(--text-secondary); }
-        .sidebar-header h2 i { color:var(--accent-cyan); margin-right:6px; }
 
         .category-list { flex:1; overflow-y:auto; padding:8px; }
         .category-card { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-radius:var(--radius-sm); cursor:pointer; transition:var(--transition); margin-bottom:2px; border:1px solid transparent; }
@@ -184,31 +107,12 @@
         .right-panel { display:flex; flex-direction:column; overflow-y:auto; gap:14px; padding-right:4px; position: relative; }
 
         .dashboard-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; }
-        .dash-card { background:var(--bg-card); border:1px solid var(--glass-border); border-radius:var(--radius-md); padding:22px 16px; cursor:grab; transition:var(--transition); text-align:center; position: relative; overflow: hidden; }
-        .dash-card:active { cursor: grabbing; }
+        .dash-card { background:var(--bg-card); border:1px solid var(--glass-border); border-radius:var(--radius-md); padding:22px 16px; cursor:pointer; transition:var(--transition); text-align:center; position: relative; overflow: hidden; }
         .dash-card:hover { background:var(--bg-card-hover); border-color:var(--accent-cyan); transform:translateY(-3px); box-shadow: 0 6px 20px rgba(0,229,255,0.15); }
-        .dash-card.drag-over { border: 2px dashed var(--accent-magenta); background: rgba(255,42,95,0.1); }
         .dash-card i { font-size:32px; color:var(--accent-cyan); margin-bottom:10px; pointer-events: none; }
         .dash-card.pinned i { color: #fbbf24; }
-        .dash-card.special i { color: var(--accent-magenta); }
         .dash-card .dash-name { font-weight:700; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; pointer-events: none; }
         .dash-card .dash-count { font-size:12px; color:var(--text-muted); margin-top:4px; pointer-events: none; }
-
-        .continue-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; padding: 10px; width:100%;}
-        .continue-card-lg { background: var(--bg-secondary); border: 1px solid var(--glass-border); border-radius: var(--radius-md); overflow: hidden; position: relative; cursor: pointer; transition: var(--transition); }
-        .continue-card-lg:hover { border-color: var(--accent-cyan); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,229,255,0.15); }
-        .continue-poster { width: 100%; height: 135px; background: #000; position: relative; display: flex; align-items: center; justify-content: center; }
-        .continue-poster img { max-width: 100%; max-height: 100%; object-fit: cover; opacity: 0.8; }
-        .continue-poster .play-overlay { position: absolute; inset:0; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; }
-        .continue-card-lg:hover .play-overlay { opacity: 1; }
-        .continue-poster .play-overlay i { font-size: 40px; color: var(--accent-cyan); filter: drop-shadow(0 0 10px rgba(0,229,255,0.8)); }
-        .continue-info { padding: 12px; }
-        .continue-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .continue-meta { font-size: 12px; color: var(--text-secondary); margin-bottom: 10px; display: flex; justify-content: space-between; }
-        .continue-progress-bg { height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
-        .continue-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-magenta)); border-radius: 4px; }
-        .delete-continue-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: #fff; border: 1px solid rgba(255,255,255,0.2); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; z-index: 10; }
-        .delete-continue-btn:hover { background: var(--accent-magenta); border-color: var(--accent-magenta); transform: scale(1.1); }
 
         .channel-view-header { padding:14px; border-bottom:1px solid var(--glass-border); display:flex; align-items:center; gap:12px; flex-shrink:0; }
         .back-btn { background:rgba(255,255,255,0.05); border:none; color:var(--text-secondary); width:32px; height:32px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; }
@@ -225,21 +129,10 @@
         .channel-item .c-name { font-weight:600; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .channel-item .c-epg { font-size:11px; color:var(--text-secondary); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-        .player-wrapper { width:100%; background:#000; border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--glass-shadow); position:relative; padding-top: 56.25%; flex-shrink:0; border:1px solid var(--glass-border); scroll-margin-top: 80px; }
+        .player-wrapper { width:100%; background:#000; border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--glass-shadow); position:relative; padding-top: 56.25%; flex-shrink:0; border:1px solid var(--glass-border); }
         .player-wrapper video, .player-wrapper .plyr { position: absolute; top: 0; left: 0; width: 100% !important; height: 100% !important; }
         
         .stream-alert-box { display: none; background: rgba(255, 42, 95, 0.15); border: 1px solid var(--accent-magenta); border-radius: var(--radius-md); padding: 12px 16px; font-size: 13px; font-weight: 600; color: #fff; align-items: center; gap: 10px; animation: fadeIn 0.3s ease; }
-
-        .video-slide-popup { position: absolute; bottom: 85px; right: 20px; width: 290px; background: rgba(14, 18, 31, 0.96); backdrop-filter: blur(15px); border: 1px solid var(--accent-cyan); border-radius: var(--radius-md); padding: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: none; transform: translateY(30px); opacity: 0; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 2147483647 !important; }
-        .video-slide-popup.show { display: block; transform: translateY(0); opacity: 1; }
-        .popup-close { position: absolute; top: 8px; right: 8px; background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; }
-        .popup-close:hover { color: #fff; }
-        .popup-tag { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-magenta); margin-bottom: 4px; }
-        .popup-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .popup-btn { width: 100%; padding: 8px; background: var(--accent-cyan); color: #000; border: none; border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; margin-top: 6px; }
-
-        .live-next-overlay { position: absolute; top: 20px; left: 20px; background: rgba(8, 11, 20, 0.95); border-left: 4px solid var(--accent-magenta); padding: 12px 18px; border-radius: 4px var(--radius-sm) var(--radius-sm) 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: none; z-index: 2147483647 !important; animation: slideInLeft 0.4s ease; }
-        @keyframes slideInLeft { from { transform: translateX(-50px); opacity:0; } to { transform: translateX(0); opacity:1; } }
 
         .load-progress-wrap { display:flex; align-items:center; gap:12px; padding:0 4px; flex-shrink:0; }
         .load-progress-track { flex:1; height:4px; background:rgba(255,255,255,0.05); border-radius:10px; overflow:hidden; }
@@ -249,208 +142,33 @@
         .epg-mini { background:var(--bg-card); border-radius:var(--radius-md); padding:16px; border:1px solid var(--glass-border); display: flex; flex-direction: column; gap: 10px; }
         .epg-now { font-size:15px; font-weight:700; color:#fff; display:flex; align-items:center; gap:8px;}
         .epg-desc { font-size:12px; color:var(--text-secondary); line-height:1.4; }
-        .epg-timeline-list { display: flex; flex-direction: column; gap: 8px; }
-        
-        .epg-timeline-item {
-            padding: 10px 14px;
-            border-radius: var(--radius-sm);
-            border-left: 3px solid rgba(255,255,255,0.15);
-            background: rgba(255,255,255,0.02);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            transition: var(--transition);
-        }
-        .epg-timeline-item.current-live {
-            border-left-color: var(--accent-magenta);
-            background: rgba(255, 42, 95, 0.08);
-        }
 
-        /* PROFIL VÁLASZTÓ KÉPERNYŐ STÍLUSOK (Netflix stílusú UI) */
-        #profilePickerView {
-            position: fixed;
-            inset: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #000;
-            z-index: 999999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 40px;
-            overflow-y: auto;
-            padding: 24px;
-        }
-        .profile-picker-title {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 38px;
-            font-weight: 800;
-            color: #fff;
-            text-align: center;
-            letter-spacing: 1px;
-        }
-        .profiles-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 24px;
-            max-width: 1000px;
-            width: 100%;
-            margin-top: 10px;
-        }
-        .profile-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-            transition: var(--transition);
-            position: relative;
-            width: 110px;
-        }
-        .profile-card:hover .profile-avatar {
-            transform: scale(1.1);
-            border-color: #fff;
-            box-shadow: 0 0 25px rgba(255,255,255,0.3);
-        }
-        .profile-avatar {
-            width: 90px;
-            height: 90px;
-            background: #1e2640;
-            border: 3px solid transparent;
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 42px;
-            transition: var(--transition);
-            user-select: none;
-        }
-        .profile-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            text-align: center;
-            width: 100%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .profile-card:hover .profile-name {
-            color: #fff;
-        }
-        .profile-delete-btn {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            background: var(--accent-magenta);
-            color: #fff;
-            border: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 11px;
-            transition: 0.2s;
-            z-index: 10;
-        }
-        .profile-delete-btn:hover {
-            transform: scale(1.1);
-        }
-        .profile-picker-manage-btn {
-            padding: 10px 24px;
-            background: transparent;
-            border: 1px solid var(--text-muted);
-            color: var(--text-muted);
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            border-radius: var(--radius-sm);
-            transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        .profile-picker-manage-btn:hover, .profile-picker-manage-btn.active {
-            border-color: #fff;
-            color: #fff;
-        }
+        /* PROFIL VÁLASZTÓ KÉPERNYŐ STÍLUSOK */
+        #profilePickerView { position: fixed; inset: 0; width: 100vw; height: 100vh; background: #000; z-index: 999999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 40px; overflow-y: auto; padding: 24px; }
+        .profile-picker-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 38px; font-weight: 800; color: #fff; text-align: center; }
+        .profiles-grid { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 24px; max-width: 1000px; width: 100%; margin-top: 10px; }
+        .profile-card { display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer; transition: var(--transition); position: relative; width: 110px; }
+        .profile-card:hover .profile-avatar { transform: scale(1.1); border-color: #fff; box-shadow: 0 0 25px rgba(255,255,255,0.3); }
+        .profile-avatar { width: 90px; height: 90px; background: #1e2640; border: 3px solid transparent; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 42px; transition: var(--transition); user-select: none; }
+        .profile-name { font-size: 14px; font-weight: 600; color: var(--text-secondary); text-align: center; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .profile-card:hover .profile-name { color: #fff; }
+        .profile-delete-btn { position: absolute; top: -6px; right: -6px; background: var(--accent-magenta); color: #fff; border: none; width: 24px; height: 24px; border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; font-size: 11px; transition: 0.2s; z-index: 10; }
+        .profile-picker-manage-btn { padding: 10px 24px; background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted); font-size: 13px; font-weight: 700; cursor: pointer; border-radius: var(--radius-sm); transition: var(--transition); text-transform: uppercase; letter-spacing: 2px; }
+        .profile-picker-manage-btn:hover, .profile-picker-manage-btn.active { border-color: #fff; color: #fff; }
 
-        /* Fejléces profil-váltó gomb */
-        .profile-switch-trigger {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 12px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--glass-border);
-            border-radius: 40px;
-            font-size: 12px;
-            font-weight: 700;
-            color: #fff;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .status-panel .profile-switch-trigger:hover {
-            border-color: var(--accent-cyan);
-            background: rgba(0, 229, 255, 0.05);
-        }
+        .profile-switch-trigger { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 40px; font-size: 12px; font-weight: 700; color: #fff; cursor: pointer; transition: var(--transition); }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(4, 6, 12, 0.9); backdrop-filter: blur(8px); z-index: 9999; display: none; align-items: center; justify-content: center; }
         .modal-box { background: var(--bg-card); border: 1px solid var(--accent-cyan); width: 90%; max-width: 550px; border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--glass-shadow); }
         .modal-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
-        .modal-title i { color: var(--accent-cyan); }
         .form-group { margin-bottom: 14px; }
         .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
         .form-group input { width: 100%; padding: 12px; background: var(--bg-primary); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: #fff; font-family: 'Inter', sans-serif; font-size: 13px; }
-        .form-group input:focus { border-color: var(--accent-cyan); outline: none; }
         
-        .admin-toggle-label {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px 10px;
-            background: rgba(255,255,255,0.02);
-            border-radius: var(--radius-sm);
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: var(--transition);
-            margin-bottom: 4px;
-        }
-        .admin-toggle-label:hover {
-            background: rgba(255,255,255,0.04);
-            border-color: var(--accent-cyan);
-        }
-        .admin-toggle-input {
-            width: 16px;
-            height: 16px;
-            accent-color: var(--accent-cyan);
-            cursor: pointer;
-        }
+        .admin-toggle-label { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.05); margin-bottom: 4px; }
+        .admin-toggle-input { width: 16px; height: 16px; accent-color: var(--accent-cyan); cursor: pointer; }
 
-        /* Vegyes tartalom (Mixed Content) figyelmeztető doboz stílusa */
-        .mixed-content-warning {
-            display: none;
-            background: rgba(251, 191, 36, 0.15);
-            border: 1px solid #fbbf24;
-            border-radius: var(--radius-md);
-            padding: 14px;
-            font-size: 12px;
-            line-height: 1.5;
-            color: #fff;
-            margin-bottom: 14px;
-            flex-direction: column;
-            gap: 8px;
-            animation: fadeIn 0.3s ease;
-        }
-        .mixed-content-warning i {
-            color: #fbbf24;
-            font-size: 16px;
-        }
+        .mixed-content-warning { display: none; background: rgba(251, 191, 36, 0.15); border: 1px solid #fbbf24; border-radius: var(--radius-md); padding: 14px; font-size: 12px; line-height: 1.5; color: #fff; margin-bottom: 14px; flex-direction: column; gap: 8px; }
         
         .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
         .btn { padding: 10px 18px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; cursor: pointer; border: none; }
@@ -458,139 +176,38 @@
         .btn-save { background: var(--accent-magenta); color: #fff; }
 
         @media (max-width: 900px) {
-            body {
-                overflow-y: auto !important;
-                height: auto !important;
-            }
-            header {
-                display: flex;
-                flex-wrap: wrap;
-                align-items: center;
-                justify-content: space-between;
-                padding: 8px 12px;
-                gap: 6px;
-                position: sticky;
-                top: 0;
-                z-index: 1000;
-                background: rgba(8,11,20,0.95);
-                border-bottom: 1px solid var(--glass-border);
-            }
-            .logo {
-                order: 1;
-                font-size: 17px;
-                gap: 5px;
-            }
-            .logo small {
-                font-size: 10px;
-                margin-left: 2px;
-            }
-            .status-panel {
-                order: 2;
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                margin-left: auto;
-                flex-shrink: 0;
-            }
-            .status-badge {
-                padding: 4px 8px;
-                font-size: 10px;
-                font-weight: 700;
-                white-space: nowrap;
-                border-radius: 20px;
-                display: flex;
-                align-items: center;
-                gap: 4px;
-            }
-            #m3uStatus, #epgStatus {
-                display: none !important;
-            }
-            .header-search-wrap {
-                order: 3;
-                width: 100%;
-                flex-basis: 100%;
-                margin-top: 4px;
-                max-width: none;
-            }
-            
-            .container {
-                display: block;
-                height: auto;
-                overflow: visible;
-            }
-            .sidebar {
-                display: none !important;
-            }
-            .main-content {
-                display: block;
-                height: auto;
-                overflow: visible;
-            }
-            .view {
-                display: none;
-                height: auto;
-                overflow: visible;
-                padding: 10px;
-            }
-            .view.active {
-                display: block;
-            }
-            
-            #viewChannels.active {
-                display: flex;
-                flex-direction: column;
-                padding: 10px;
-                gap: 12px;
-                overflow: visible;
-            }
-            
-            .right-panel {
-                order: 1;
-                height: auto;
-                overflow: visible;
-            }
-            .left-panel {
-                order: 2;
-                height: auto;
-                max-height: 500px;
-                overflow: hidden;
-                display: flex;
-                flex-direction: column;
-                scroll-margin-top: 80px;
-            }
-            .channel-list-view {
-                flex: 1;
-                overflow-y: auto;
-                max-height: 400px;
-            }
-            
+            body { overflow-y: auto !important; height: auto !important; }
+            header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; padding: 8px 12px; gap: 6px; position: sticky; top: 0; z-index: 1000; background: rgba(8,11,20,0.95); border-bottom: 1px solid var(--glass-border); }
+            .logo { order: 1; font-size: 17px; }
+            .status-panel { order: 2; margin-left: auto; flex-shrink: 0; }
+            .status-badge { padding: 4px 8px; font-size: 10px; }
+            #m3uStatus, #epgStatus { display: none !important; }
+            .header-search-wrap { order: 3; width: 100%; flex-basis: 100%; margin-top: 4px; }
+            .sidebar { display: none !important; }
+            .view { padding: 10px; }
+            #viewChannels.active { display: flex; flex-direction: column; padding: 10px; gap: 12px; }
+            .right-panel { order: 1; height: auto; }
+            .left-panel { order: 2; height: auto; max-height: 500px; }
             .dashboard-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
-            .dash-card { padding: 16px 10px; }
             .continue-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
-            
-            .player-wrapper { border-radius: var(--radius-md); }
-            .video-slide-popup { width: calc(100% - 20px); right: 10px; bottom: 70px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- INTRO KÉPERNYŐ -->
     <div id="introAnim">
         <div class="intro-logo" id="introLogo"><i class="fa-solid fa-bolt"></i><span>RobiTV</span><small>Premium</small></div>
         <div class="intro-slogan" id="introSlogan">Felejtsd el a többit.</div>
     </div>
 
-    <!-- GLOBÁLIS RENDSSZERBETÖLTŐ -->
     <div class="global-loader" id="globalLoader" style="display: none;">
         <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:26px; font-weight:800; display:flex; align-items:center; gap:10px; color:#fff; margin-bottom: 20px;">
-            <i class="fa-solid fa-bolt" style="color:var(--accent-magenta); font-size:30px; filter:drop-shadow(0 0 10px rgba(255,42,95,0.5));"></i><span>RobiTV</span><small style="font-size:14px; font-weight:400; color:var(--text-muted); margin-left:4px;">Premium</small>
+            <i class="fa-solid fa-bolt" style="color:var(--accent-magenta); font-size:30px;"></i><span>RobiTV</span>
         </div>
         <div class="loader-spinner"></div>
         <div class="funny-quote" id="loadingJoke">Bitek és bájtok sorba rendezése...</div>
     </div>
 
-    <!-- PROFIL VÁLASZTÓ KÉPERNYŐ -->
     <div id="profilePickerView" style="display: none;">
         <h1 class="profile-picker-title">Ki nézi a RobiTV-t?</h1>
         <div class="profiles-grid" id="profilesGrid"></div>
@@ -602,12 +219,12 @@
 
     <header>
         <div class="logo" onclick="resetToHome()">
-            <i class="fa-solid fa-bolt"></i><span>RobiTV</span><small>Premium</small>
+            <i class="fa-solid fa-bolt"></i><span>RobiTV</span>
         </div>
         
         <div class="header-search-wrap">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" id="headerSearchInput" placeholder="Keresés adók, filmek, sorozatok között..." oninput="executeHeaderSearch()" />
+            <input type="text" id="headerSearchInput" placeholder="Keresés..." oninput="executeHeaderSearch()" />
             <div class="search-results-box" id="headerSearchResults"></div>
         </div>
 
@@ -615,9 +232,11 @@
             <div class="profile-switch-trigger" onclick="logoutProfile()">
                 <span id="activeProfileAvatar">😎</span>
                 <span id="activeProfileName">Főnök</span>
-                <i class="fa-solid fa-caret-down" style="font-size:10px; color:var(--text-secondary);"></i>
             </div>
-            <div class="status-badge" id="expireStatus" onclick="checkAdminPin()" style="background:rgba(251, 191, 36, 0.04); border-color:rgba(251, 191, 36, 0.15); cursor: pointer;"><i class="fa-regular fa-calendar" style="color:var(--accent-cyan);"></i><span id="expireText" style="color:#fff;">Lejárat: Lekérés...</span></div>
+            <!-- GOMB A BEÁLLÍTÁSOKHOZ -->
+            <div class="status-badge" id="expireStatus" onclick="checkAdminPin()" style="background:rgba(251, 191, 36, 0.04); border-color:rgba(251, 191, 36, 0.15); cursor: pointer;" title="Beállítások megnyitása">
+                <i class="fa-solid fa-gear" style="color:var(--accent-cyan);"></i><span id="expireText" style="color:#fff;">Beállítások</span>
+            </div>
             <div class="status-badge" id="m3uStatus"><div class="dot"></div><span id="m3uText">M3U..</span></div>
             <div class="status-badge" id="epgStatus"><div class="dot"></div><span id="epgText">EPG..</span></div>
             <div class="status-badge" style="background:rgba(0, 225, 255, 0.05); border-color:rgba(0, 225, 255, 0.2);"><div class="dot ok"></div><span id="activeUsersCount" style="color:var(--accent-cyan);">Lekérés...</span></div>
@@ -628,7 +247,6 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <h2><i class="fa-regular fa-folder"></i> Kategóriák</h2>
-                <i class="fa-solid fa-arrows-up-down" style="color:var(--text-muted); font-size:12px; cursor:help;" title="A főoldalon tudod húzással módosítani a sorrendet!"></i>
             </div>
             <div class="category-list" id="categoryList"></div>
         </aside>
@@ -637,7 +255,6 @@
             <div class="view active" id="viewDashboard">
                 <div style="margin-bottom:16px;">
                     <h2 style="font-size:18px; font-weight:700;">📺 Válassz egy listát</h2>
-                    <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">Tipp: Fogd meg az egérrel a kártyákat és húzd őket saját sorrend kialakításához!</p>
                 </div>
                 <div class="dashboard-grid" id="dashboardGrid"></div>
             </div>
@@ -652,32 +269,21 @@
                 </div>
 
                 <div class="right-panel">
-                    <!-- Vegyes tartalom block figyelmeztetés -->
                     <div class="mixed-content-warning" id="mixedContentBox">
                         <div style="display:flex; align-items:center; gap:10px; font-weight:700;">
                             <i class="fa-solid fa-triangle-exclamation"></i>
-                            <span>MEGGÁTLOLT ADÁSBETÖLTÉS (MIXED CONTENT)!</span>
+                            <span>MEGGÁTLOLT ADÁSBETÖLTÉS!</span>
                         </div>
-                        <p style="margin-top:4px; font-size:11px; color:var(--text-secondary);">Az IPTV adásod unencrypted HTTP címet használ, míg a RobiTV lejátszó biztonságos HTTPS kapcsolaton fut. A mobilos böngészők adatvédelmi okokból teljesen blokkolják a vegyes tartalom (Mixed Content) betöltését.</p>
-                        <p style="font-size:11px; font-weight:700; color:var(--accent-cyan); margin-top:2px;">Megoldás: Használj HTTPS alapú IPTV listát, vagy töltsd le az oldalt helyi fájlként asztali gépre/mobilra (golyó3.html formájában) és indítsd el onnan!</p>
+                        <p style="margin-top:4px; font-size:11px;">Az IPTV adásod HTTP címet használ, míg a lejátszó HTTPS kapcsolaton fut. A mobilos böngészők blokkolják a vegyes tartalom betöltését.</p>
                     </div>
 
                     <div class="player-wrapper" id="playerWrapper">
-                        <div class="live-next-overlay" id="liveNextOverlay"></div>
-                        
-                        <div class="video-slide-popup" id="videoSlidePopup">
-                            <button class="popup-close" onclick="closeSlidePopup()"><i class="fa-solid fa-xmark"></i></button>
-                            <div class="popup-tag" id="popupTag">Következő rész</div>
-                            <div class="popup-title" id="popupTitle">Műsor cím</div>
-                            <button class="popup-btn" id="popupBtn">Megtekintés</button>
-                        </div>
-
                         <video id="player" playsinline controls></video>
                     </div>
                     
                     <div class="stream-alert-box" id="streamAlertBox">
                         <i class="fa-solid fa-circle-exclamation" style="color:var(--accent-magenta); font-size:16px;"></i>
-                        <span id="streamAlertText">Hoppá! Ez az adás az átlagosnál lassabban tölt be. Kérlek várj még egy pillanatot... 📺</span>
+                        <span id="streamAlertText">Hoppá! Ez az adás lassan tölt be. Kérlek várj...</span>
                     </div>
 
                     <div class="load-progress-wrap">
@@ -687,47 +293,39 @@
                     
                     <div class="epg-mini" id="epgMini">
                         <div class="epg-now"><i class="fa-solid fa-tv"></i> Nincs kiválasztott adás</div>
-                        <div class="epg-desc">Kattints a bal oldali listában egy csatornára vagy mappára.</div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- ADMIN BEÁLLÍTÁSOK / FEJLESZTŐI PANEL -->
+    <!-- ADMIN MODAL -->
     <div class="modal-overlay" id="adminModal">
         <div class="modal-box" style="max-width: 600px;">
-            <div class="modal-title"><i class="fa-solid fa-gear"></i> RobiTV Központi Beállítások</div>
+            <div class="modal-title"><i class="fa-solid fa-gear"></i> RobiTV Beállítások</div>
             
             <div style="display:flex; border-bottom:1px solid var(--glass-border); gap:16px; margin-bottom:14px;">
-                <span id="tabBtnConfig" class="font-bold text-xs pb-2 cursor-pointer border-b-2 border-cyan-400" onclick="switchAdminTab('config')" style="color:var(--accent-cyan); font-size:12px; text-transform:uppercase; letter-spacing:1px;">Alapbeállítások</span>
-                <span id="tabBtnLogs" class="font-bold text-xs pb-2 cursor-pointer" onclick="switchAdminTab('logs')" style="color:var(--text-muted); font-size:12px; text-transform:uppercase; letter-spacing:1px;">Néző és IP Naplózás</span>
+                <span id="tabBtnConfig" class="font-bold text-xs pb-2 cursor-pointer border-b-2 border-cyan-400" onclick="switchAdminTab('config')" style="color:var(--accent-cyan); font-size:12px; text-transform:uppercase;">Alapbeállítások</span>
+                <span id="tabBtnLogs" class="font-bold text-xs pb-2 cursor-pointer" onclick="switchAdminTab('logs')" style="color:var(--text-muted); font-size:12px; text-transform:uppercase;">Aktivitási Napló</span>
             </div>
 
-            <!-- CONFIG ALPANEL -->
             <div id="adminTabConfig">
                 <div class="form-group">
-                    <label for="inputM3u">M3U URL címe:</label>
-                    <input type="text" id="inputM3u" />
+                    <label>M3U URL címe:</label>
+                    <input type="text" id="inputM3u" placeholder="Pl.: http://..." />
                 </div>
                 <div class="form-group">
-                    <label for="inputEpg">XMLTV EPG URL címe (Opcionális):</label>
+                    <label>XMLTV EPG URL címe (Opcionális):</label>
                     <input type="text" id="inputEpg" />
-                </div>
-                <div class="form-group">
-                    <label for="inputApi">Player API URL címe (Opcionális):</label>
-                    <input type="text" id="inputApi" />
                 </div>
 
                 <div style="margin-top: 16px; border-top: 1px solid var(--glass-border); padding-top: 14px;">
-                    <div style="font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 8px;"><i class="fa-solid fa-eye-slash" style="color: var(--accent-cyan);"></i> Mappák kezelése (Ki/Be kapcsolás):</div>
+                    <div style="font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 8px;">Mappák kezelése (Ki/Be kapcsolás):</div>
                     <div id="adminGroupList" style="max-height: 140px; overflow-y: auto; background: var(--bg-primary); padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 4px;"></div>
                 </div>
             </div>
 
-            <!-- LOGS ALPANEL -->
             <div id="adminTabLogs" style="display:none;">
-                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">Az alábbi listában valós időben követheted az aktív és korábbi adásnézők listáját.</div>
                 <div id="adminLogsContainer" style="max-height: 320px; overflow-y: auto; background: var(--bg-primary); padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); display:flex; flex-direction:column; gap:6px;">
                     <div style="padding:20px; text-align:center; color:var(--text-muted); font-size:12px;">Nincs rögzített adat...</div>
                 </div>
@@ -741,21 +339,12 @@
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby2sS6sa8_AW5MQ1aWllDy3cpoiiYdWch-SduqsZxesXxyFBUPoEnGEv4B2warfJ_8oYQ/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQec8rP2JvDicu7znpOQhfoU5KCqEZqVNRIGyrv3xpiipLQz8LhzHpvbPzZY_ofZUclA/exec"; 
 
         const jokes = [
             "Bitek és bájtok sorba rendezése...",
             "Virtuális kábelek kibogozása folyamatban...",
-            "Pixelek fényesítése a maximális élményért...",
-            "A streaming manók ébresztése...",
-            "Keresem a távirányítót a szerverszobában...",
-            "Az EPG mátrix dekódolása...",
-            "Kérlek várj, a szerver épp a kávéját issza...",
-            "Pufferek feltöltése illegálisan jó tartalommal...",
-            "Szerverkábelek fésülése...",
-            "A bitek polírozása folyamatban...",
-            "A router éppen mély levegőt vesz...",
-            "Pufferelés a fénysebesség 99%-ával..."
+            "Pixelek fényesítése a maximális élményért..."
         ];
 
         const avatars = ["😎", "👴", "👽", "🦄", "👾", "🦖", "🦊", "🦁", "🐼", "🧠"];
@@ -766,7 +355,6 @@
         let savedCategoryOrder = [];
         let continueCloudList = []; 
         let deletedGroupsList = [];
-        
         let profilesList = [];
         let activeProfile = null;
         let isProfileManageMode = false;
@@ -779,29 +367,12 @@
         let plyrInstance = null;
         let epgDB = {};              
         let epgFullyLoaded = false; 
-        let epgLoading = false;
         let mySessionId = generateUUID();
 
         let currentM3uUrl = "";
         let currentEpgUrl = "";
-        let currentApiUrl = "";
-
-        let streamLoadTimer = null;
-        let liveNextOverlayInterval = null;
-        let popupTriggered = false;
-        
-        let lastSavedTime = 0; 
         let lastCloudSyncTime = 0; 
-        let playAttemptTime = 0;
-        let draggedGroupName = null;
-        let pendingResumeTime = 0;
         let loadingJokeInterval = null;
-        let myClientIp = "Ismeretlen";
-
-        const loadFill = document.getElementById('loadFill');
-        const loadPercent = document.getElementById('loadPercent');
-
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
         function generateUUID() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -810,19 +381,6 @@
             });
         }
 
-        // IP cím lekérdezése aszinkron módon az activity loghoz
-        async function fetchClientIp() {
-            try {
-                const res = await fetch("https://api.ipify.org?format=json");
-                const data = await res.json();
-                myClientIp = data.ip || "Ismeretlen";
-            } catch(e) {
-                myClientIp = "Ismeretlen";
-            }
-        }
-        fetchClientIp();
-
-        // Vicces szövegek dinamikus váltogatása a betöltés alatt
         loadingJokeInterval = setInterval(() => {
             const jokeEl = document.getElementById('loadingJoke');
             if (jokeEl) {
@@ -830,36 +388,19 @@
             }
         }, 1500);
 
+        // BEVEZETŐ ANIMÁCIÓ BIZTONSÁGOS ELTÜNTETÉSE (Láthatatlan fal hiba javítása)
         setTimeout(() => { 
-            document.getElementById('introAnim').style.display = 'none';
-            // Csak akkor mutatjuk a globális loatert ha a profilválasztó nincs aktívan elindítva
-            if (!activeProfile) {
-                document.getElementById('profilePickerView').style.display = 'flex';
-            } else {
-                document.getElementById('globalLoader').style.display = 'flex';
+            const intro = document.getElementById('introAnim');
+            if (intro) {
+                intro.style.opacity = '0';
+                setTimeout(() => intro.style.display = 'none', 500);
             }
         }, 7000);
 
         function resetToHome() {
             if (hls) { hls.destroy(); hls = null; }
-            if (mpegtsPlayer) { mpegtsPlayer.unload(); mpegtsPlayer.destroy(); mpegtsPlayer = null; }
-            if (plyrInstance) {
-                try { plyrInstance.stop(); } catch(e) {}
-            }
-            
+            if (plyrInstance) { try { plyrInstance.stop(); } catch(e) {} }
             activeChannel = null;
-            popupTriggered = false;
-            lastSavedTime = 0;
-            pendingResumeTime = 0;
-            
-            if (streamLoadTimer) clearTimeout(streamLoadTimer);
-            document.getElementById('streamAlertBox').style.display = 'none';
-            document.getElementById('mixedContentBox').style.display = 'none';
-            document.getElementById('epgMini').innerHTML = `<div class="epg-now"><i class="fa-solid fa-tv"></i> Nincs kiválasztott adás</div><div class="epg-desc">Kattints a bal oldali listában egy csatornára vagy mappára.</div>`;
-            document.getElementById('headerSearchInput').value = '';
-            document.getElementById('headerSearchResults').style.display = 'none';
-            
-            loadFill.style.width = '0%'; loadPercent.textContent = '0';
             goToDashboard();
         }
 
@@ -873,15 +414,12 @@
         }
 
         function sanitizeId(str) { return str ? str.toLowerCase().replace(/\.hu/g,'').replace(/[^a-z0-9]/g,'') : ''; }
-        function formatTime(d) { return d.toLocaleTimeString('hu-HU', { hour:'2-digit', minute:'2-digit' }); }
-
         function isVodGroup(groupName) {
             if (!groupName) return false;
             const g = groupName.toLowerCase();
-            return g.includes('film') || g.includes('mozi') || g.includes('sorozat') || g.includes('vod') || g.includes('cinema');
+            return g.includes('film') || g.includes('mozi') || g.includes('sorozat') || g.includes('vod');
         }
 
-        // PROFIL KEZELŐ FUNKCIÓK
         function renderProfilePicker() {
             const container = document.getElementById('profilesGrid');
             container.innerHTML = '';
@@ -890,28 +428,14 @@
                 const card = document.createElement('div');
                 card.className = 'profile-card';
                 card.onclick = () => selectProfile(prof);
-                
-                card.innerHTML = `
-                    <div class="profile-delete-btn" onclick="event.stopPropagation(); deleteProfile('${prof.id}')" title="Profil törlése"><i class="fa-solid fa-xmark"></i></div>
-                    <div class="profile-avatar">${prof.avatar || '😎'}</div>
-                    <div class="profile-name">${prof.name}</div>
-                `;
+                card.innerHTML = `<div class="profile-delete-btn" onclick="event.stopPropagation(); deleteProfile('${prof.id}')"><i class="fa-solid fa-xmark"></i></div><div class="profile-avatar">${prof.avatar || '😎'}</div><div class="profile-name">${prof.name}</div>`;
                 container.appendChild(card);
             });
 
-            // "Új profil" hozzáadása gomb kezelése
             const addBtn = document.getElementById('btnAddProfile');
-            if (isProfileManageMode && profilesList.length < 10) {
-                addBtn.style.display = 'inline-block';
-            } else {
-                addBtn.style.display = 'none';
-            }
-
-            // Törlés gombok elrejtése/megjelenítése menedzsment módban
-            const deleteButtons = document.querySelectorAll('.profile-delete-btn');
-            deleteButtons.forEach(btn => {
-                btn.style.display = isProfileManageMode ? 'flex' : 'none';
-            });
+            addBtn.style.display = (isProfileManageMode && profilesList.length < 10) ? 'inline-block' : 'none';
+            
+            document.querySelectorAll('.profile-delete-btn').forEach(btn => btn.style.display = isProfileManageMode ? 'flex' : 'none');
         }
 
         function toggleProfileManagement() {
@@ -927,26 +451,19 @@
             const name = prompt("Kérjük, add meg a profil nevét:");
             if (!name || !name.trim()) return;
 
-            const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
-            const newId = 'prof_' + Date.now();
-            const newProf = {
-                id: newId,
+            profilesList.push({
+                id: 'prof_' + Date.now(),
                 name: name.trim().slice(0, 12),
-                avatar: randomAvatar,
+                avatar: avatars[Math.floor(Math.random() * avatars.length)],
                 continue_watching: []
-            };
-
-            profilesList.push(newProf);
+            });
             renderProfilePicker();
             await syncProfilesToCloud();
         }
 
         async function deleteProfile(id) {
-            if (profilesList.length <= 1) {
-                alert("Legalább egy profilnak léteznie kell!");
-                return;
-            }
-            if (confirm("Biztosan törölni szeretnéd ezt a profilt és a hozzá tartozó folyamat-listákat?")) {
+            if (profilesList.length <= 1) return alert("Legalább egy profilnak léteznie kell!");
+            if (confirm("Biztosan törölni szeretnéd?")) {
                 profilesList = profilesList.filter(p => p.id !== id);
                 if (activeProfile && activeProfile.id === id) {
                     activeProfile = null;
@@ -960,22 +477,15 @@
         function selectProfile(prof) {
             if (isProfileManageMode) {
                 const newName = prompt("Módosítsd a profil nevét:", prof.name);
-                if (newName && newName.trim()) {
-                    prof.name = newName.trim().slice(0, 12);
-                    renderProfilePicker();
-                    syncProfilesToCloud();
-                }
+                if (newName && newName.trim()) { prof.name = newName.trim().slice(0, 12); renderProfilePicker(); syncProfilesToCloud(); }
                 return;
             }
 
             activeProfile = prof;
             localStorage.setItem('robi_active_profile_id', prof.id);
-            
-            // Profil kártyák frissítése a fejlécben
             document.getElementById('activeProfileAvatar').innerText = prof.avatar || '😎';
             document.getElementById('activeProfileName').innerText = prof.name;
             
-            // Folytatási lista betöltése
             continueCloudList = (prof.continue_watching || []).map(cItem => {
                 const foundCh = allChannels.find(x => x.id === cItem.id);
                 if(foundCh) return { id: foundCh.id, time: cItem.time, pct: cItem.pct, chSource: foundCh };
@@ -983,14 +493,23 @@
             }).filter(x => x !== null);
 
             document.getElementById('profilePickerView').style.display = 'none';
-            document.getElementById('globalLoader').style.display = 'flex';
             
-            // Dashboard betöltés befejezése
+            if(allChannels.length === 0) {
+               const loader = document.getElementById('globalLoader');
+               if (loader) loader.style.display = 'none';
+               alert("Még nincs M3U lista beállítva. Kattints a Beállításokra!");
+               return;
+            }
+            
+            // LÁTHATATLAN FAL HIBA JAVÍTÁSA: Opacity helyreállítása mielőtt bekapcsoljuk
+            const loader = document.getElementById('globalLoader');
+            loader.style.display = 'flex';
+            loader.style.opacity = '1';
+            
             renderDashboard();
             renderCategorySidebar(null);
             
             setTimeout(() => {
-                const loader = document.getElementById('globalLoader');
                 loader.style.opacity = '0';
                 setTimeout(() => loader.style.display = 'none', 400);
             }, 500);
@@ -1000,43 +519,20 @@
             activeProfile = null;
             localStorage.removeItem('robi_active_profile_id');
             isProfileManageMode = false;
-            
-            const manageBtn = document.getElementById('btnManageProfiles');
-            manageBtn.className = 'profile-picker-manage-btn';
-            manageBtn.innerText = 'Profilok Kezelése';
-
+            document.getElementById('btnManageProfiles').className = 'profile-picker-manage-btn';
+            document.getElementById('btnManageProfiles').innerText = 'Profilok Kezelése';
             renderProfilePicker();
             document.getElementById('profilePickerView').style.display = 'flex';
         }
 
         async function syncProfilesToCloud() {
             const encoded = encodeURIComponent(JSON.stringify(profilesList));
-            try {
-                await fetch(`${GOOGLE_SCRIPT_URL}?action=saveProfiles&data=${encoded}`);
-            } catch(e) {
-                console.error("Hiba a profilok mentésekor:", e);
-            }
+            try { await fetch(`${GOOGLE_SCRIPT_URL}?action=saveProfiles&data=${encoded}`); } catch(e) {}
         }
 
-        // FEJLESZTŐI LAPFÜL CSERE
         function switchAdminTab(tabName) {
             document.getElementById('adminTabConfig').style.display = tabName === 'config' ? 'block' : 'none';
             document.getElementById('adminTabLogs').style.display = tabName === 'logs' ? 'block' : 'none';
-            
-            const btnConfig = document.getElementById('tabBtnConfig');
-            const btnLogs = document.getElementById('tabBtnLogs');
-
-            if (tabName === 'config') {
-                btnConfig.style.color = 'var(--accent-cyan)';
-                btnConfig.style.borderBottom = '2px solid var(--accent-cyan)';
-                btnLogs.style.color = 'var(--text-muted)';
-                btnLogs.style.borderBottom = 'none';
-            } else {
-                btnLogs.style.color = 'var(--accent-cyan)';
-                btnLogs.style.borderBottom = '2px solid var(--accent-cyan)';
-                btnConfig.style.color = 'var(--text-muted)';
-                btnConfig.style.borderBottom = 'none';
-            }
         }
 
         function renderActivityLogs(logs) {
@@ -1045,57 +541,24 @@
                 container.innerHTML = `<div style="padding:20px; text-align:center; color:var(--text-muted); font-size:12px;">Nincs rögzített adat...</div>`;
                 return;
             }
-
             container.innerHTML = '';
             logs.forEach(log => {
-                const logTime = new Date(log.last_active).toLocaleTimeString('hu-HU', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
                 const itemDiv = document.createElement('div');
                 itemDiv.className = 'admin-toggle-label';
-                itemDiv.style.flexDirection = 'row';
-                itemDiv.style.justifyContent = 'space-between';
-                itemDiv.style.alignItems = 'center';
-                
-                itemDiv.innerHTML = `
-                    <div style="display:flex; flex-direction:column; gap:2px; flex:1;">
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <span style="font-size:11px; font-weight:800; color:var(--accent-cyan); background:rgba(0, 229, 255, 0.08); padding:1px 6px; border-radius:10px;">${log.profile}</span>
-                            <span style="font-size:10px; color:var(--text-muted);">${log.device} • ${log.ip}</span>
-                        </div>
-                        <div style="font-size:12px; font-weight:700; color:#fff; margin-top:2px;">📺 Nézi: ${log.channel}</div>
-                        <div style="font-size:10px; color:var(--text-secondary);">Aktív ekkor: ${logTime} (${log.duration} perce)</div>
-                    </div>
-                    <button class="btn" style="padding:6px 12px; font-size:11px; background:var(--accent-magenta); color:#fff; border-radius:var(--radius-sm); font-weight:700; cursor:pointer;" onclick="deleteLogItem('${log.id}')">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                `;
+                itemDiv.innerHTML = `<div style="font-size:12px; color:#fff;">${log.profile} - ${log.channel} (${log.duration}p)</div>`;
                 container.appendChild(itemDiv);
             });
         }
 
-        async function deleteLogItem(id) {
-            if (confirm("Biztosan törölni szeretnéd ezt az aktivitási bejegyzést?")) {
-                try {
-                    const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=deleteLog&id=${id}`);
-                    const data = await res.json();
-                    if (data.status === 'success') {
-                        renderActivityLogs(data.logs);
-                    }
-                } catch(e) {
-                    alert("Hiba történt a törlés során.");
-                }
-            }
-        }
-
         function checkAdminPin() {
-            const pin = prompt("Kérlek, add meg a 4 jegyű szerkesztői kódot a továbblépéshez:");
+            const pin = prompt("Kérlek, add meg a 4 jegyű szerkesztői kódot (Alap: 0000):");
             if (pin === "0000") openAdminModal();
-            else if (pin !== null) alert("❌ Hibás szerkesztői kód! Belépés megtagadva.");
+            else if (pin !== null) alert("Hibás kód!");
         }
 
         function openAdminModal() {
             document.getElementById('inputM3u').value = currentM3uUrl;
             document.getElementById('inputEpg').value = currentEpgUrl;
-            document.getElementById('inputApi').value = currentApiUrl;
             
             const groupListContainer = document.getElementById('adminGroupList');
             groupListContainer.innerHTML = '';
@@ -1117,14 +580,10 @@
 
         function toggleGroupVisibilityFromAdmin(checkbox) {
             const group = checkbox.value;
-            const show = checkbox.checked;
-            
-            if (show) {
+            if (checkbox.checked) {
                 deletedGroupsList = deletedGroupsList.filter(g => g !== group);
             } else {
-                if (!deletedGroupsList.includes(group)) {
-                    deletedGroupsList.push(group);
-                }
+                if (!deletedGroupsList.includes(group)) deletedGroupsList.push(group);
             }
         }
 
@@ -1133,138 +592,18 @@
         async function saveAdminUrls() {
             const m3uVal = document.getElementById('inputM3u').value.trim();
             const epgVal = document.getElementById('inputEpg').value.trim();
-            const apiVal = document.getElementById('inputApi').value.trim();
-            if (!m3uVal) { alert("Az M3U URL kitöltése minimum feltétel a mentéshez!"); return; }
+            if (!m3uVal) return alert("Az M3U URL kötelező!");
 
             try {
-                const sendUrl = `${GOOGLE_SCRIPT_URL}?action=setUrls&m3u=${encodeURIComponent(m3uVal)}&epg=${encodeURIComponent(epgVal)}&api=${encodeURIComponent(apiVal)}`;
-                await fetch(sendUrl);
-                
-                const encodedDeleted = encodeURIComponent(JSON.stringify(deletedGroupsList));
-                await fetch(`${GOOGLE_SCRIPT_URL}?action=saveDeleted&data=${encodedDeleted}`);
-
-                alert("Sikeres mentés! A rendszer elmentette a beállításokat és a kategória-láthatóságokat."); 
-                setTimeout(() => location.reload(), 500);
+                document.getElementById('btnSaveAdmin').innerText = "Mentés...";
+                await fetch(`${GOOGLE_SCRIPT_URL}?action=setUrls&m3u=${encodeURIComponent(m3uVal)}&epg=${encodeURIComponent(epgVal)}`);
+                await fetch(`${GOOGLE_SCRIPT_URL}?action=saveDeleted&data=${encodeURIComponent(JSON.stringify(deletedGroupsList))}`);
+                alert("Mentve! Az oldal újratölt."); 
+                setTimeout(() => location.reload(), 1000);
             } catch(e) { 
-                alert("Hiba történt a mentés során."); 
+                alert("Hiba mentés közben."); 
+                document.getElementById('btnSaveAdmin').innerText = "Mentés";
             }
-        }
-
-        function executeHeaderSearch() {
-            const input = document.getElementById('headerSearchInput');
-            const box = document.getElementById('headerSearchResults');
-            const query = input.value.trim().toLowerCase();
-
-            if (query.length < 3) { box.innerHTML = ''; box.style.display = 'none'; return; }
-
-            const filtered = allChannels.filter(ch => {
-                if (deletedGroupsList.includes(ch.group)) return false;
-                return ch.name.toLowerCase().includes(query) || (ch.group && ch.group.toLowerCase().includes(query));
-            });
-
-            if (filtered.length === 0) {
-                box.innerHTML = `<div style="padding: 14px; text-align: center; color: var(--text-muted); font-size: 13px;"><i class="fa-solid fa-face-frown"></i> Nincs találat...</div>`;
-                box.style.display = 'block'; return;
-            }
-
-            box.innerHTML = '';
-            filtered.slice(0, 25).forEach(ch => {
-                const info = parseSeriesInfo(ch.name);
-                const isSeriesItem = info.isSeries;
-                const div = document.createElement('div');
-                div.className = 'search-result-item';
-                div.innerHTML = `
-                    <div class="sr-logo">${isSeriesItem ? `<i class="fa-solid fa-folder" style="color:#fbbf24; font-size:14px;"></i>` : (ch.logo ? `<img src="${ch.logo}" />` : `<i class="fa-solid fa-play" style="color:var(--text-muted); font-size:12px;"></i>`)}</div>
-                    <div class="sr-info">
-                        <div class="sr-name" style="${isSeriesItem ? 'color:#fbbf24;' : ''}">${isSeriesItem ? `[MAPPA] ${info.seriesName} (${info.season}. évad ${info.episode}. rész)` : ch.name}</div>
-                        <div class="sr-group"><i class="fa-regular fa-folder"></i> ${ch.group}</div>
-                    </div>
-                `;
-                div.onclick = () => { box.style.display = 'none'; input.value = ''; openChannelFromSearch(ch); };
-                box.appendChild(div);
-            });
-            box.style.display = 'block';
-        }
-
-        function scrollToPlayerOnMobile() {
-            if (window.innerWidth <= 900) {
-                const container = document.querySelector('.left-panel');
-                if (container) {
-                    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-        function scrollToChannelListOnMobile() {
-            if (window.innerWidth <= 900) {
-                setTimeout(() => {
-                    const listPanel = document.querySelector('.left-panel');
-                    if (listPanel) {
-                        listPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                }, 80);
-            }
-        }
-
-        function openChannelFromSearch(ch) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('viewChannels').classList.add('active');
-            
-            activeGroup = ch.group;
-            renderCategorySidebar(ch.group);
-            const info = parseSeriesInfo(ch.name);
-            
-            if (info.isSeries) {
-                const groupChs = channelsByGroup[ch.group] || [];
-                const eps = [];
-                groupChs.forEach(c => {
-                    const cInf = parseSeriesInfo(c.name);
-                    if (cInf.isSeries && cInf.seriesName === info.seriesName) eps.push({ ch: c, info: cInf });
-                });
-                
-                const seriesNode = { type: 'series', name: info.seriesName, episodes: eps };
-                seriesNode.episodes.sort((a, b) => {
-                    if (a.info.season !== b.info.season) return a.info.season - b.info.season;
-                    return a.info.episode - b.info.episode;
-                });
-                
-                openSeriesFolder(seriesNode);
-                const exactEp = seriesNode.episodes.find(e => e.info.season === info.season && e.info.episode === info.episode);
-                if (exactEp) {
-                    playChannel(exactEp.ch, null);
-                    setTimeout(() => { document.querySelectorAll('.channel-item').forEach(el => { if (el.innerText.includes(ch.name)) el.classList.add('active'); }); }, 300);
-                }
-            } else {
-                document.getElementById('channelViewTitle').textContent = ch.group;
-                renderChannelsForGroup(ch.group);
-                playChannel(ch, null);
-                setTimeout(() => { const activeEl = document.querySelector('.channel-item.active'); if (activeEl) activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 400);
-            }
-            
-            scrollToPlayerOnMobile();
-
-            if (!epgFullyLoaded && ch.group === "⭐ Élő Magyar Csatornák") {
-                loadEPG(); 
-            }
-        }
-
-        document.addEventListener('click', (e) => {
-            const wrap = document.querySelector('.header-search-wrap');
-            if (wrap && !wrap.contains(e.target)) document.getElementById('headerSearchResults').style.display = 'none';
-        });
-
-        function parseSeriesInfo(name) {
-            let match;
-            match = name.match(/(.+?)\s+[sS](\d+)\s*[eE](\d+)/);
-            if (match) return { isSeries: true, seriesName: match[1].trim(), season: parseInt(match[2]), episode: parseInt(match[3]) };
-            match = name.match(/(.+?)\s+(\d+)\.\s*évad\s+(\d+)\.\s*rész/i);
-            if (match) return { isSeries: true, seriesName: match[1].trim(), season: parseInt(match[2]), episode: parseInt(match[3]) };
-            match = name.match(/(.+?)\s+(\d+)\.\s*rész/i);
-            if (match) return { isSeries: true, seriesName: match[1].trim(), season: 1, episode: parseInt(match[2]) };
-            match = name.match(/(.+?)\s+(?:ep|epizód|rész)\s*(\d+)/i);
-            if (match) return { isSeries: true, seriesName: match[1].trim(), season: 1, episode: parseInt(match[2]) };
-            return { isSeries: false, seriesName: name, season: 0, episode: 0 };
         }
 
         function parseM3U(data) {
@@ -1273,29 +612,20 @@
             for (let i=0; i<lines.length; i++) {
                 const line = lines[i].trim();
                 if (line.startsWith('#EXTINF:')) {
-                    const entry = { name:'Ismeretlen', logo:'', url:'', id:'', group:'Egyéb', isCatchup: false };
-                    const nameParts = line.split(',');
-                    if (nameParts.length > 1) entry.name = nameParts.pop().trim();
+                    const entry = { name:'Ismeretlen', logo:'', url:'', id:'', group:'Egyéb' };
+                    
+                    if (line.includes(',')) entry.name = line.substring(line.indexOf(',') + 1).trim();
+                    
                     const logoMatch = line.match(/tvg-logo="([^"]+)"/);
                     if (logoMatch) entry.logo = logoMatch[1];
+                    
                     const idMatch = line.match(/tvg-id="([^"]+)"/);
-                    if (idMatch) entry.id = sanitizeId(idMatch[1]); else entry.id = sanitizeId(entry.name);
+                    entry.id = idMatch ? sanitizeId(idMatch[1]) : sanitizeId(entry.name);
                     
                     const groupMatch = line.match(/group-title="([^"]+)"/);
-                    let initialGroup = groupMatch ? groupMatch[1] || 'Egyéb' : 'Egyéb';
-                    const initialGroupLower = initialGroup.toLowerCase();
+                    entry.group = groupMatch ? groupMatch[1] : 'Egyéb';
 
-                    if (line.match(/catchup="([^"]+)"/i) || line.match(/catchup-days="([^"]+)"/i) || line.match(/tvg-rec="([^"]+)"/i) || line.match(/timeshift="([^"]+)"/i)) {
-                        entry.isCatchup = true;
-                    }
-
-                    if ((initialGroupLower.includes('magyar') || initialGroupLower === 'hungary' || initialGroupLower === 'hu') && !isVodGroup(initialGroup)) {
-                        entry.group = "⭐ Élő Magyar Csatornák";
-                    } else {
-                        entry.group = initialGroup;
-                    }
-
-                    if (i + 1 < lines.length && lines[i+1].trim().startsWith('http')) {
+                    if (i + 1 < lines.length && !lines[i+1].startsWith('#')) {
                         entry.url = lines[i+1].trim();
                         i++;
                     }
@@ -1305,398 +635,52 @@
             return result;
         }
 
-        function getFullEpgForChannel(ch, targetTime = new Date()) {
-            const id = ch.id || sanitizeId(ch.name);
-            const list = epgDB[id] || [];
-            if (!list.length) return null;
-            
-            let current = null;
-            let upcoming = [];
-            
-            for (let i = 0; i < list.length; i++) {
-                const p = list[i];
-                if (targetTime >= p.start && targetTime < p.stop) {
-                    current = p;
-                } else if (p.start >= targetTime) {
-                    upcoming.push(p);
-                }
-            }
-            
-            return { now: current, upcoming: upcoming.slice(0, 6) };
-        }
-
-        function getEpgForChannel(ch, targetTime = new Date()) {
-            const data = getFullEpgForChannel(ch, targetTime);
-            if (!data) return null;
-            return { now: data.now, next: data.upcoming ? data.upcoming[0] : null };
-        }
-
         function getSortedGroupNames() {
-            const fixedTops = ["⭐ Élő Magyar Csatornák", "⏪ Visszanézhető Csatornák"];
-            
             let activeGroups = groupNames.filter(g => !deletedGroupsList.includes(g));
-            let others = activeGroups.filter(g => !fixedTops.includes(g));
-            
-            if (savedCategoryOrder && savedCategoryOrder.length > 0) {
-                others.sort((a, b) => {
-                    let idxA = savedCategoryOrder.indexOf(a);
-                    let idxB = savedCategoryOrder.indexOf(b);
-                    if (idxA === -1) idxA = 9999;
-                    if (idxB === -1) idxB = 9999;
-                    return idxA - idxB;
-                });
-            } else {
-                others.sort((a,b) => a.localeCompare(b));
-            }
-            
-            let finalArray = [];
-            fixedTops.forEach(f => { if(activeGroups.includes(f)) finalArray.push(f); });
-            return finalArray.concat(others);
-        }
-
-        function handleDragStart(e, groupName) {
-            draggedGroupName = groupName;
-            e.dataTransfer.effectAllowed = 'move';
-            e.target.style.opacity = '0.5';
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault();
-            const card = e.currentTarget;
-            card.classList.add('drag-over');
-            e.dataTransfer.dropEffect = 'move';
-        }
-
-        function handleDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
-
-        function handleDrop(e, targetGroupName) {
-            e.preventDefault();
-            e.currentTarget.classList.remove('drag-over');
-            if (draggedGroupName && draggedGroupName !== targetGroupName) {
-                const fixedTops = ["⭐ Élő Magyar Csatornák", "⏪ Visszanézhető Csatornák"];
-                if (fixedTops.includes(draggedGroupName) || fixedTops.includes(targetGroupName)) {
-                    alert("A fix kiemelt mappák helye nem változtatható!");
-                    return;
-                }
-
-                let currentOrder = getSortedGroupNames().filter(g => !fixedTops.includes(g));
-                const fromIdx = currentOrder.indexOf(draggedGroupName);
-                const toIdx = currentOrder.indexOf(targetGroupName);
-                
-                if (fromIdx > -1 && toIdx > -1) {
-                    currentOrder.splice(fromIdx, 1);
-                    currentOrder.splice(toIdx, 0, draggedGroupName);
-                    
-                    savedCategoryOrder = currentOrder;
-                    saveOrderToCloud(savedCategoryOrder);
-                    
-                    renderDashboard();
-                    renderCategorySidebar(activeGroup);
-                }
-            }
-        }
-
-        function handleDragEnd(e) { e.target.style.opacity = '1'; draggedGroupName = null; }
-
-        async function saveOrderToCloud(orderArray) {
-            try {
-                const encoded = encodeURIComponent(JSON.stringify(orderArray));
-                await fetch(`${GOOGLE_SCRIPT_URL}?action=saveOrder&order=${encoded}`);
-            } catch(e) {}
-        }
-
-        function restoreCategory(group) {
-            deletedGroupsList = deletedGroupsList.filter(g => g !== group);
-            syncDeletedGroupsToCloud();
-            renderDashboard();
-            if (deletedGroupsList.length > 0) {
-                openSpecialCategory('deleted');
-            } else {
-                goToDashboard();
-            }
-        }
-
-        function syncDeletedGroupsToCloud() {
-            const encoded = encodeURIComponent(JSON.stringify(deletedGroupsList));
-            fetch(`${GOOGLE_SCRIPT_URL}?action=saveDeleted&data=${encoded}`, { keepalive: true })
-                .catch(err => console.error("Törölt csoportok szinkronizációs hiba:", err));
+            activeGroups.sort((a,b) => a.localeCompare(b));
+            return activeGroups;
         }
 
         function renderDashboard() {
             const grid = document.getElementById('dashboardGrid');
             grid.innerHTML = '';
 
-            if (continueCloudList.length > 0) {
-                const card = document.createElement('div');
-                card.className = 'dash-card special';
-                card.innerHTML = `<i class="fa-solid fa-clock-rotate-left"></i><div class="dash-name">Folytasd ahol abbahagytad</div><div class="dash-count">${continueCloudList.length} mentett film</div>`;
-                card.onclick = () => openSpecialCategory('continue');
-                grid.appendChild(card);
-            }
-
-            const sortedGroups = getSortedGroupNames();
-
-            sortedGroups.forEach(group => {
+            getSortedGroupNames().forEach(group => {
                 const count = channelsByGroup[group]?.length || 0;
-                const isFixed = group === "⭐ Élő Magyar Csatornák" || group === "⏪ Visszanézhető Csatornák";
-                
                 const card = document.createElement('div');
-                card.className = `dash-card ${group === "⭐ Élő Magyar Csatornák" ? 'pinned' : ''}`;
-                if(!isFixed) {
-                    card.setAttribute('draggable', 'true');
-                    card.addEventListener('dragstart', (e) => handleDragStart(e, group));
-                    card.addEventListener('dragover', handleDragOver);
-                    card.addEventListener('dragleave', handleDragLeave);
-                    card.addEventListener('drop', (e) => handleDrop(e, group));
-                    card.addEventListener('dragend', handleDragEnd);
-                }
-                
-                let icon = group.includes("Visszanézhető") ? '<i class="fa-solid fa-clock-rotate-left" style="color:#fbbf24;"></i>' : '<i class="fa-solid fa-folder-open"></i>';
-
-                card.innerHTML = `
-                    ${icon}
-                    <div class="dash-name">${group}</div>
-                    <div class="dash-count">${count} adó</div>
-                `;
+                card.className = `dash-card`;
+                card.innerHTML = `<i class="fa-solid fa-folder-open"></i><div class="dash-name">${group}</div><div class="dash-count">${count} adó</div>`;
                 card.onclick = () => openCategory(group);
                 grid.appendChild(card);
             });
-
-            if (deletedGroupsList.length > 0) {
-                const card = document.createElement('div');
-                card.className = 'dash-card special';
-                card.style.borderColor = 'rgba(255, 42, 95, 0.3)';
-                card.innerHTML = `
-                    <i class="fa-solid fa-trash-can" style="color:var(--text-muted);"></i>
-                    <div class="dash-name" style="color:var(--text-muted);">Törölt mappák</div>
-                    <div class="dash-count">${deletedGroupsList.length} rejtett mappa</div>
-                `;
-                card.onclick = () => openSpecialCategory('deleted');
-                grid.appendChild(card);
-            }
         }
 
         function renderCategorySidebar(activeName) {
             const list = document.getElementById('categoryList');
             list.innerHTML = '';
 
-            if (continueCloudList.length > 0) {
-                const div = document.createElement('div');
-                div.className = `category-card ${activeName === 'continue' ? 'active' : ''}`;
-                div.innerHTML = `<span class="category-name" style="color:var(--accent-magenta);"><i class="fa-solid fa-clock-rotate-left"></i> Folytatás</span><span class="category-count">${continueCloudList.length}</span>`;
-                div.onclick = () => openSpecialCategory('continue');
-                list.appendChild(div);
-            }
-
-            const sortedGroups = getSortedGroupNames();
-
-            sortedGroups.forEach(group => {
+            getSortedGroupNames().forEach(group => {
                 const count = channelsByGroup[group]?.length || 0;
                 const div = document.createElement('div');
                 div.className = `category-card ${group === activeName ? 'active' : ''}`;
-                
-                let displayGroup = group;
-                if(group === "⭐ Élő Magyar Csatornák") displayGroup = '📌 ' + group;
-                if(group === "⏪ Visszanézhető Csatornák") displayGroup = '⏪ Visszanézhető';
-
-                div.innerHTML = `
-                    <span class="category-name">${displayGroup}</span>
-                    <span style="display:flex; align-items:center; gap:6px;">
-                        <span class="category-count">${count}</span>
-                    </span>
-                `;
+                div.innerHTML = `<span class="category-name">${group}</span><span class="category-count">${count}</span>`;
                 div.onclick = () => openCategory(group);
                 list.appendChild(div);
             });
-
-            if (deletedGroupsList.length > 0) {
-                const div = document.createElement('div');
-                div.className = `category-card ${activeName === 'deleted' ? 'active' : ''}`;
-                div.innerHTML = `
-                    <span class="category-name" style="color:var(--text-muted);"><i class="fa-solid fa-trash-can"></i> Törölt mappák</span>
-                    <span class="category-count">${deletedGroupsList.length}</span>
-                `;
-                div.onclick = () => openSpecialCategory('deleted');
-                list.appendChild(div);
-            }
-        }
-
-        function openSpecialCategory(type) {
-            activeGroup = type;
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('viewChannels').classList.add('active');
-            renderCategorySidebar(type);
-            scrollToChannelListOnMobile();
-            
-            const list = document.getElementById('channelListView');
-            list.innerHTML = '';
-
-            if (type === 'continue') {
-                document.getElementById('channelViewTitle').textContent = "🍿 Folytasd ahol abbahagytad";
-                
-                const gridDiv = document.createElement('div');
-                gridDiv.className = 'continue-grid';
-                
-                continueCloudList.forEach((item) => {
-                    const ch = item.chSource;
-                    const mins = Math.round(item.time / 60);
-                    
-                    const card = document.createElement('div');
-                    card.className = 'continue-card-lg';
-                    card.innerHTML = `
-                        <div class="continue-poster">
-                            ${ch.logo ? `<img src="${ch.logo}" />` : `<i class="fa-solid fa-clapperboard" style="font-size:40px; color:var(--text-muted);"></i>`}
-                            <div class="play-overlay"><i class="fa-solid fa-circle-play"></i></div>
-                        </div>
-                        <div class="continue-info">
-                            <div class="continue-title">${ch.name}</div>
-                            <div class="continue-meta">
-                                <span>${mins} percnél</span>
-                                <span style="color:var(--accent-cyan); font-weight:700;">${item.pct}%</span>
-                            </div>
-                            <div class="continue-progress-bg">
-                                <div class="continue-progress-fill" style="width: ${item.pct}%;"></div>
-                            </div>
-                        </div>
-                        <button class="delete-continue-btn" title="Törlés"><i class="fa-solid fa-trash-can"></i></button>
-                    `;
-                    
-                    card.querySelector('.delete-continue-btn').onclick = (e) => {
-                        e.stopPropagation();
-                        deleteContinueItem(ch.id);
-                    };
-                    
-                    card.onclick = () => {
-                        playChannel(ch, null, item.time);
-                        scrollToPlayerOnMobile();
-                    };
-                    
-                    gridDiv.appendChild(card);
-                });
-                
-                list.appendChild(gridDiv);
-            } else if (type === 'deleted') {
-                document.getElementById('channelViewTitle').textContent = "🗑️ Rejtett és törölt mappák";
-                
-                if (deletedGroupsList.length === 0) {
-                    list.innerHTML = `<div style="padding: 24px; text-align: center; color: var(--text-muted);"><i class="fa-solid fa-circle-info" style="font-size:24px; margin-bottom:8px;"></i><p>Nincs elrejtett kategória.</p></div>`;
-                    return;
-                }
-
-                deletedGroupsList.forEach((group) => {
-                    const count = channelsByGroup[group]?.length || 0;
-                    const div = document.createElement('div');
-                    div.className = 'channel-item';
-                    div.style.justifyContent = 'space-between';
-                    div.innerHTML = `
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <div class="c-logo" style="background:rgba(255,255,255,0.02); border-color:var(--glass-border);"><i class="fa-solid fa-eye-slash" style="color:var(--text-muted);"></i></div>
-                            <div class="c-info">
-                                <div class="c-name" style="color:var(--text-secondary);">${group}</div>
-                                <div class="c-epg">${count} adó található benne</div>
-                            </div>
-                        </div>
-                        <button class="btn" style="padding:6px 12px; font-size:11px; background:var(--accent-cyan); color:#000; border-radius:var(--radius-sm); font-weight:700; cursor:pointer;" onclick="event.stopPropagation(); restoreCategory('${group.replace(/'/g, "\\'")}')">
-                            <i class="fa-solid fa-trash-arrow-up"></i> Visszaállítás
-                        </button>
-                    `;
-                    list.appendChild(div);
-                });
-            }
         }
 
         function renderChannelsForGroup(group) {
             const list = document.getElementById('channelListView');
             const chs = channelsByGroup[group] || [];
             list.innerHTML = '';
-            
-            const isVOD = isVodGroup(group);
-            
-            const nestedData = [];
-            const seriesMap = {};
 
             chs.forEach(ch => {
-                const info = parseSeriesInfo(ch.name);
-                if (info.isSeries) {
-                    if (!seriesMap[info.seriesName]) {
-                        seriesMap[info.seriesName] = { type: 'series', name: info.seriesName, episodes: [] };
-                        nestedData.push(seriesMap[info.seriesName]);
-                    }
-                    seriesMap[info.seriesName].episodes.push({ ch, info });
-                } else {
-                    nestedData.push({ type: 'standalone', name: ch.name, ch: ch });
-                }
-            });
-
-            nestedData.forEach(node => {
-                if (node.type === 'series') {
-                    node.episodes.sort((a, b) => {
-                        if (a.info.season !== b.info.season) return a.info.season - b.info.season;
-                        return a.info.episode - b.info.episode;
-                    });
-                }
-            });
-
-            nestedData.forEach(node => {
-                if (node.type === 'standalone') {
-                    const ch = node.ch;
-                    let text = "Film / Média tartalom";
-                    
-                    if (!isVOD) {
-                        const epgInfo = getEpgForChannel(ch);
-                        text = epgInfo && epgInfo.now ? `<span style="color:var(--accent-magenta);">🔴 MOST:</span> ${epgInfo.now.title}` : 'Kattints a betöltéshez...';
-                    }
-                    
-                    const div = document.createElement('div');
-                    div.className = `channel-item ${activeChannel === ch ? 'active' : ''}`;
-                    div.innerHTML = `
-                        <div class="c-logo">${ch.logo ? `<img src="${ch.logo}" />` : `<i class="fa-solid fa-tv"></i>`}</div>
-                        <div class="c-info"><div class="c-name">${ch.name}</div><div class="c-epg">${text}</div></div>
-                    `;
-                    div.onclick = () => { playChannel(ch, div); scrollToPlayerOnMobile(); };
-                    list.appendChild(div);
-                } else if (node.type === 'series') {
-                    const div = document.createElement('div');
-                    div.className = `channel-item`;
-                    div.innerHTML = `
-                        <div class="c-logo" style="background: rgba(251, 191, 36, 0.1); border-color: rgba(251, 191, 36, 0.3);"><i class="fa-solid fa-folder" style="color: #fbbf24;"></i></div>
-                        <div class="c-info"><div class="c-name" style="color: #fbbf24;">[MAPPA] ${node.name}</div><div class="c-epg">${node.episodes.length} epizód elérhető</div></div>
-                    `;
-                    div.onclick = () => openSeriesFolder(node);
-                    list.appendChild(div);
-                }
-            });
-        }
-
-        function openSeriesFolder(seriesNode) {
-            const list = document.getElementById('channelListView');
-            document.getElementById('channelViewTitle').innerHTML = `<span style="color:#98a2b3; cursor:pointer;" onclick="renderChannelsForGroup('${activeGroup}')">${activeGroup}</span> &gt; <span style="color:#fbbf24;">${seriesNode.name}</span>`;
-            list.innerHTML = '';
-            
-            const backDiv = document.createElement('div');
-            backDiv.className = `channel-item`;
-            backDiv.innerHTML = `
-                <div class="c-logo" style="background: rgba(255,255,255,0.05);"><i class="fa-solid fa-folder-open"></i></div>
-                <div class="c-info"><div class="c-name" style="color: var(--accent-cyan);">.. [Vissza a szülőmappához]</div></div>
-            `;
-            backDiv.onclick = () => {
-                document.getElementById('channelViewTitle').textContent = activeGroup;
-                renderChannelsForGroup(activeGroup);
-            };
-            list.appendChild(backDiv);
-
-            seriesNode.episodes.forEach(ep => {
-                const ch = ep.ch;
                 const div = document.createElement('div');
                 div.className = `channel-item ${activeChannel === ch ? 'active' : ''}`;
-                div.innerHTML = `
-                    <div class="c-logo">${ch.logo ? `<img src="${ch.logo}" />` : `<i class="fa-solid fa-video"></i>`}</div>
-                    <div class="c-info"><div class="c-name">${ch.name}</div><div class="c-epg">S${ep.info.season} E${ep.info.episode} epizód</div></div>
-                `;
-                div.onclick = () => { playChannel(ch, div); scrollToPlayerOnMobile(); };
+                div.innerHTML = `<div class="c-logo">${ch.logo ? `<img src="${ch.logo}" />` : `<i class="fa-solid fa-tv"></i>`}</div><div class="c-info"><div class="c-name">${ch.name}</div><div class="c-epg">Kattints a lejátszáshoz</div></div>`;
+                div.onclick = () => { playChannel(ch, div); };
                 list.appendChild(div);
             });
-            scrollToChannelListOnMobile();
         }
 
         function openCategory(group) {
@@ -1706,11 +690,6 @@
             document.getElementById('channelViewTitle').textContent = group;
             renderCategorySidebar(group);
             renderChannelsForGroup(group);
-            scrollToChannelListOnMobile();
-            
-            if (!epgFullyLoaded && group === "⭐ Élő Magyar Csatornák") { 
-                loadEPG(); 
-            }
         }
 
         function goToDashboard() {
@@ -1721,489 +700,106 @@
             renderDashboard();
         }
 
-        const epgWorkerCode = `
-        self.onmessage = function(e) {
-            const { xmlText, filterIds } = e.data;
-            const db = {};
-            const limitDate = new Date(); 
-            limitDate.setDate(limitDate.getDate() - 1);
-            
-            const programmes = xmlText.split('<programme');
-            for(let i = 1; i < programmes.length; i++) {
-                const chunk = programmes[i];
-                const chMatch = chunk.match(/channel="([^"]+)"/);
-                if(!chMatch) continue;
-                
-                const chId = chMatch[1].toLowerCase().replace(/\\.hu/g,'').replace(/[^a-z0-9]/g,'');
-                if(!filterIds.includes(chId)) continue;
-                
-                const startMatch = chunk.match(/start="([^"]+)"/);
-                const stopMatch = chunk.match(/stop="([^"]+)"/);
-                if(!startMatch || !stopMatch) continue;
-                
-                const parseDate = (str) => {
-                    const year = str.slice(0, 4), month = str.slice(4, 6), day = str.slice(6, 8);
-                    const hour = str.slice(8, 10), min = str.slice(10, 12), sec = str.slice(12, 14) || "00";
-                    let tz = "+01:00";
-                    const parts = str.split(' ');
-                    if (parts.length > 1 && parts[1].length === 5) {
-                        tz = parts[1].slice(0, 3) + ":" + parts[1].slice(3, 5);
-                    }
-                    return new Date(\`\${year}-\${month}-\${day}T\${hour}:\${min}:\${sec}\${tz}\`);
-                };
-                
-                const start = parseDate(startMatch[1]);
-                const stop = parseDate(stopMatch[1]);
-                if(stop < limitDate) continue;
-                
-                const titleMatch = chunk.match(/<title[^>]*>([^<]+)<\\/title>/);
-                const title = titleMatch ? titleMatch[1] : 'Műsor';
-                
-                const descMatch = chunk.match(/<desc[^>]*>([^<]+)<\\/desc>/);
-                const desc = descMatch ? descMatch[1] : '';
-                
-                if(!db[chId]) db[chId] = [];
-                db[chId].push({ start, stop, title, desc });
-            }
-            
-            for (let id in db) db[id].sort((a, b) => a.start - b.start);
-            self.postMessage({ db });
-        };
-        `;
-
-        async function loadEPG() {
-            if (epgLoading || epgFullyLoaded) return;
-            epgLoading = true;
-            updateStatus('epg', 'warn', 'EPG szinkron...');
-            try {
-                const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getEpg`);
-                const text = await res.text();
-                
-                const filterIds = Array.from(new Set(
-                    allChannels
-                    .filter(ch => ch.group === "⭐ Élő Magyar Csatornák")
-                    .map(ch => ch.id || sanitizeId(ch.name))
-                ));
-
-                const blob = new Blob([epgWorkerCode], {type: 'application/javascript'});
-                const worker = new Worker(URL.createObjectURL(blob));
-                
-                worker.onmessage = function(e) {
-                    Object.assign(epgDB, e.data.db); 
-                    epgFullyLoaded = true; 
-                    epgLoading = false;
-                    updateStatus('epg', 'ok', 'Kész');
-                    renderChannelsForGroup(activeGroup);
-                    if (activeChannel) updateEpgMini(activeChannel);
-                    worker.terminate();
-                };
-                
-                worker.postMessage({ xmlText: text, filterIds });
-            } catch (e) { 
-                epgLoading = false; 
-                updateStatus('epg', 'error', 'Hiba'); 
-            }
-        }
-
-        function forceAudioUnmute() {
-            const video = document.getElementById('player');
-            if (video) {
-                video.muted = false;
-                video.volume = 1.0;
-            }
-            if(plyrInstance) {
-                try {
-                    plyrInstance.muted = false; 
-                    plyrInstance.volume = 1; 
-                } catch(e) {}
-            }
-        }
-
-        // PRÍMELŐ FUNKCIÓ AZ ANDROID CHROME FELOLDÁSÁRA:
-        function primeVideoElement(video) {
-            if (!video) return;
-            try {
-                const playPromise = video.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        // sikeres prímelés
-                    }).catch(() => {
-                        // elkapjuk csendben
-                    });
-                }
-            } catch(e) {}
-        }
-
-        function playChannel(ch, el, resumeTime = 0) {
-            const video = document.getElementById('player'); // DINAMIKUS LEKÉRDEZÉS
-            if (video) {
-                primeVideoElement(video); // AZONNALI SZINKRON AKTIVÁLÁS MOBILRA
-            }
-
+        function playChannel(ch, el) {
+            const video = document.getElementById('player'); 
             activeChannel = ch;
-            popupTriggered = false;
-            lastSavedTime = 0; 
-            pendingResumeTime = resumeTime;
-            closeSlidePopup();
             
-            const alertBox = document.getElementById('streamAlertBox');
-            alertBox.style.display = 'none';
-            alertBox.style.background = 'rgba(255, 42, 95, 0.15)';
-            document.getElementById('streamAlertText').innerText = 'Hoppá! Ez az adás az átlagosnál lassabban tölt be. Kérlek várj még egy pillanatot... 📺';
-
-            // MIXED CONTENT DETEKCIÓ ÉS FIGYELMEZTETÉS
-            const mixedBox = document.getElementById('mixedContentBox');
-            if (location.protocol === 'https:' && ch.url.startsWith('http://')) {
-                mixedBox.style.display = 'flex';
-                // Megpróbáljuk automatikusan "upgrade"-elni a protokollt HTTPS-re, hátha támogatja a szerver
-                if (!ch.url.includes(':8080')) { // Port 8080 ritkán támogat SSL-t ugyanazon a porton
-                    ch.url = ch.url.replace('http://', 'https://');
-                }
-            } else {
-                mixedBox.style.display = 'none';
-            }
-
             if (el) {
                 document.querySelectorAll('.channel-item').forEach(item => item.classList.remove('active'));
                 el.classList.add('active');
             }
 
-            // Tisztítjuk és leállítjuk a korábbi lejátszási példányokat natív szinten
             if (hls) { hls.destroy(); hls = null; }
-            if (mpegtsPlayer) { mpegtsPlayer.unload(); mpegtsPlayer.destroy(); mpegtsPlayer = null; }
+            if (plyrInstance) { try { plyrInstance.stop(); } catch(e) {} }
             
             video.removeAttribute('src');
             video.load();
-            
-            if (plyrInstance) {
-                try { plyrInstance.stop(); } catch(e) {}
-            }
-            
-            loadFill.style.width = '0%'; loadPercent.textContent = '0';
-
-            if (streamLoadTimer) clearTimeout(streamLoadTimer);
-            streamLoadTimer = setTimeout(() => {
-                document.getElementById('streamAlertBox').style.display = 'flex';
-            }, 20000);
 
             if (!ch.url) return;
 
-            const urlLower = ch.url.toLowerCase();
-            const isStaticMovie = urlLower.includes('.mp4') || urlLower.includes('.mkv') || urlLower.includes('.avi');
-            const isM3u8 = urlLower.includes('.m3u8');
-
-            forceAudioUnmute();
-
-            if (isStaticMovie) {
-                if (plyrInstance) {
-                    plyrInstance.source = {
-                        type: 'video',
-                        sources: [
-                            {
-                                src: ch.url,
-                                type: 'video/mp4'
-                            }
-                        ]
-                    };
-                    try { plyrInstance.play(); } catch(e) {}
-                } else {
-                    video.src = ch.url;
-                    video.load();
-                    try { video.play(); } catch(e) {}
-                }
-                video.onprogress = () => {
-                    if (video.duration) {
-                        const pct = (video.buffered.length ? video.buffered.end(video.buffered.length - 1) : 0) / video.duration * 100;
-                        loadFill.style.width = Math.min(100, Math.round(pct)) + '%';
-                        loadPercent.textContent = Math.min(100, Math.round(pct));
-                    }
-                };
-            } else if (isM3u8) {
-                // KERESZTPALETTA HLS DETEKCIÓ:
-                // Ha a böngésző támogatja az MSE-t (Asztali Chrome, Android Chrome, asztali Firefox),
-                // akkor a szoftveres hls.js-t futtatjuk. Ezzel elkerülhető az Android beépített stagefright fagyása.
-                // Ha nem támogatja (mint az iOS Safari/Chrome), akkor átadjuk a natív rendszer-motorvonalnak.
+            if (ch.url.toLowerCase().includes('.m3u8')) {
                 if (Hls.isSupported()) {
-                    hls = new Hls({ 
-                        enableWorker: false, // CORS warning megelőzése local fáljoknál (file:///)
-                        lowLatencyMode: false, 
-                        autoStartLoad: true, 
-                        capLevelToPlayerSize: true, 
-                        defaultAudioCodec: 'mp4a.40.2',
-                        maxBufferLength: 30,
-                        maxMaxBufferLength: 600
-                    });
+                    hls = new Hls();
                     hls.loadSource(ch.url);
                     hls.attachMedia(video);
-                    
-                    hls.on(Hls.Events.AUDIO_TRACKS_UPDATED, (e, data) => {
-                        if (data.audioTracks && data.audioTracks.length > 0) {
-                            let hunIdx = data.audioTracks.findIndex(t => t.name.toLowerCase().includes('hun') || t.name.toLowerCase().includes('magyar'));
-                            if(hunIdx !== -1) hls.audioTrack = hunIdx;
-                        }
-                    });
-                    
-                    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                        forceAudioUnmute();
-                        video.play().catch(() => {
-                            video.muted = true;
-                            video.play().catch(err => console.log("HLS play error:", err));
-                        });
-                    });
-
-                    hls.on(Hls.Events.ERROR, (e, data) => { if (data.fatal && data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError(); });
+                    hls.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(()=>{}); });
                 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    // iOS natív HLS ág
                     video.src = ch.url;
                     video.load();
-                    video.play().catch(() => {
-                        video.muted = true;
-                        video.play().catch(err => console.log("Native iOS HLS play error:", err));
-                    });
-                } else {
-                    // Fallback
-                    video.src = ch.url;
-                    video.load();
-                    video.play().catch(e => console.log(e));
+                    video.play().catch(()=>{});
                 }
-                loadFill.style.width = '100%'; loadPercent.textContent = '100';
             } else {
-                if (mpegts.isSupported()) {
-                    mpegtsPlayer = mpegts.createPlayer({ type: 'mse', isLive: true, url: ch.url }, { enableWorker: false, stashInitialSize: 384, enableStashBuffer: true, liveBufferLatencyChasing: false });
-                    mpegtsPlayer.attachMediaElement(video);
-                    mpegtsPlayer.load();
-                    forceAudioUnmute();
-                    mpegtsPlayer.play().catch(() => {
-                        video.muted = true;
-                        video.play().catch(e => console.log("Mpegts play error:", e));
-                    });
-                    loadFill.style.width = '100%'; loadPercent.textContent = '100';
-                } else {
-                    video.src = ch.url;
-                    video.load();
-                    video.play().catch(() => {
-                        video.muted = true;
-                        video.play().catch(e => console.log("Fallback play error:", e));
-                    });
-                }
+                video.src = ch.url;
+                video.load();
+                video.play().catch(()=>{});
             }
-            updateEpgMini(ch);
-            startLiveNextOverlayMonitor(ch);
-        }
-
-        // PROFIL-ALAPÚ FOLYAMATMENTÉS REALTIME A SCRIPTBE
-        function saveCurrentPosition() {
-            const video = document.getElementById('player');
-            if (!video || !activeChannel || !video.duration || video.duration < 30 || !activeProfile) return;
-            const currentTime = video.currentTime;
-            const duration = video.duration;
-            const timeLeft = duration - currentTime;
-            const pct = Math.round((currentTime / duration) * 100);
-
-            if (!isVodGroup(activeChannel.group)) return;
-
-            // Frissítjük az aktív profil saját continue_watching listáját
-            let currentList = activeProfile.continue_watching || [];
-            currentList = currentList.filter(x => x.id !== activeChannel.id);
-
-            if (pct >= 1 && timeLeft > 60) {
-                currentList.unshift({ id: activeChannel.id, time: currentTime, pct: pct });
-                if (currentList.length > 12) currentList.pop(); 
-                activeProfile.continue_watching = currentList;
-                syncContinueListToCloud(false);
-            } else if (timeLeft <= 60) {
-                activeProfile.continue_watching = currentList;
-                syncContinueListToCloud(true);
-            }
-
-            // Helyi memóriában frissítjük a folyamat-listát a kijelzőnek
-            continueCloudList = currentList.map(cItem => {
-                const foundCh = allChannels.find(x => x.id === cItem.id);
-                if(foundCh) return { id: foundCh.id, time: cItem.time, pct: cItem.pct, chSource: foundCh };
-                return null;
-            }).filter(x => x !== null);
-        }
-
-        function syncContinueListToCloud(force = false) {
-            if (!activeProfile) return;
-            const now = Date.now();
-            if (!force && now - lastCloudSyncTime < 20000) return;
-            lastCloudSyncTime = now;
-            
-            // Profilok tömb frissítése és elküldése
-            const updatedProfiles = profilesList.map(p => {
-                if (p.id === activeProfile.id) {
-                    return activeProfile;
-                }
-                return p;
-            });
-
-            const encoded = encodeURIComponent(JSON.stringify(updatedProfiles));
-            fetch(`${GOOGLE_SCRIPT_URL}?action=saveProfiles&data=${encoded}`, { 
-                method: "GET",
-                keepalive: true 
-            }).catch(err => console.error("Profil folyamat sync hiba:", err));
         }
 
         async function initSystem() {
             updateStatus('m3u', 'warn', 'Betöltés...');
             try {
-                // PÁRHUZAMOSÍTOTT CSATLAKOZÁS A SCRIPT-HEZ (50%-al gyorsabb betöltés)
-                const configPromise = fetch(`${GOOGLE_SCRIPT_URL}?session_id=${mySessionId}`).then(r => r.json());
-                const m3uPromise = fetch(`${GOOGLE_SCRIPT_URL}?action=getM3u`).then(r => r.text());
-
-                const [gasData, m3uText] = await Promise.all([configPromise, m3uPromise]);
+                const gasData = await fetch(`${GOOGLE_SCRIPT_URL}?session_id=${mySessionId}`).then(r => r.json());
                 
                 if (loadingJokeInterval) clearInterval(loadingJokeInterval);
 
                 document.getElementById('activeUsersCount').textContent = (gasData.active_viewers || 1) + " online";
-                
-                let expDateValue = gasData.expire_date || "Nincs adat";
-                if (window.innerWidth <= 900) {
-                    document.getElementById('expireText').innerText = expDateValue;
-                } else {
-                    document.getElementById('expireText').innerText = "Lejárat: " + expDateValue;
-                }
+                document.getElementById('expireText').innerText = gasData.expire_date || "Beállítások";
 
                 currentM3uUrl = gasData.m3u_url || "";
                 currentEpgUrl = gasData.epg_url || "";
-                currentApiUrl = gasData.api_url || "";
-                savedCategoryOrder = gasData.category_order || [];
                 deletedGroupsList = gasData.deleted_groups || [];
                 profilesList = gasData.profiles || [];
                 
-                // Aktivitás naplók betöltése az admin panelnek
                 renderActivityLogs(gasData.activity_logs);
 
-                allChannels = parseM3U(m3uText);
+                if (currentM3uUrl) {
+                    const m3uText = await fetch(`${GOOGLE_SCRIPT_URL}?action=getM3u`).then(r => r.text());
+                    allChannels = parseM3U(m3uText);
+                    
+                    channelsByGroup = {};
+                    allChannels.forEach(ch => {
+                        if (!channelsByGroup[ch.group]) channelsByGroup[ch.group] = [];
+                        channelsByGroup[ch.group].push(ch);
+                    });
+                    groupNames = Object.keys(channelsByGroup);
+                    updateStatus('m3u', 'ok', allChannels.length + " adó");
+                } else {
+                    updateStatus('m3u', 'error', 'Nincs M3U');
+                    document.getElementById('globalLoader').innerHTML = `
+                      <div style="color:var(--accent-magenta); font-weight:700;">Nincs beállítva URL!</div>
+                      <div style="color:white; font-size:12px;">Nyisd meg a beállításokat a jobb felső menüben, add meg az M3U linket, és mentsd el! Jelszó: 0000</div>`;
+                }
 
-                channelsByGroup = {};
-                allChannels.forEach(ch => {
-                    if (!channelsByGroup[ch.group]) channelsByGroup[ch.group] = [];
-                    channelsByGroup[ch.group].push(ch);
-                });
-                
-                const catchupChannels = allChannels.filter(c => c.isCatchup);
-                if (catchupChannels.length > 0) channelsByGroup["⏪ Visszanézhető Csatornák"] = catchupChannels;
-                
-                groupNames = Object.keys(channelsByGroup);
-                updateStatus('m3u', 'ok', allChannels.length + " adó");
-
-                // PROFIL BEJELENTKEZÉS KEZELÉSE
                 const lastProfileId = localStorage.getItem('robi_active_profile_id');
                 const matchedProf = profilesList.find(p => p.id === lastProfileId);
 
+                // LÁTHATATLAN FAL HIBA JAVÍTÁSA: Csak akkor jelenítjük meg a Profile Pickert ha NINCS belépett profil.
                 if (matchedProf) {
                     selectProfile(matchedProf);
                 } else {
-                    // Ha nincs mentett profil, megjelenítjük a profilválasztót az intro után
                     renderProfilePicker();
-                    const checkIntroActive = setInterval(() => {
-                        if (document.getElementById('introAnim').style.display === 'none') {
-                            document.getElementById('profilePickerView').style.display = 'flex';
-                            document.getElementById('globalLoader').style.display = 'none';
-                            clearInterval(checkIntroActive);
-                        }
-                    }, 500);
+                    document.getElementById('profilePickerView').style.display = 'flex';
+                    const loader = document.getElementById('globalLoader');
+                    if(loader) loader.style.display = 'none';
                 }
 
             } catch (e) { 
                 updateStatus('m3u', 'error', 'Szerverhiba'); 
-                document.getElementById('globalLoader').innerHTML = `<div style="color:var(--accent-magenta); font-weight:700;">Szerver kapcsolódási hiba! Ellenőrizd a beállításaidat!</div>`;
+                document.getElementById('globalLoader').innerHTML = `<div style="color:var(--accent-magenta); font-weight:700;">Hiba a kapcsolatban! Frissítsd az oldalt!</div>`;
             }
 
-            // PLYR INICIALIZÁLÁSA
             const initialVideo = document.getElementById('player');
             plyrInstance = new Plyr(initialVideo, { controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'], autoplay: true });
-            
-            // AZ AKTÍV DOM-BAN MARADT VIDEÓ ELEM LEKÉRDEZÉSE AZ ESEMÉNYEKHOZ
-            const activeVideo = document.getElementById('player');
-            if (activeVideo) {
-                activeVideo.addEventListener('playing', () => {
-                    if (streamLoadTimer) clearTimeout(streamLoadTimer);
-                    document.getElementById('streamAlertBox').style.display = 'none';
-                    forceAudioUnmute();
-                });
-
-                activeVideo.addEventListener('play', () => { playAttemptTime = Date.now(); });
-                
-                activeVideo.addEventListener('pause', () => {
-                    if (Date.now() - playAttemptTime < 1500 && activeVideo.currentTime === 0 && activeChannel) {
-                        if (streamLoadTimer) clearTimeout(streamLoadTimer);
-                        const alertBox = document.getElementById('streamAlertBox');
-                        alertBox.style.display = 'flex';
-                        alertBox.style.background = 'rgba(255, 42, 95, 0.25)';
-                        document.getElementById('streamAlertText').innerHTML = `❌ <strong>Sajnáljuk, ez a tartalom jelenleg nem elérhető!</strong> A forrásszerver offline vagy szakadás történt.`;
-                        if (plyrInstance) {
-                            try { plyrInstance.stop(); } catch(e) {}
-                        }
-                    }
-                    saveCurrentPosition();
-                });
-
-                activeVideo.addEventListener('error', () => {
-                    if (activeChannel) {
-                        if (streamLoadTimer) clearTimeout(streamLoadTimer);
-                        const alertBox = document.getElementById('streamAlertBox');
-                        alertBox.style.display = 'flex';
-                        alertBox.style.background = 'rgba(255, 42, 95, 0.25)';
-                        document.getElementById('streamAlertText').innerHTML = `❌ <strong>Hiba történt a betöltéskor!</strong> A stream nem elérhető vagy megszakadt.`;
-                        if (plyrInstance) {
-                            try { plyrInstance.stop(); } catch(e) {}
-                        }
-                    }
-                });
-
-                activeVideo.addEventListener('timeupdate', () => {
-                    if (!activeVideo.duration || activeVideo.duration < 30) return; 
-                    const currentTime = activeVideo.currentTime;
-                    const timeLeft = activeVideo.duration - currentTime;
-
-                    if (activeChannel && currentTime > 0 && Math.abs(currentTime - lastSavedTime) >= 5) { 
-                        lastSavedTime = currentTime; 
-                        saveCurrentPosition();
-                    }
-                    if (timeLeft <= 30 && !popupTriggered) { popupTriggered = true; triggerVideoEndPopup(); }
-                });
-
-                activeVideo.addEventListener('seeking', saveCurrentPosition);
-                activeVideo.addEventListener('seeked', saveCurrentPosition);
-                
-                activeVideo.addEventListener('loadedmetadata', () => {
-                    if (pendingResumeTime > 0) {
-                        activeVideo.currentTime = pendingResumeTime;
-                        pendingResumeTime = 0;
-                    }
-                });
-            }
-            
-            setTimeout(() => {
-                const plyrContainer = document.querySelector('.plyr');
-                if (plyrContainer) {
-                    plyrContainer.appendChild(document.getElementById('liveNextOverlay'));
-                    plyrContainer.appendChild(document.getElementById('videoSlidePopup'));
-                }
-            }, 1000);
         }
 
-        // REALTIME HEARTBEAT NAPLÓZÓ SCRIPT PARAMÉTEREK KÜLDÉSE:
         setInterval(async () => {
             if (!activeProfile) return;
             try {
-                const encChannel = encodeURIComponent(activeChannel ? activeChannel.name : "Böngészés");
-                const encProfile = encodeURIComponent(activeProfile.name);
-                const encDevice = encodeURIComponent(isMobile ? "Mobil" : "Asztali");
-                const encIp = encodeURIComponent(myClientIp);
-
-                const pulse = await fetch(`${GOOGLE_SCRIPT_URL}?action=heartbeat&session_id=${mySessionId}&ip=${encIp}&device=${encDevice}&profile=${encProfile}&channel=${encChannel}`);
+                const pulse = await fetch(`${GOOGLE_SCRIPT_URL}?action=heartbeat&session_id=${mySessionId}&profile=${encodeURIComponent(activeProfile.name)}&channel=${encodeURIComponent(activeChannel ? activeChannel.name : "Böngészés")}`);
                 const pData = await pulse.json();
-                
                 document.getElementById('activeUsersCount').textContent = (pData.active_viewers || 1) + " online";
-                
-                // Valós idejű naplók listájának frissítése a fejlesztői felületen
-                renderActivityLogs(pData.activity_logs);
             } catch(_) {}
-        }, 20000);
+        }, 30000);
 
         window.onload = initSystem;
     </script>
